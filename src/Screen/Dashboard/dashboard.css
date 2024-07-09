@@ -1,0 +1,72 @@
+.custom-card {
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 15px;
+}
+.code-badge {
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-weight: bold;
+    display: inline-block;
+    margin-left: auto;
+}
+.offer-details {
+    flex-grow: 1;
+}
+
+.custom-cardss {
+    background-color: #f8f9fa; /* Yellow background */
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+  }
+.custom-cards {
+    background-color: #ffd700; /* Yellow background */
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+  }
+  .custom-card-text {
+    max-width: 50%;
+  }
+  .custom-card-text h2 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  .custom-card-text p {
+    font-size: 1.2rem;
+  }
+  .custom-card-images img {
+    max-width: 100px;
+    margin-right: 15px;
+  }
+  .custom-card-button {
+    background-color: transparent;
+    border: 2px solid #000;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000;
+  }
+
+
+
+  /* *******************daily deal card*********************** */
+
+  /* Font */
+@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700');
+
+/* Design */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+} 

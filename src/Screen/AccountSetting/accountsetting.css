@@ -1,0 +1,42 @@
+.list-groupss .list-group-itemss{
+    border:none;
+    padding: 7px ;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 600;
+
+  }
+  .list-groupss .list-group-itemss:hover{
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .list-group-itemsss{
+    border:none;
+    padding: 7px ;
+    font-size: 16px;
+    cursor: pointer;
+    color: #1f7df8;
+    font-weight: 600;
+  } 
+
+  .save-btn{
+    background-color: #1a51f7;
+    color: white;
+  }
+  .save-btn:hover{
+    background-color: #3665f3;
+    color: white;
+  }
+
+  .cancel-btn{
+    background-color: #ccc;
+    color: #4b4a4a;
+  }
+
+  .usernamess{
+    font-weight: 600;
+    font-size: 14px;
+    color: #383838;
+    /* background-color: #1f7df8; */
+  }

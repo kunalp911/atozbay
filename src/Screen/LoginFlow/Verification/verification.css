@@ -1,0 +1,32 @@
+/* App.css */
+
+.otp-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+  }
+  
+  .otp-input { 
+    width: 35px !important;
+    height: 45px;
+    margin: 0 5px;
+    font-size: 20px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s ease;
+    /* padding: 20px; */
+  }
+  
+  .otp-input:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+  }
+  
+  .otp-separator { 
+    font-size: 20px;
+    color: #6c757d; 
+  }
+  
