@@ -1,0 +1,75 @@
+.listanbutton {
+  background-color: #3665f3;
+  border-radius: 20px;
+  font-weight: 500;
+  color: #fff;
+}
+.listanbutton:hover {
+  color: #fff;
+}
+.search-item-button {
+  background-color: #3665f3;
+  border-radius: 20px;
+  font-weight: 500;
+  color: #fff;
+  margin-top: -1px;
+  margin-left: 5px;
+}
+.search-item-button:hover {
+  color: #fff;
+}
+.search-items {
+  border-radius: 20px;
+  font-weight: 500;
+  border: none;
+  box-shadow: #b1b0b0 1px 1px 5px;
+}
+.search-items:focus {
+  box-shadow: #b1b0b0 1px 1px 5px;
+}
+
+.card-customss {
+  border: none;
+  border-radius: 15px;
+  padding: 20px;
+  color: white;
+  font-size: 16px;
+}
+.card-red {
+  background-color: #dd2645;
+  font-weight: 500;
+}
+.card-blue {
+  background-color: #81edfc;
+  color: black;
+  font-weight: 500;
+}
+.card-yellow {
+  background-color: #d6c107;
+  color: black;
+  font-weight: 500;
+}
+.card .listimg {
+  max-width: 100px;
+  margin: 20px 0;
+} 
+::-webkit-scrollbar {
+  width: 5px; 
+}
+::-webkit-scrollbar-button {
+  background: #ccc; 
+}
+::-webkit-scrollbar-track-piece {
+  background: #ccc
+}
+::-webkit-scrollbar-thumb {
+  background: #eee
+}   
+/* ***********************find-product********************* */
+.finddroptext{
+  font-weight: 500;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+

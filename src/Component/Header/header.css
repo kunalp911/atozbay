@@ -1,0 +1,238 @@
+/* *************bottom header******************* */
+.main-navbar {
+  height: 40px;
+  border-bottom: 1px solid #ccc;
+}
+.first-title {
+  color: #000;
+  font-size: 14px;
+}
+.first-titless {
+  color: #000;
+  font-size: 14px;
+  padding-top: 12px;
+}
+.first-icon {
+  color: #000;
+}
+.first-iconss {
+  color: #000;
+  padding-top: 12px;
+}
+.navbar-brand img {
+  max-height: 40px;
+}
+.search-bar {
+  flex-grow: 1;
+}
+.search-bar input {
+  width: 100%;
+}
+.category-select {
+  max-width: 200px;
+}
+.search-button {
+  min-width: 100px;
+}
+.advanced-link {
+  line-height: 38px;
+}
+
+.search-button {
+  color: white;
+  background-color: #3665f3;
+}
+.search-button:hover {
+  color: white;
+  background-color: #3665f3;
+}
+
+/* *************bottom header******************* */ 
+
+/* Styles for the search bar */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+.input-group {
+  display: flex;
+  width: 100%;
+}
+
+.input-group .form-control {
+  flex: 1;
+}
+
+.input-group-append .btn {
+  background-color: #3665f3;
+  border-color: #3665f3;
+  color: #fff;
+}
+
+.logo {
+  max-width: 150px;
+}
+.logosshide {
+  display: none;
+}
+
+.shopcategorytitle {
+  font-size: 15px;
+  color: #000;
+  cursor: pointer;
+} 
+@media (max-width: 768px) {
+  .input-group {
+    flex-direction: row;
+  }
+
+  .input-group .form-control,
+  .input-group-append .btn {
+    width: 100%;
+  }
+
+  .input-group-append .btn {
+    width: auto;
+  }
+  .search-drop {
+    display: none;
+  }
+  .logo {
+    display: none;
+  }
+  .logodiv {
+    display: none;
+  }
+  .logosshide {
+    display: block;
+    max-width: 70px;
+    margin-top: -16px;
+  }
+
+  .shopcategorytitle {
+    font-size: 9px;
+    color: #000;
+    width: 150px;
+  }
+}
+
+/* Styles for the main-navbar */
+/* .main-navbar {
+  background-color: #fff;  
+  padding: 10px 20px;
+}
+
+.main-navbar .navbar-nav .nav-link {
+  color: #000; 
+}
+
+.main-navbar .navbar-toggler {
+  border: none;
+  color: #000;  
+}
+
+ 
+.main-navbar .navbar-nav .nav-link .fas {
+  color: #000;  
+}
+ 
+.main-navbar .navbar-nav .nav-link {
+  padding-right: 15px;  
+}
+
+ 
+@media (max-width: 991px) {
+  .main-navbar .navbar-nav .nav-item {
+    margin-left: 0;
+  }
+  
+  .main-navbar .navbar-collapse {
+    padding: 0 20px;
+  }
+
+  .main-navbar .navbar-nav {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .main-navbar .navbar-nav .nav-link {
+    padding: 10px 0;
+  }
+} */
+
+/* Styles for the main-navbar */
+.main-navbar {
+  background-color: #fff; /* Dark background color */
+  padding: 10px 20px;
+  z-index: 1000; /* Ensure navbar is on top */
+  position: relative;
+}
+
+.main-navbar .navbar-nav .nav-link {
+  color: #000; /* White text color */
+}
+
+.main-navbar .navbar-toggler {
+  border: none;
+  color: #000;
+  padding: 0;
+  margin-top: -5px;
+  /* White color for the toggle icon */
+}
+
+/* Ensuring the icons are visible and styled properly */
+.main-navbar .navbar-nav .nav-link .fas {
+  color: #000; /* White color for icons */
+}
+
+/* Handling padding and other adjustments */
+.main-navbar .navbar-nav .nav-link {
+  padding-right: 15px; /* Add some padding to the right */
+}
+
+/* Responsive styles for mobile screens */
+@media (max-width: 991px) {
+  .main-navbar .navbar-nav .nav-item {
+    left: 0;
+    background-color: #fff;
+    margin-left: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .main-navbar .navbar-collapse {
+    padding: 0 20px;
+  }
+
+  .main-navbar .navbar-nav {
+    flex-direction: column;
+    /* text-align: center; */
+  }
+
+  .main-navbar .navbar-nav .nav-link {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+  }
+  .logo {
+    display: none;
+  }
+  .logodiv {
+    display: none;
+  }
+  .logosshide {
+    display: block;
+    max-width: 70px;
+    margin-top: -16px;
+  }
+  .shopcategorytitle {
+    font-size: 9px;
+    color: #000;
+    width: 150px;
+  }
+}
+
+/* Styles for the main content to ensure it does not overlap */
+#main-content {
+  padding-top: 60px; /* Adjust based on the height of your navbar */
+}
