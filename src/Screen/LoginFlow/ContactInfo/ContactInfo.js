@@ -18,8 +18,7 @@ const ContactInfo = () => {
   const [countryList, setCountriesList] = useState([]);
   const [stateList, setStateList] = useState([]);
   const [countryId, setCountryId] = useState();
-  const [stateId, setStateId] = useState();
-  const [relationType, setrelationType] = useState("");
+  const [stateId, setStateId] = useState(); 
   const [errors, setErrors] = useState({});
   const [businessErrors, setbusinessErrors] = useState({});
   const [contactData, setContactData] = useState({
@@ -653,13 +652,4 @@ const styles = {
 };
 export default ContactInfo;
 
-
-{/* <p>
-  Today Task
-working on AtoZBay
-=> implement  update-business-contact-info Api. 
-=> create Add to Cart screen. 
-=> Show Shopping Cart.
-=> show Shopping Cart Icon in Header.
-
-</p> */}
+ 

@@ -43,10 +43,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const sidebarItems = [
-  { text: "Personal information" },
+const customersidebarItems = [
+  {
+    text: "Personal information",
+  },
   { text: "Sign-in and security" },
-  // { text: "Addresses" },
+  { text: "Feedback" },
+  { text: "Payment Information" },
+  { text: "Account Preferences" },
+  { text: "Selling" },
+];
+const businesssidebarItems = [
+  {
+    text: "Business info",
+  },
+  { text: "Sign-in and security" },
   { text: "Feedback" },
   { text: "Payment Information" },
   { text: "Account Preferences" },
@@ -55,7 +66,10 @@ const sidebarItems = [
 
 const PersonalInfo = () => {
   const classes = useStyles();
+  const userDatas = localStorage.getItem("@userData");
+  const data = JSON.parse(userDatas);
   const [userData, setUserData] = useState({});
+  const [businessUserData, setBusinessUserData] = useState({});
   const [file, setFile] = useState(null);
   const inputFile = useRef(null);
   const [load, setload] = useState(false);
@@ -63,11 +77,13 @@ const PersonalInfo = () => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [type, setType] = useState("Personal information");
+  const [type, setType] = useState(data.user_type === "Customer" ? "Personal information" : "");
+  const [busiType, setBusiType] = useState(data.user_type === "Customer" ? "" : "Business info" );
   const [showPassword, setShowPassword] = React.useState(false);
   const [contactData, setContactData] = useState();
+  const [businessData, setBusinessData] = useState();
   const [countryList, setCountriesList] = useState([]);
-  const [stateList, setStateList] = useState([]); 
+  const [stateList, setStateList] = useState([]);
   const [userName, setUserName] = useState("");
   const [imageUrl, setImageUrl] = useState();
 
@@ -80,6 +96,20 @@ const PersonalInfo = () => {
     pincode: "",
   });
 
+  const [businessUpdateData, setBusinessUpdateData] = useState({
+    name: "",
+    address_1: "",
+    address_2: "",
+    city_name: "",
+    pincode: "",
+    address_country_code: "",
+    address_mobile_number: "",
+    business_relation_type: "",
+  });
+
+  
+
+  console.log("businessData", businessData ,businessUpdateData);
   useEffect(() => {
     if (file) {
       updateProfileImg();
@@ -102,6 +132,28 @@ const PersonalInfo = () => {
   }, [contactData]);
 
   useEffect(() => {
+    if (businessData) {
+      setBusinessUpdateData({
+        name: businessData.name || "",
+        country_id: businessData.country_id || "",
+        city_name: businessData.city_name || "",
+        address_1: businessData.address_1 || "",
+        address_2: businessData.address_2 || "",
+        state_id: businessData.state_id || "",
+        pincode: businessData.pincode || "",
+        country_code: businessData.country_code || "",
+        mobile_number: businessData.mobile_number || "",
+        address_country_code: businessData.user_country_code || "",
+        address_mobile_number: businessData.user_mobile_number || "0",
+        business_relation_type: businessData.business_relation_type || "",
+      });
+      if (businessData.country_id) {
+        getStates(businessData.country_id);
+      }
+    }
+  }, [businessData]);
+
+  useEffect(() => {
     if (userData && userData.name) {
       setUserName(userData.name);
     }
@@ -111,6 +163,17 @@ const PersonalInfo = () => {
     const { name, value } = e.target;
     setContactUpdateData({
       ...contactUpdateData,
+      [name]: value,
+    }); 
+    if (name === "country_id") {
+      getStates(value);
+    }
+  };
+
+  const handleBusinessChange = (e) => {
+    const { name, value } = e.target;
+    setBusinessUpdateData({
+      ...businessUpdateData,
       [name]: value,
     });
     if (name === "country_id") {
@@ -122,27 +185,38 @@ const PersonalInfo = () => {
     getUserInfo();
     getContactInfo();
     getCountries();
+    getBusinessContactInfo();
+    getBusinessInfo();
   }, []);
 
   const handlesideClick = (text) => {
-    if (text === "Personal information") {
+    if (text === "Personal information" ) {
       setType(text);
     }
     if (text === "Sign-in and security") {
       setType(text);
     }
   };
- 
-  const handleChangess = async(event) => {
+
+  const handleBusiClick = (text) => { 
+    if (text === "Business info" ) {
+      setBusiType(text);
+    }
+    if (text === "Sign-in and security") {
+      setBusiType(text);
+    }
+  };
+
+  const handleChangess = async (event) => {
     const { files } = event.target;
     if (files.length > 0) {
       const selectedFile = files[0];
-      setFile(selectedFile); 
+      setFile(selectedFile);
       const reader = new FileReader();
       reader.onload = (e) => {
         setImageUrl(e.target.result);
       };
-      reader.readAsDataURL(selectedFile); 
+      reader.readAsDataURL(selectedFile);
     }
   };
 
@@ -166,11 +240,30 @@ const PersonalInfo = () => {
       setload(false);
     }
   };
-
+  const getBusinessInfo = async () => {
+    try {
+      const response = await apiCallNew(
+        "get",
+        {},
+        ApiEndPoints.SellerProfile
+      );
+      setload(true);
+      if (response.success) {
+        setBusinessUserData(response.result);
+        setImageUrl(response.result.profile_image);
+        setload(false);
+      } else {
+        setload(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
 
   const updateProfileImg = async () => {
     const formData = new FormData();
-    formData.append("profile_image", file); 
+    formData.append("profile_image", file);
     try {
       const response = await apiCallNew(
         "post",
@@ -265,6 +358,26 @@ const PersonalInfo = () => {
     }
   };
 
+  const getBusinessContactInfo = async () => {
+    try {
+      const response = await apiCallNew(
+        "get",
+        {},
+        ApiEndPoints.GetBusinessInfo
+      );
+      setload(true);
+      if (response.success) {
+        setBusinessData(response.result);
+        setload(false);
+      } else {
+        setload(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
   const getCountries = () => {
     try {
       apiCallNew("get", {}, ApiEndPoints.CountryList).then((response) => {
@@ -309,6 +422,27 @@ const PersonalInfo = () => {
       console.log(error);
     }
   };
+  const handleBusinessUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await apiCallNew(
+        "post",
+        businessUpdateData,
+        ApiEndPoints.UpdateBusinessContactInfo
+      );
+      if (response.success) {
+        handleUpdateCustomer(e);
+        getBusinessContactInfo();
+        getBusinessInfo();
+        getUserInfo();
+        toast.success(response.msg);
+      } else {
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleUpdateCustomer = async (e) => {
     e.preventDefault();
@@ -341,19 +475,33 @@ const PersonalInfo = () => {
             <Grid item xs={12} md={3}>
               <Paper>
                 <List className="list-groupss">
-                  {sidebarItems.map((item, index) => (
-                    <li
-                      className={
-                        type === item.text
-                          ? "list-group-itemsss"
-                          : "list-group-itemss"
-                      }
-                      key={index}
-                      onClick={() => handlesideClick(item.text)}
-                    >
-                      {item.text}
-                    </li>
-                  ))}
+                  {data.user_type === "Customer"
+                    ? customersidebarItems.map((item, index) => (
+                        <li
+                          className={
+                            type === item.text
+                              ? "list-group-itemsss"
+                              : "list-group-itemss"
+                          }
+                          key={index}
+                          onClick={() => handlesideClick(item.text)}
+                        >
+                          {item.text}
+                        </li>
+                      ))
+                    : businesssidebarItems.map((item, index) => (
+                        <li
+                          className={
+                            busiType === item.text
+                              ? "list-group-itemsss"
+                              : "list-group-itemss"
+                          }
+                          key={index}
+                          onClick={() => handleBusiClick(item.text)}
+                        >
+                          {item.text}
+                        </li>
+                      ))}
                 </List>
               </Paper>
             </Grid>
@@ -388,7 +536,7 @@ const PersonalInfo = () => {
                           height: "180px",
                         }}
                       >
-                        <img 
+                        <img
                           src={imageUrl || "default-image-path"}
                           alt="profile"
                           width={"100%"}
@@ -499,7 +647,149 @@ const PersonalInfo = () => {
                 </Paper>
               </Grid>
             )}
-            {type == "Sign-in and security" && (
+            {busiType == "Business info" && (
+              <Grid item xs={12} md={9} className={classes.content}>
+                <Paper>
+                  <Box>
+                    <Grid className={classes.section}>
+                      <Typography variant="h6">Business info</Typography>
+                      <Grid>
+                        {!contactData?.country_id && (
+                          <Link to={"/contact-info"}>
+                            <button className="btn btn-sm save-btn">
+                              Add Info
+                            </button>
+                          </Link>
+                        )}
+                      </Grid>
+                    </Grid>
+                    <Box
+                      className={classes.section}
+                      xs={3}
+                      md={3}
+                      style={{ backgroundColor: "#e7e6e6" }}
+                    >
+                      <Grid
+                        container
+                        alignItems="center"
+                        style={{
+                          position: "relative",
+                          width: "180px",
+                          height: "180px",
+                        }}
+                      >
+                        <img
+                          src={imageUrl || "default-image-path"}
+                          alt="profile"
+                          width={"100%"}
+                          height={"100%"}
+                          style={{ borderRadius: "50%", objectFit: "cover" }}
+                        />
+                        <EditIcon
+                          onClick={() => inputFile.current.click()}
+                          style={{
+                            position: "absolute",
+                            bottom: "10px",
+                            right: "10px",
+                            cursor: "pointer",
+                            background: "white",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      </Grid>
+                      <input
+                        type="file"
+                        onChange={handleChangess}
+                        ref={inputFile}
+                        hidden
+                      />
+                    </Box>
+                    <Box className={classes.section} xs={3} md={3}>
+                      <Grid>
+                        <Typography variant="body1">Username</Typography>
+                        <Typography
+                          className="usernamess"
+                          variant="body2"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {businessUserData?.username}
+                        </Typography>
+                      </Grid>
+                    </Box>
+                    <Box className={classes.section} xs={3} md={3}>
+                      <Grid>
+                        <Typography variant="body1">Account type</Typography>
+                        <Typography
+                          variant="body2"
+                          className="usernamess"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {businessUserData?.user_type}
+                        </Typography>
+                      </Grid>
+                    </Box>
+                    <Box className={classes.section}>
+                      <Grid>
+                        <Typography variant="body1">Contact info</Typography>
+                        <Typography variant="body2">Email address</Typography>
+                        <Typography
+                          variant="body2"
+                          className="usernamess"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {businessUserData?.email}
+                        </Typography>
+                      </Grid>
+                    </Box>
+                    <Box className={classes.section}>
+                      <Grid>
+                        <Typography variant="body1">Phone number</Typography>
+                        <Typography
+                          variant="body2"
+                          className="usernamess"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {businessUserData?.mobile_number}
+                        </Typography>
+                      </Grid>
+                    </Box>
+                    <Box className={classes.section}>
+                      <Grid>
+                        <Typography variant="body1">
+                          Personal info (Owner name, address)
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          className="usernamess"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {businessData?.name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          className="usernamess"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {businessData?.address_1},
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          className="usernamess"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {businessData?.address_1} (
+                          {businessData?.pincode})
+                        </Typography>
+                      </Grid>
+                      <Link color="primary" onClick={() => setBusiType("Edit")}>
+                        Edit
+                      </Link>
+                    </Box>
+                  </Box>
+                </Paper>
+              </Grid>
+            )}
+            {(type === "Sign-in and security" || busiType === "Sign-in and security") && (
               <Grid item xs={12} md={9} className={classes.content}>
                 <Paper>
                   <Box>
@@ -608,139 +898,6 @@ const PersonalInfo = () => {
                 </Paper>
               </Grid>
             )}
-            {/* {type == "Editss" && (
-              <Grid item xs={12} md={9}>
-                <Paper>
-                  <Box className="p-3">
-                    <Grid>
-                      <Typography variant="h6">Personal Info</Typography>
-                    </Grid>
-                    <Box>
-                      <form>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} md={6} sm={12}>
-                            <div className="form-floating mb-3">
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="floatingPassword1"
-                                name="fullname"
-                                placeholder="Fullname"
-                              />
-                              <label htmlFor="floatingPassword1">
-                                Fullname
-                              </label>
-                            </div>
-                            <div className="form-floating mb-3">
-                              <select
-                                className="form-control"
-                                id="floatingCountry"
-                                name="country_id"
-                                placeholder="Select Country"
-                              >
-                                <option value=""></option>
-                                <option value="1">India</option>
-                                <option value="2">USA</option>
-                                <option value="3">UK</option>
-                              </select>
-                              <label htmlFor="floatingCountry">
-                                Select Country
-                              </label>
-                            </div>
-                            <div className="form-floating mb-3">
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="floatingPassword3"
-                                placeholder="city"
-                              />
-                              <label htmlFor="floatingPassword3">City</label>
-                            </div>
-                            <div className="form-floating ">
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="floatingPassword3"
-                                placeholder="Street Address"
-                              />
-                              <label htmlFor="floatingPassword3">
-                                Street Address
-                              </label>
-                            </div>
-                          </Grid>
-                          <Grid item xs={12} md={6} sm={12}>
-                            <div className="form-floating mb-3">
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="floatingPassword4"
-                                placeholder="Street Address"
-                              />
-                              <label htmlFor="floatingPassword4">
-                                Street Address 2
-                              </label>
-                            </div>
-                            <div className="form-floating mb-3">
-                              <select
-                                className="form-control"
-                                id="floatingstate"
-                                placeholder="Select State"
-                              >
-                                <option value=""></option>
-                                <option value="1">India</option>
-                                <option value="2">USA</option>
-                                <option value="3">UK</option>
-                              </select>
-                              <label htmlFor="floatingCountry">
-                                Select State
-                              </label>
-                            </div>
-                            <div className="form-floating mb-3">
-                              <input
-                                type="number"
-                                className="form-control"
-                                id="floatingPassword6"
-                                placeholder="pincode"
-                              />
-                              <label htmlFor="floatingPassword6">Pincode</label>
-                            </div>
-                            <div className="d-grid mt-4">
-                              <Grid
-                                container
-                                spacing={2}
-                                justifyContent="center"
-                              >
-                                <Grid item>
-                                  <button
-                                    className="btn text-uppercase fw-bold cancel-btn"
-                                    variant="contained"
-                                    type="button"
-                                    onClick={() =>
-                                      setType("Personal information")
-                                    }
-                                  >
-                                    Cancel
-                                  </button>
-                                </Grid>
-                                <Grid item>
-                                  <button
-                                    className="btn text-uppercase fw-bold save-btn"
-                                    variant="contained"
-                                    type="submit"
-                                  >
-                                    Save
-                                  </button>
-                                </Grid>
-                              </Grid>
-                            </div>
-                          </Grid>
-                        </Grid>
-                      </form>
-                    </Box>
-                  </Box>
-                </Paper>
-              </Grid>
-            )} */}
             {type == "Edit" && (
               <Grid item xs={12} md={9}>
                 <Paper>
@@ -870,6 +1027,159 @@ const PersonalInfo = () => {
                                     type="button"
                                     onClick={() =>
                                       setType("Personal information")
+                                    }
+                                  >
+                                    Cancel
+                                  </button>
+                                </Grid>
+                                <Grid item>
+                                  <button
+                                    className="btn text-uppercase fw-bold save-btn"
+                                    type="submit"
+                                  >
+                                    Save
+                                  </button>
+                                </Grid>
+                              </Grid>
+                            </div>
+                          </Grid>
+                        </Grid>
+                      </form>
+                    </Box>
+                  </Box>
+                </Paper>
+              </Grid>
+            )}
+            {busiType == "Edit" && (
+              <Grid item xs={12} md={9}>
+                <Paper>
+                  <Box className="p-3">
+                    <Grid>
+                      <Typography variant="h6">Business info</Typography>
+                    </Grid>
+                    <Box>
+                      <form onSubmit={handleBusinessUpdate}>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12} md={6} sm={12}>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingCity"
+                                placeholder="User Name"
+                                name="name" 
+                                defaultValue={businessUpdateData.name}
+                                value={businessUpdateData.name}
+                                onChange={handleBusinessChange}
+                              />
+                              <label htmlFor="floatingCity">User Name</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <select
+                                className="form-control"
+                                id="floatingCountry"
+                                name="country_id"
+                                defaultValue={businessUpdateData.country_id}
+                                value={businessUpdateData.country_id}
+                                onChange={handleBusinessChange}
+                              >
+                                <option value="">Select Country</option>
+                                {countryList.map((item) => (
+                                  <option value={item.id} key={item.id}>
+                                    {item.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <label htmlFor="floatingCountry">
+                                Select Country
+                              </label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingCity"
+                                placeholder="City"
+                                name="city_name"
+                                defaultValue={businessUpdateData.city_name}
+                                value={businessUpdateData.city_name}
+                                onChange={handleBusinessChange}
+                              />
+                              <label htmlFor="floatingCity">City</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingAddress1"
+                                placeholder="Street Address"
+                                name="address_1"
+                                value={businessUpdateData.address_1}
+                                onChange={handleBusinessChange}
+                              />
+                              <label htmlFor="floatingAddress1">
+                                Street Address
+                              </label>
+                            </div>
+                          </Grid>
+                          <Grid item xs={12} md={6} sm={12}>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingAddress2"
+                                placeholder="Street Address 2"
+                                name="address_2"
+                                value={businessUpdateData.address_2}
+                                onChange={handleBusinessChange}
+                              />
+                              <label htmlFor="floatingAddress2">
+                                Street Address 2
+                              </label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <select
+                                className="form-control"
+                                id="floatingState"
+                                name="state_id"
+                                value={businessUpdateData.state_id}
+                                onChange={handleBusinessChange}
+                              >
+                                <option value="">Select State</option>
+                                {stateList.map((item) => (
+                                  <option value={item.id} key={item.id}>
+                                    {item.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <label htmlFor="floatingState">
+                                Select State
+                              </label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="number"
+                                className="form-control"
+                                id="floatingPincode"
+                                placeholder="Pincode"
+                                name="pincode"
+                                value={businessUpdateData.pincode}
+                                onChange={handleBusinessChange}
+                              />
+                              <label htmlFor="floatingPincode">Pincode</label>
+                            </div>
+                            <div className="d-grid mt-4">
+                              <Grid
+                                container
+                                spacing={2}
+                                justifyContent="center"
+                              >
+                                <Grid item>
+                                  <button
+                                    className="btn text-uppercase fw-bold cancel-btn"
+                                    type="button"
+                                    onClick={() =>
+                                      setBusiType("Business info")
                                     }
                                   >
                                     Cancel

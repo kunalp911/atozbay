@@ -15,8 +15,7 @@ const EmailOtp = () => {
     const [otp, setOtp] = useState("");
     const [load, setload] = useState(false); 
     const [errors, setErrors] = useState({}); 
-      
-    console.log(">>>>>>>>", data.data.api_token);
+       
 
     const validation = ()=>{
       const newError = {};
