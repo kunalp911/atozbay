@@ -3,7 +3,6 @@ import "./addtocart.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
 const AddtoCart = () => {
-  // <img src="https://i.ebayimg.com/images/g/sgUAAOSwyppmavaz/s-l225.webp" alt="Laptop 1" className="product-image" />
   return (
     <main className="page">
       <Header />
@@ -18,7 +17,7 @@ const AddtoCart = () => {
                 <div className="items">
                   <div className="product">
                     <div className="row">
-                      <div className="col-md-3">
+                      <div className="col-md-3 mt-3">
                         <img
                           className="img-fluid mx-auto d-block image"
                           src="https://i.ebayimg.com/images/g/sgUAAOSwyppmavaz/s-l225.webp"
@@ -29,7 +28,7 @@ const AddtoCart = () => {
                           <div className="row">
                             <div className="col-md-5 product-name">
                               <div className="product-name">
-                                <a href="#">
+                                <a href="#" className="pro-name">
                                   Lenovo ThinkPad T14 Gen 1 14" FHD
                                 </a>
                                 <div className="product-info">
@@ -60,6 +59,11 @@ const AddtoCart = () => {
                                 <option value="3">3</option>
                                 <option value="4">4</option>
                                 <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
                               </select>
                             </div>
                             <div className="col-md-3 price">
@@ -84,7 +88,7 @@ const AddtoCart = () => {
 
                   <div className="product">
                     <div className="row">
-                      <div className="col-md-3">
+                      <div className="col-md-3 mt-3">
                         <img
                           className="img-fluid mx-auto d-block image"
                           src="https://i.ebayimg.com/images/g/Or8AAOSw4Ktmavcs/s-l225.jpg"
@@ -95,7 +99,7 @@ const AddtoCart = () => {
                           <div className="row">
                             <div className="col-md-5 product-name">
                               <div className="product-name">
-                                <a href="#">
+                                <a href="#" className="pro-name">
                                   Lenovo ThinkPad T14 Gen 1 14" FHD
                                 </a>
                                 <div className="product-info">
@@ -126,6 +130,11 @@ const AddtoCart = () => {
                                 <option value="3">3</option>
                                 <option value="4">4</option>
                                 <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
                               </select>
                             </div>
                             <div className="col-md-3 price">
@@ -149,7 +158,7 @@ const AddtoCart = () => {
                   <hr />
                   <div className="product">
                     <div className="row">
-                      <div className="col-md-3">
+                      <div className="col-md-3 mt-3">
                         <img
                           className="img-fluid mx-auto d-block image"
                           src="https://i.ebayimg.com/images/g/sgUAAOSwyppmavaz/s-l225.webp"
@@ -160,7 +169,7 @@ const AddtoCart = () => {
                           <div className="row">
                             <div className="col-md-5 product-name">
                               <div className="product-name">
-                                <a href="#">
+                                <a href="#" className="pro-name">
                                   Lenovo ThinkPad T14 Gen 1 14" FHD
                                 </a>
                                 <div className="product-info">
@@ -191,6 +200,11 @@ const AddtoCart = () => {
                                 <option value="3">3</option>
                                 <option value="4">4</option>
                                 <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
                               </select>
                             </div>
                             <div className="col-md-3 price">
@@ -239,9 +253,9 @@ const AddtoCart = () => {
                   </div>
                   <button
                     type="button"
-                    className="btn btn-primary btn-lg btn-block"
+                    className="btn btn-lg btn-block checkout-btn"
                   >
-                    Checkout
+                   Go to checkout
                   </button>
                 </div>
               </div>

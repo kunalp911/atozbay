@@ -37,3 +37,11 @@
   font-size: 14px;
   color: #555;
 } 
+
+.buyitnow-btn{
+  background-color: #3665f3;
+  color: #fff;
+}
+.buyitnow-btn:hover{
+  color: #fff;
+}

@@ -5,7 +5,7 @@ import Footer from "../../Component/Footer/Footer";
 const Product = () => {
   return (
     <div>
-      <Header/>
+      <Header />
       <div className="container mt-4 mb-4">
         <div className="row">
           <div
@@ -49,19 +49,30 @@ const Product = () => {
               <span>Condition: New</span>
             </div>
             <div className="quantitye mb-3">
-              <label for="quantity" className="mr-2">
+               <label for="quantity" className="mr-2">
                 Quantity:
-              </label>
-              <input
-                type="number"
+              </label> 
+              <select
                 id="quantity"
-                name="quantity"
-                className="form-control d-inline-block w-auto"
-                defaultValue={1}
-              />
+                type="number" 
+                defaultValue={1} 
+                className="form-control quantity-input w-25 text-center"
+              >
+                <option value="0" hidden></option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
             </div>
             <div className="buttonse mb-3">
-              <button className="btn btn-primary btn-block mb-2">
+              <button className="btn buyitnow-btn btn-block mb-2">
                 Buy It Now
               </button>
               <button className="btn btn-secondary btn-block mb-2">
@@ -79,7 +90,7 @@ const Product = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

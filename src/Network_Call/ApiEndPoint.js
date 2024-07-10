@@ -23,7 +23,9 @@ const APPConfig = {
     GetContactInfo: `${APPConfig.API_URL}/get-contact-info`,
     UpdateCustomerProfile: `${APPConfig.API_URL}/update-customer-profile`,
     UpdateBusinessContactInfo: `${APPConfig.API_URL}/update-business-contact-info`,
+    GetBusinessInfo: `${APPConfig.API_URL}/get-business-contact-info`,
     UpdatePaymentGateway: `${APPConfig.API_URL}/update-payment-gateway`,
+    SellerProfile: `${APPConfig.API_URL}/seller-profile`, 
   }
 
   export default ApiEndPoints

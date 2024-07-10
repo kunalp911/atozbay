@@ -9,7 +9,10 @@
 
 .shopping-cart .content{
 	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.075);
-	background-color: white;
+	background-color: white; 
+	padding: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+
 }
 
 .shopping-cart .block-heading{
@@ -58,6 +61,20 @@
 
 .shopping-cart .items .product .info .product-name{
 	font-weight: 600;
+}
+
+.product-name .pro-name{
+	color: #4b76f8;
+}
+.checkout-btn{
+	background-color: #3665f3;
+	color: #fff;
+	font-size: 18px;
+	border-radius: 25px;
+}
+
+.checkout-btn:hover{
+	color: #fff;
 }
 
 .shopping-cart .items .product .info .product-name .product-info{
