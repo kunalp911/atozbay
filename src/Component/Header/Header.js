@@ -1,15 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./header.css";
-import { Link, json, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logos from "../../Assets/image/bay.png";
 import {
-  Badge,
-  Button,
+  Badge, 
   Grid,
   IconButton,
   Menu,
-  MenuItem,
-  Typography,
+  MenuItem, 
 } from "@mui/material";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
@@ -21,8 +19,7 @@ const Header = () => {
   const [anchorE2, setAnchorE2] = React.useState(null);
   const open = Boolean(anchorEl);
   const opens = Boolean(anchorE2);
-  const [categoriesList, setCategoriesList] = useState([]);
-  const [categoryId, setCategoryId] = useState(0);
+  const [categoriesList, setCategoriesList] = useState([]); 
   const userData = localStorage.getItem("@userData");
   const data = JSON.parse(userData);
 
@@ -35,8 +32,7 @@ const Header = () => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(null);
-    handleNavigate();
+    setAnchorEl(null); 
   };
   const handleClicks = (event) => {
     setAnchorE2(event.currentTarget);
@@ -49,32 +45,12 @@ const Header = () => {
     getCategories();
   }, []);
 
-  const handleCategorySelect = (id) => {
-    setCategoryId(id);
+  const handleCategorySelect = (category) => {
+    console.log("idddd",category)
+    navigate(`/category/${category?.id}`, { state: { category: category } }); 
     setAnchorEl(null);
   };
-
-  useEffect(() => {
-    if (categoryId !== 0) {
-      handleNavigate();
-    }
-  }, [categoryId]);
-
-  const handleNavigate = () => {
-    switch (categoryId) {
-      case 1:
-        navigate("/livercare", { state: { id: categoryId } });
-        break;
-      case 2:
-        navigate("/babychildcare", { state: { id: categoryId } });
-        break;
-      case 3:
-        navigate("/skincare", { state: { id: categoryId } });
-        break;
-      default:
-        navigate("/");
-    }
-  };
+ ;
 
   const getCategories = () => {
     try {
@@ -346,7 +322,7 @@ const Header = () => {
                   <Grid sx={{ padding: "10px 20px" }}>
                     {categoriesList?.map((category, index) => (
                       <MenuItem
-                        onClick={() => handleCategorySelect(category?.id)}
+                        onClick={() => handleCategorySelect(category)}
                         sx={{ fontSize: "14px", fontWeight: "bold" }}
                         key={index}
                       >

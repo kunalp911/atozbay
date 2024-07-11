@@ -1,0 +1,98 @@
+section
+ {
+  margin-bottom: 20px;
+}
+
+.photos-video .upload-section {
+  display: flex;
+  gap: 10px;
+}
+
+.upload-box {
+  flex: 1;
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.upload-box {
+  flex: 1;
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.upload-box:hover {
+  background-color: #f0f0f0;
+}
+ 
+.specifics-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .specifics-box label {
+    flex: 1;
+  }
+  
+  .specifics-box input {
+    flex: 2;
+  }
+  
+  .section-header{
+    font-weight: 700;
+  }
+
+  .listing-section{
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9e3e3;
+  }
+
+  .btn-customs {
+    margin: 10px 0;
+    width: 100%;
+    background-color: #3665f3;
+    color: #fff;
+    border-radius: 25px;
+    font-weight: 500;
+}
+.btn-customss {
+    margin: 10px 0;
+    width: 100%;  
+    border: 2px solid #808080;
+    border-radius: 25px;
+    font-weight: 500;
+
+} 
+.btn-customs:hover {
+    background-color: #3665f3;
+    color: #fff;
+}
+
+.container-custom {
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .photos-video .upload-section {
+    flex-direction: column;
+  } 
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 18px;
+  } 
+}
+
+ 
+
+
+

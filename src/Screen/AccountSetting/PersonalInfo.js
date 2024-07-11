@@ -44,21 +44,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const customersidebarItems = [
-  {
-    text: "Personal information",
-  },
+  { text: "Personal information" },
   { text: "Sign-in and security" },
-  { text: "Feedback" },
+  { text: "Address" },
+  // { text: "Feedback" },
   { text: "Payment Information" },
   { text: "Account Preferences" },
   { text: "Selling" },
 ];
 const businesssidebarItems = [
-  {
-    text: "Business info",
-  },
+  { text: "Business info" },
   { text: "Sign-in and security" },
-  { text: "Feedback" },
+  { text: "Address" },
+  // { text: "Feedback" },
   { text: "Payment Information" },
   { text: "Account Preferences" },
   { text: "Selling" },
@@ -77,8 +75,12 @@ const PersonalInfo = () => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [type, setType] = useState(data.user_type === "Customer" ? "Personal information" : "");
-  const [busiType, setBusiType] = useState(data.user_type === "Customer" ? "" : "Business info" );
+  const [type, setType] = useState(
+    data.user_type === "Customer" ? "Personal information" : ""
+  );
+  const [busiType, setBusiType] = useState(
+    data.user_type === "Customer" ? "" : "Business info"
+  );
   const [showPassword, setShowPassword] = React.useState(false);
   const [contactData, setContactData] = useState();
   const [businessData, setBusinessData] = useState();
@@ -86,7 +88,10 @@ const PersonalInfo = () => {
   const [stateList, setStateList] = useState([]);
   const [userName, setUserName] = useState("");
   const [imageUrl, setImageUrl] = useState();
-
+  const [shipAddress, setShipAddress] = useState();
+  const [shipAddList, setShipAddList] = useState([]);
+  const [addId, setAddId] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
   const [contactUpdateData, setContactUpdateData] = useState({
     country_id: "",
     city_name: "",
@@ -95,7 +100,6 @@ const PersonalInfo = () => {
     state_id: "",
     pincode: "",
   });
-
   const [businessUpdateData, setBusinessUpdateData] = useState({
     name: "",
     address_1: "",
@@ -106,10 +110,16 @@ const PersonalInfo = () => {
     address_mobile_number: "",
     business_relation_type: "",
   });
-
-  
-
-  console.log("businessData", businessData ,businessUpdateData);
+  const [addShipAddress, setAddShipAddress] = useState({
+    country_id: "",
+    city_name: "",
+    address_1: "",
+    address_2: "",
+    state_id: "",
+    pincode: "",
+    address_type: "",
+  });
+  // console.log("shipAddList", shipAddList,">>>>>>>>>>>>>>",addId);
   useEffect(() => {
     if (file) {
       updateProfileImg();
@@ -159,12 +169,22 @@ const PersonalInfo = () => {
     }
   }, [userData]);
 
+  useEffect(() => {
+    getUserInfo();
+    getContactInfo();
+    getCountries();
+    getBusinessContactInfo();
+    getBusinessInfo();
+    getShipAddress();
+    getShipAddressList();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setContactUpdateData({
       ...contactUpdateData,
       [name]: value,
-    }); 
+    });
     if (name === "country_id") {
       getStates(value);
     }
@@ -181,28 +201,37 @@ const PersonalInfo = () => {
     }
   };
 
-  useEffect(() => {
-    getUserInfo();
-    getContactInfo();
-    getCountries();
-    getBusinessContactInfo();
-    getBusinessInfo();
-  }, []);
+  const handleAddAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddShipAddress({
+      ...addShipAddress,
+      [name]: value,
+    });
+    if (name === "country_id") {
+      getStates(value);
+    }
+  };
 
   const handlesideClick = (text) => {
-    if (text === "Personal information" ) {
+    if (text === "Personal information") {
       setType(text);
     }
     if (text === "Sign-in and security") {
+      setType(text);
+    }
+    if (text === "Address") {
       setType(text);
     }
   };
 
-  const handleBusiClick = (text) => { 
-    if (text === "Business info" ) {
+  const handleBusiClick = (text) => {
+    if (text === "Business info") {
       setBusiType(text);
     }
     if (text === "Sign-in and security") {
+      setBusiType(text);
+    }
+    if (text === "Address") {
       setBusiType(text);
     }
   };
@@ -242,11 +271,7 @@ const PersonalInfo = () => {
   };
   const getBusinessInfo = async () => {
     try {
-      const response = await apiCallNew(
-        "get",
-        {},
-        ApiEndPoints.SellerProfile
-      );
+      const response = await apiCallNew("get", {}, ApiEndPoints.SellerProfile);
       setload(true);
       if (response.success) {
         setBusinessUserData(response.result);
@@ -342,6 +367,7 @@ const PersonalInfo = () => {
     }
   };
 
+  // ***************business api********************
   const getContactInfo = async () => {
     try {
       const response = await apiCallNew("get", {}, ApiEndPoints.GetContactInfo);
@@ -460,6 +486,98 @@ const PersonalInfo = () => {
       console.log(error);
     }
   };
+
+  // **************shiping api***************
+  const getShipAddress = () => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.GetAddress).then((response) => {
+        if (response.success) {
+          setShipAddress(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getShipAddressList = () => {
+    try {
+      apiCallNew("post", {}, ApiEndPoints.ShipAddressList).then((response) => {
+        if (response.success) {
+          setShipAddList(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleShipAddSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await apiCallNew(
+        "post",
+        addShipAddress,
+        ApiEndPoints.AddAddress
+      );
+      if (response.success) {
+        toast.success(response.msg);
+        getShipAddressList();
+        setAddShipAddress({});
+        if (data?.user_type === "Customer") {
+          setType("Address");
+        } else {
+          setBusiType("Address");
+        }
+      } else {
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleShipAddUpdate = async (addId) => { 
+    try {
+      const response = await apiCallNew(
+        "post",
+        addShipAddress,
+        ApiEndPoints.UpdateAddress + addId
+      );
+      if (response.success) {
+        toast.success(response.msg);
+        getShipAddressList();
+        setAddShipAddress({});
+        if (data?.user_type === "Customer") {
+          setType("Address");
+        } else {
+          setBusiType("Address");
+        }
+      } else {
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEdit = (item) => {
+    setIsOpen(true);
+    setAddShipAddress({
+      country_id: item.country_id,
+      state_id: item.state_id,
+      city_name: item.city_name,
+      address_1: item.address_1,
+      address_2: item.address_2,
+      address_type: item.address_type,
+      pincode: item.pincode,
+    });
+    setAddId(item.id);
+    if (data?.user_type === "Customer") {
+      setType("addressEdit");
+    } else {
+      setBusiType("addressEdit");
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -621,7 +739,7 @@ const PersonalInfo = () => {
                           className="usernamess"
                           style={{ fontWeight: "bold" }}
                         >
-                          {userData?.name}
+                          {contactUpdateData?.name}
                         </Typography>
                         <Typography
                           variant="body2"
@@ -635,7 +753,7 @@ const PersonalInfo = () => {
                           className="usernamess"
                           style={{ fontWeight: "bold" }}
                         >
-                          {contactUpdateData?.address_1} (
+                          {contactUpdateData?.city_name} (
                           {contactUpdateData?.pincode})
                         </Typography>
                       </Grid>
@@ -777,8 +895,7 @@ const PersonalInfo = () => {
                           className="usernamess"
                           style={{ fontWeight: "bold" }}
                         >
-                          {businessData?.address_1} (
-                          {businessData?.pincode})
+                          {businessData?.address_1} ({businessData?.pincode})
                         </Typography>
                       </Grid>
                       <Link color="primary" onClick={() => setBusiType("Edit")}>
@@ -789,7 +906,8 @@ const PersonalInfo = () => {
                 </Paper>
               </Grid>
             )}
-            {(type === "Sign-in and security" || busiType === "Sign-in and security") && (
+            {(type === "Sign-in and security" ||
+              busiType === "Sign-in and security") && (
               <Grid item xs={12} md={9} className={classes.content}>
                 <Paper>
                   <Box>
@@ -1067,7 +1185,7 @@ const PersonalInfo = () => {
                                 className="form-control"
                                 id="floatingCity"
                                 placeholder="User Name"
-                                name="name" 
+                                name="name"
                                 defaultValue={businessUpdateData.name}
                                 value={businessUpdateData.name}
                                 onChange={handleBusinessChange}
@@ -1178,9 +1296,7 @@ const PersonalInfo = () => {
                                   <button
                                     className="btn text-uppercase fw-bold cancel-btn"
                                     type="button"
-                                    onClick={() =>
-                                      setBusiType("Business info")
-                                    }
+                                    onClick={() => setBusiType("Business info")}
                                   >
                                     Cancel
                                   </button>
@@ -1192,6 +1308,225 @@ const PersonalInfo = () => {
                                   >
                                     Save
                                   </button>
+                                </Grid>
+                              </Grid>
+                            </div>
+                          </Grid>
+                        </Grid>
+                      </form>
+                    </Box>
+                  </Box>
+                </Paper>
+              </Grid>
+            )}
+            {(busiType == "Address" || type == "Address") && (
+              <Grid item xs={12} md={9}>
+                <Paper>
+                  <Box className="p-3">
+                    <Grid item className="d-flex justify-content-between">
+                      <Typography variant="h6">Addresses</Typography>
+                      <button
+                        className="btn ship-btn"
+                        onClick={() => {
+                          data?.user_type === "Customer"
+                            ? setType("addressEdit")
+                            : setBusiType("addressEdit");
+                        }}
+                      >
+                        Add new
+                      </button>
+                    </Grid>
+                    <p className="shipping-titless">Shipping address</p>
+                    <Box className="p-3 mt-2 mb-2">
+                      <Grid container spacing={3}>
+                        {shipAddList?.map((item, index) => (
+                          <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            sm={12}
+                            className="d-flex border-top border-bottom justify-content-between"
+                            key={item.id}
+                          >
+                            <div className="form-floating mb-3">
+                              <p className="shipping-title">{item.address_1}</p>
+                              <p className="shipping-para">
+                                {item.address_2}, {item.city_name}, (
+                                {item.pincode})
+                              </p>
+                              <p className="shipping-para">{item.country_id}</p>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <button
+                                className="btn ship-btn"
+                                onClick={() => handleEdit(item)}
+                              >
+                                Edit
+                              </button>
+                            </div>
+                          </Grid>
+                        ))} 
+                      </Grid>
+                    </Box>
+                  </Box>
+                </Paper>
+              </Grid>
+            )}
+            {(busiType == "addressEdit" || type == "addressEdit") && (
+              <Grid item xs={12} md={9}>
+                <Paper>
+                  <Box className="p-3">
+                    <Grid>
+                      <Typography variant="h6">Add Addresses</Typography>
+                    </Grid>
+                    <Box>
+                      <form action="javascript:void(0);">
+                        <Grid container spacing={3}>
+                          <Grid item xs={12} md={6} sm={12}>
+                            <div className="form-floating mb-3">
+                              <select
+                                className="form-control"
+                                id="floatingCountry"
+                                name="country_id"
+                                value={addShipAddress.country_id}
+                                onChange={handleAddAddressChange}
+                              >
+                                <option value="">Select Country</option>
+                                {countryList.map((item) => (
+                                  <option value={item.id} key={item.id}>
+                                    {item.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <label htmlFor="floatingCountry">
+                                Select Country
+                              </label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <select
+                                className="form-control"
+                                id="floatingState"
+                                name="state_id"
+                                value={addShipAddress.state_id}
+                                onChange={handleAddAddressChange}
+                              >
+                                <option value="">Select State</option>
+                                {stateList.map((item) => (
+                                  <option value={item.id} key={item.id}>
+                                    {item.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <label htmlFor="floatingState">
+                                Select State
+                              </label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingCity"
+                                placeholder="City"
+                                name="city_name"
+                                value={addShipAddress.city_name}
+                                onChange={handleAddAddressChange}
+                              />
+                              <label htmlFor="floatingCity">City</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingAddress1"
+                                placeholder="Street Address"
+                                name="address_1"
+                                value={addShipAddress.address_1}
+                                onChange={handleAddAddressChange}
+                              />
+                              <label htmlFor="floatingAddress1">
+                                Street Address
+                              </label>
+                            </div>
+                          </Grid>
+                          <Grid item xs={12} md={6} sm={12}>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingAddress2"
+                                placeholder="Street Address 2"
+                                name="address_2"
+                                value={addShipAddress.address_2}
+                                onChange={handleAddAddressChange}
+                              />
+                              <label htmlFor="floatingAddress2">
+                                Street Address 2
+                              </label>
+                            </div>
+
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingCity"
+                                placeholder="Address Type"
+                                name="address_type"
+                                value={addShipAddress.address_type}
+                                onChange={handleAddAddressChange}
+                              />
+                              <label htmlFor="floatingCity">Address Type</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="number"
+                                className="form-control"
+                                id="floatingPincode"
+                                placeholder="Pincode"
+                                name="pincode"
+                                value={addShipAddress.pincode}
+                                onChange={handleAddAddressChange}
+                              />
+                              <label htmlFor="floatingPincode">Pincode</label>
+                            </div>
+                            <div className="d-grid mt-4">
+                              <Grid
+                                container
+                                spacing={2}
+                                justifyContent="center"
+                              >
+                                <Grid item>
+                                  <button
+                                    className="btn text-uppercase fw-bold cancel-btn"
+                                    type="button"
+                                    onClick={() => {
+                                      data?.user_type === "Customer"
+                                        ? setType("Address")
+                                        : setBusiType("Address");
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                </Grid>
+                                <Grid item>
+                                  {
+                                    isOpen ? (
+                                      <button
+                                        className="btn text-uppercase fw-bold save-btn"
+                                        type="submit"
+                                        onClick={() => handleShipAddUpdate(addId)}
+                                      > 
+                                      Update
+                                      </button>
+                                    ) : (
+                                  <button
+                                    className="btn text-uppercase fw-bold save-btn"
+                                    type="submit"
+                                    onClick={handleShipAddSubmit}
+                                  >
+                                    Save
+                                  </button>
+                                    )
+                                  }
                                 </Grid>
                               </Grid>
                             </div>

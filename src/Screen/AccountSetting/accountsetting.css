@@ -40,3 +40,30 @@
     color: #383838;
     /* background-color: #1f7df8; */
   }
+
+  /* ***************shiping address********************** */
+  .shipping-title{
+    font-weight: 600;
+    font-size: 16px;
+    color: #383838;
+  }
+  .shipping-titless{
+    font-weight: 700;
+    font-size: 17px;
+    color: #383838;
+  }
+  .shipping-para{
+    font-weight: 600;
+    font-size: 14px;
+    color: #383838;
+    margin-top: -12px;
+  }
+  .ship-btn{
+    border: 2px solid #1f7df8;
+    color: #1f7df8;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 3px 12px;
+    border-radius: 5px;
+    float: right;
+  }

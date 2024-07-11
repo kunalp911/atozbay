@@ -26,6 +26,13 @@ const APPConfig = {
     GetBusinessInfo: `${APPConfig.API_URL}/get-business-contact-info`,
     UpdatePaymentGateway: `${APPConfig.API_URL}/update-payment-gateway`,
     SellerProfile: `${APPConfig.API_URL}/seller-profile`, 
+    ColorList: `${APPConfig.API_URL}/colors-list`, 
+    AddAddress: `${APPConfig.API_URL}/address-add`, 
+    UpdateAddress: `${APPConfig.API_URL}/address-update/`, 
+    GetAddress: `${APPConfig.API_URL}/address/8`, 
+    ShipAddressList: `${APPConfig.API_URL}/addresses-list`, 
+    ProductAdd: `${APPConfig.API_URL}/product-add`, 
+
   }
 
   export default ApiEndPoints
