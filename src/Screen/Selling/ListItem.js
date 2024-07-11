@@ -1,7 +1,7 @@
 import React from "react";
 import logos from "../../Assets/image/bay.png";
-import { useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
+import { Link, useNavigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search"; 
 const ListItem = () => {
   const navigate = useNavigate();
   return (
@@ -16,8 +16,11 @@ const ListItem = () => {
         />
       </div>
       <div className="container" style={{ padding: "10px 40px" }}>
-        <div>
+        <div className="d-flex justify-content-between">
           <h4>Start Your Listing</h4>
+          <Link to={"/add-product"}>
+        <button className="btn listanbutton">Continue without match</button>
+          </Link>
         </div>
         <div className="my-4 d-flex justify-content-center">
           <input
