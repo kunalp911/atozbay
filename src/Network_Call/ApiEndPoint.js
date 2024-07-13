@@ -32,7 +32,10 @@ const APPConfig = {
     GetAddress: `${APPConfig.API_URL}/address/8`, 
     ShipAddressList: `${APPConfig.API_URL}/addresses-list`, 
     ProductAdd: `${APPConfig.API_URL}/product-add`, 
-
+    BrandList: `${APPConfig.API_URL}/brands-list`, 
+    AttributesList: `${APPConfig.API_URL}/attributes-list`, 
+    AttributesValueList: `${APPConfig.API_URL}/attributevalues-by-attribute/`, 
+    AttributesByCategory: `${APPConfig.API_URL}/attributes-by-category/`, 
   }
 
   export default ApiEndPoints

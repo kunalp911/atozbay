@@ -72,4 +72,17 @@
   cursor: pointer;
 }
 
+/* ****************select condition**************************** */
 
+.btn-continess{
+  background-color: #3665f3;
+  color: #fff;
+  border-radius: 50px;
+  font-weight: 500;
+  margin: 20px 0;
+  width: 100%;
+}
+.btn-continess:hover{
+  background-color: #3665f3;
+  color: #fff;
+} 
