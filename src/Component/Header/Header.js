@@ -45,8 +45,7 @@ const Header = () => {
     getCategories();
   }, []);
 
-  const handleCategorySelect = (category) => {
-    console.log("idddd",category)
+  const handleCategorySelect = (category) => { 
     navigate(`/category/${category?.id}`, { state: { category: category } }); 
     setAnchorEl(null);
   };

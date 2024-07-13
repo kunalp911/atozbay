@@ -18,7 +18,7 @@ const ListItem = () => {
       <div className="container" style={{ padding: "10px 40px" }}>
         <div className="d-flex justify-content-between">
           <h4>Start Your Listing</h4>
-          <Link to={"/add-product"}>
+          <Link to={"/selling/select-condition"}>
         <button className="btn listanbutton">Continue without match</button>
           </Link>
         </div>

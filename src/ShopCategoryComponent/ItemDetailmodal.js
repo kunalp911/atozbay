@@ -97,3 +97,5 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
   );
 };
 export default ItemDetailmodal;
+
+

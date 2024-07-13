@@ -1,9 +1,10 @@
 import React from "react";
 import logos from "../../../Assets/image/bay.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { makeStyles } from "@material-ui/core";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import "../selling.css";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -51,10 +52,10 @@ const SelectCondition = () => {
     setSelected(index);
   };
   return (
-    <div >
+    <div>
       <div className="container col-12 d-flex justify-content-between border-bottom">
         <ArrowBackIosIcon
-          onClick={() => navigate("/selling/find-product")}
+          onClick={() => navigate("/selling/list-item")}
           style={{ cursor: "pointer", margin: "20px 0px" }}
         />
         <img
@@ -66,7 +67,7 @@ const SelectCondition = () => {
         />
         <p></p>
       </div>
-      <Container maxWidth="sm" sx={{ mt: 2,mb: 3 }}>
+      <Container maxWidth="sm" sx={{ mt: 2, mb: 3 }}>
         <Box mb={4}>
           <Typography sx={{ fontWeight: "600", fontSize: "20px" }} gutterBottom>
             Select condition
@@ -96,7 +97,11 @@ const SelectCondition = () => {
           ))}
         </Grid>
         <Box mt={4}>
-          <button className="btn btn-primary rounded w-100">Continue</button>
+          <Link to="/add-product">
+            <button className="btn btn-continess ">
+              Continue
+            </button>
+          </Link>
         </Box>
       </Container>
     </div>

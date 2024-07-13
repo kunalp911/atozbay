@@ -77,7 +77,38 @@ section
     margin: 50px auto;
     text-align: center;
 }
-
+.addcustom-item{
+  background-color: #e4e3e3;
+  padding: 5px 10px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.item-condition-name{
+  font-weight: 500;  
+  font-size: 18px;
+  cursor: pointer;
+  color: #1882c0
+}
+.btn-savss{
+  background-color: #3665f3;
+  color: #fff;
+  border-radius: 25px;
+  font-weight: 500;
+  margin: 20px 0;
+  width: 100%;
+}
+.btn-savss:hover{
+  background-color: #3665f3;
+  color: #fff;
+}
+.btn-closess{
+  border: 2px solid #808080;
+  border-radius: 25px;
+  font-weight: 500;
+  margin: 20px 0;
+  width: 100%;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
