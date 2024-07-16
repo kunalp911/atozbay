@@ -1,9 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logos from "../../Assets/image/bay.png";
 import { Link, useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search"; 
+import SearchIcon from "@mui/icons-material/Search";
+import { apiCallNew } from "../../Network_Call/apiservices";
+import ApiEndPoints from "../../Network_Call/ApiEndPoint";
+import "./selling.css";
+
 const ListItem = () => {
   const navigate = useNavigate();
+  const [productLists, setProductLists] = React.useState([]);
+  const [keyword, setKeyword] = React.useState("");
+
+  console.log("first", keyword);
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (keyword) {
+        getProductList();
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [keyword]);
+  const getProductList = () => {
+    const payload = {
+      page: 0,
+      keyword: keyword,
+    };
+    try {
+      apiCallNew("post", payload, ApiEndPoints.ProductList).then((response) => {
+        if (response.success) {
+          setProductLists(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFilter = (name) => {
+    navigate("/selling/select-condition", { state: { fitName: name } });
+  };
   return (
     <div>
       <div className="col-12 d-flex justify-content-center border-bottom">
@@ -19,7 +55,7 @@ const ListItem = () => {
         <div className="d-flex justify-content-between">
           <h4>Start Your Listing</h4>
           <Link to={"/selling/select-condition"}>
-        <button className="btn listanbutton">Continue without match</button>
+            <button className="btn listanbutton">Continue without match</button>
           </Link>
         </div>
         <div className="my-4 d-flex justify-content-center">
@@ -27,14 +63,33 @@ const ListItem = () => {
             type="text"
             className="form-control search-items"
             placeholder="Tell us what you're selling"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
           />
-          <button className="btn search-item-button">
+          <button className="btn search-item-button" onClick={getProductList}>
             <SearchIcon />
           </button>
+        </div> 
+        <div className="search-resultss w-100">
+          {keyword &&
+            (productLists?.length > 0 ? (
+              <ul className="list-groups">
+                 {productLists.map((product, index) => (
+                  <li key={index} className="list-group-items" onClick={() => handleFilter(product?.name)}>
+                    {product.name}{" "}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-products-found">No products found</p>
+            ))}
         </div>
         <div className="row mt-5">
           <div className="col-lg-4 col-md-6 mb-4">
-            <div className="card card-customss card-red" onClick={() => navigate("/selling/find-product")}>
+            <div
+              className="card card-customss card-red"
+              onClick={() => navigate("/selling/find-product")}
+            >
               <p>
                 Type keywords like brand, model, or other details (ISBN, MPN,
                 VIN) in the search box above

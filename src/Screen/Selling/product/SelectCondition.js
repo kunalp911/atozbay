@@ -1,6 +1,6 @@
 import React from "react";
 import logos from "../../../Assets/image/bay.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { makeStyles } from "@material-ui/core";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
@@ -21,35 +21,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const conditions = [
+  {
+    label: "New",
+    description:
+      "Brand new, unworn and defect-free with original box, packaging, and accessories.",
+  },
+  {
+    label: "Used",
+    description:
+      "Brand new, unworn, and defect-free with all accessories but missing the original box.",
+  },
+  {
+    label: "New with defects",
+    description:
+      "Brand new and unworn with missing accessories or defects (scuffs, marks, manufacturing flaws, cuts, damaged box, etc.).",
+  },
+  {
+    label: "Pre-owned",
+    description: "Used, worn, or has signs of wear on any part.",
+  },
+];
+
 const SelectCondition = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { fitName } = location?.state || {};
   const classes = useStyles();
   const [selected, setSelected] = React.useState(null);
+  const [conditionName, setConditionName] = React.useState("");
 
-  const conditions = [
-    {
-      label: "New with box",
-      description:
-        "Brand new, unworn and defect-free with original box, packaging, and accessories.",
-    },
-    {
-      label: "New without box",
-      description:
-        "Brand new, unworn, and defect-free with all accessories but missing the original box.",
-    },
-    {
-      label: "New with defects",
-      description:
-        "Brand new and unworn with missing accessories or defects (scuffs, marks, manufacturing flaws, cuts, damaged box, etc.).",
-    },
-    {
-      label: "Pre-owned",
-      description: "Used, worn, or has signs of wear on any part.",
-    },
-  ];
+  // console.log(fitName);
+  const handleSelectValue = (value) => {
+    setConditionName(value);
+  };
 
   const handleSelect = (index) => {
     setSelected(index);
+  };
+
+  const handleSubmit = () => {
+    navigate("/add-product", {
+      state: {
+        condition: conditionName,
+        fitName: fitName ? fitName : "",
+      },
+    });
   };
   return (
     <div>
@@ -84,7 +101,10 @@ const SelectCondition = () => {
                 className={`${classes.paper} ${
                   selected === index ? classes.selected : ""
                 }`}
-                onClick={() => handleSelect(index)}
+                onClick={() => {
+                  handleSelect(index);
+                  handleSelectValue(condition.label);
+                }}
               >
                 <Typography sx={{ fontWeight: "600" }}>
                   {condition.label}
@@ -97,11 +117,13 @@ const SelectCondition = () => {
           ))}
         </Grid>
         <Box mt={4}>
-          <Link to="/add-product">
-            <button className="btn btn-continess ">
-              Continue
-            </button>
-          </Link>
+          <button
+            className="btn btn-continess"
+            disabled={!conditionName}
+            onClick={handleSubmit}
+          >
+            Continue
+          </button>
         </Box>
       </Container>
     </div>

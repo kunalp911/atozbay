@@ -118,7 +118,7 @@ const Login = () => {
         setToken(response.result.api_token);
         setUserData(response.result);
         navigate("/");
-        // window.location.reload();
+        window.location.reload();
         setload(false);
         toast.success(response.msg);
       } else {
@@ -133,6 +133,10 @@ const Login = () => {
       setErrors(newErrors);
     }
   };
+
+
+
+
   return (
     <div>
       <div className="container">

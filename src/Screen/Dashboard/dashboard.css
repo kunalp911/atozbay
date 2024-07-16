@@ -10,11 +10,10 @@
     font-weight: bold;
     display: inline-block;
     margin-left: auto;
+} 
+.offer-details:hover.cardsname:hover{
+  border-bottom: 1px solid #505050;
 }
-.offer-details {
-    flex-grow: 1;
-}
-
 .custom-cardss {
     background-color: #f8f9fa; /* Yellow background */
     border-radius: 10px;

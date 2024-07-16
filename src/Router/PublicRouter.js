@@ -24,6 +24,8 @@ import AddtoCart from "../Screen/AddtoCart/AddtoCart";
 import PaymentGatway from "../Screen/LoginFlow/PaymentGatway/PaymentGatway";
 import AddProduct from "../Screen/AddProduct/AddProduct";
 import Category from "../Screen/ShopbyCategory/Category/Category";
+import ProductList from "../Screen/Selling/ProductList/ProductList";
+import WatchList from "../Screen/WatchList/WatchList";
 
 const PublicRouter = () => {
   return (
@@ -54,6 +56,8 @@ const PublicRouter = () => {
         <Route path="/add-to-cart" element={<AddtoCart />} />
         <Route path="/add-product" element={<AddProduct />} />
         <Route path="/category/:id" element={<Category />} />
+        <Route path="/product-list" element={<ProductList />} />
+        <Route path="/watch-list" element={<WatchList />} />
       </Routes>
     </BrowserRouter>
   );

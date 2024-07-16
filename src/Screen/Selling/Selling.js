@@ -3,20 +3,22 @@ import Header from "../../Component/Header/Header";
 import "./selling.css";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../Component/Footer/Footer";
+import { Col, Row } from "react-bootstrap";
 const Selling = () => {
    const navigate = useNavigate();
   return (
     <div>
       <Header />
       <div className="" style={{ padding: "10px 40px" }}>
-        <div className="d-flex justify-content-between">
-          <div>
+        <Row>
+          <Col sm={12} md={6}>
             <h4>Selling</h4>
-          </div>
-          <div>
-            <button className="btn listanbutton" onClick={() => navigate("/selling/list-item")}>List an item</button>
-          </div>
-        </div>
+          </Col>
+          <Col className="d-flex justify-content-end">
+            <button className="btn listanbutton" onClick={() => navigate("/product-list")}>Product List</button>
+            <button className="btn listanbutton ms-3" onClick={() => navigate("/selling/list-item")}>List an item</button>
+          </Col>
+        </Row>
         <div className="row my-4">
           <div className="col-12">
             <img

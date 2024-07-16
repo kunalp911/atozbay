@@ -39,6 +39,7 @@ const PaymentGatway = () => {
         navigate("/");
         setload(false);
         toast.success(response.msg);
+        window.location.reload();
       } else {
         setload(false);
         toast.error(response.msg);

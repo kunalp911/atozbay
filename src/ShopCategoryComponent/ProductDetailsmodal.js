@@ -9,26 +9,16 @@ import {
   IconButton,
   Grid,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { getToken } from "../Helper/Storage";
+import CloseIcon from "@mui/icons-material/Close"; 
 import { useNavigate } from "react-router-dom";
 
-const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
+const ProductDetailsmodal = ({ itemOpen, setItemOpen }) => {
   const navigate = useNavigate();
-  const token = getToken();
-  console.log("first", token);
   const handleClose = () => {
     setItemOpen(false);
   };
 
-  const handleContenue = () => {
-    if (token) {
-      navigate("/selling/select-condition");
-      setItemOpen(false);
-    } else {
-      navigate("/login");
-    }
-  };
+  
   return (
     <div>
       <Dialog
@@ -41,7 +31,7 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
         }}
       >
         <DialogTitle sx={{ fontWeight: "600" }}>
-          Confirm details
+          Item details
           <IconButton
             aria-label="close"
             onClick={handleClose}
@@ -83,7 +73,7 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "center" }}>
+        {/* <DialogActions sx={{ justifyContent: "center" }}>
           <button
             onClick={handleContenue}
             className="btn btn-continesss" 
@@ -91,11 +81,11 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
           >
             Continue
           </button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     </div>
   );
 };
-export default ItemDetailmodal;
+export default ProductDetailsmodal;
 
 

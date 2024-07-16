@@ -5,12 +5,17 @@ import "./dashboard.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
 import {
+  Box,
+  Button,
   Card,
   CardActionArea,
+  CardActions,
   CardContent,
   CardMedia,
+  Chip,
   Typography,
 } from "@mui/material";
+import { Star } from "@mui/icons-material";
 const Dashboard = () => {
   const divStyle = {
     display: "flex",
@@ -19,7 +24,7 @@ const Dashboard = () => {
     backgroundSize: "cover",
     height: "400px",
     borderRadius: "15px",
-    margin: "20px 0px" 
+    margin: "20px 0px",
   };
 
   const slideImages = [
@@ -70,53 +75,62 @@ const Dashboard = () => {
 
   const cardData = [
     {
-      title: "Lizard",
       image: "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
-      date: "8 July",
-      price: "$1400",
+      title: "Green Iguana",
+      price: "$49.99",
+      status: "New",
+      rating: 4.5,
     },
     {
-      title: "Lizard",
       image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-      date: "8 July",
-      price: "$1000",
+      title: "Red Parrot",
+      price: "$59.99",
+      status: "Sale",
+      rating: 4.0,
     },
     {
-      title: "Lizard",
+      image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
+      title: "Red Parrot",
+      price: "$59.99",
+      status: "Sale",
+      rating: 4.0,
+    },
+    {
+      image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
+      title: "Red Parrot",
+      price: "$59.99",
+      status: "Sale",
+      rating: 4.0,
+    },
+    {
       image:
         "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
-      date: "8 July",
-      price: "$1500",
+      title: "Red Parrot",
+      price: "$59.99",
+      status: "Sale",
+      rating: 4.0,
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
+      title: "Red Parrot",
+      price: "$59.99",
+      status: "Sale",
+      rating: 4.0,
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
+      title: "Red Parrot",
+      price: "$59.99",
+      status: "Sale",
+      rating: 4.0,
     },
     {
       title: "Lizard",
       image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
       date: "8 July",
       price: "$10001",
-    },
-    {
-      title: "Lizard",
-      image: "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
-      date: "8 July",
-      price: "$1030",
-    },
-    {
-      title: "Lizard",
-      image: "https://i.ebayimg.com/images/g/t3gAAOSwoVhmQZ-a/s-l1600.webp",
-      date: "8 July",
-      price: "$1000",
-    },
-    {
-      title: "Lizard",
-      image: "https://picsum.photos/309/200?image=1039",
-      date: "8 July",
-      price: "$3000",
-    },
-    {
-      title: "Lizard",
-      image: "https://i.ebayimg.com/images/g/sQUAAOSwTkZlny35/s-l1600.webp",
-      date: "8 July",
-      price: "$3400",
     },
   ];
   return (
@@ -190,7 +204,33 @@ const Dashboard = () => {
                     <CardActionArea>
                       <CardMedia
                         component="img"
-                        sx={{ height: 200 }}
+                        sx={{ height: 200, objectFit: "contain", p: 2 }}
+                        image={card.image}
+                        alt={card.title}
+                      />
+                      <CardContent>
+                        <p className="font-weight-bold mt-2">{card.title}</p>
+                        <Typography variant="body1" color="text.primary">
+                          {card.price}
+                        </Typography>
+                        <Box display="flex" alignItems="center" mt={2}>
+                          <Star color="primary" />
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            ml={1}
+                          >
+                            {card.rating} / 5
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                  {/* <Card sx={{ maxWidth: 345 }}>
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        sx={{ height: 200, objectFit: "contain" }}
                         image={card.image}
                         alt="green iguana"
                       />
@@ -202,183 +242,10 @@ const Dashboard = () => {
                         </Typography>
                       </CardContent>
                     </CardActionArea>
-                  </Card>
+                  </Card> */}
                 </div>
               ))}
             </div>
-            {/* <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://i.ebayimg.com/images/g/cGEAAOSwoftkmzvs/s-l400.jpg"
-                  alt="green iguana"
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    Lizard
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Lizards are a widespread group of squamate reptiles, with
-                    over 6,000 species, ranging across all continents except
-                    Antarctica
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://i.ebayimg.com/thumbs/images/g/sQUAAOSwTkZlny35/s-l500.jpg"
-                  alt="green iguana"
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    Lizard
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Lizards are a widespread group of squamate reptiles, with
-                    over 6,000 species, ranging across all continents except
-                    Antarctica
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://i.ebayimg.com/images/g/cGEAAOSwoftkmzvs/s-l400.jpg"
-                  alt="green iguana"
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    Lizard
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Lizards are a widespread group of squamate reptiles, with
-                    over 6,000 species, ranging across all continents except
-                    Antarctica
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://i.ebayimg.com/images/g/cGEAAOSwoftkmzvs/s-l400.jpg"
-                  alt="green iguana"
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    Lizard
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Lizards are a widespread group of squamate reptiles, with
-                    over 6,000 species, ranging across all continents except
-                    Antarctica
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card> */}
-            {/* <div class="main">
-              <ul class="cards">
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://i.ebayimg.com/images/g/cGEAAOSwoftkmzvs/s-l400.jpg" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://picsum.photos/500/300/?image=5" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://picsum.photos/500/300/?image=11" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://picsum.photos/500/300/?image=11" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://picsum.photos/500/300/?image=11" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://picsum.photos/500/300/?image=14" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://picsum.photos/500/300/?image=17" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="cards_item">
-                  <div class="card">
-                    <div class="card_image">
-                      <img src="https://picsum.photos/500/300/?image=2" />
-                    </div>
-                    <div class="card_content">
-                      <h2 class="card_title">Card Grid Layout</h2>
-
-                      <button class="btn card_btn">Read More</button>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div> */}
           </div>
           <div className=" mt-5">
             <div className="container-fluid custom-cards">
@@ -439,16 +306,25 @@ const Dashboard = () => {
                     <CardActionArea>
                       <CardMedia
                         component="img"
-                        sx={{ height: 200 }}
+                        sx={{ height: 200, objectFit: "contain", p: 2 }}
                         image={card.image}
-                        alt="green iguana"
+                        alt={card.title}
                       />
                       <CardContent>
                         <p className="font-weight-bold mt-2">{card.title}</p>
-
-                        <Typography variant="body1" color="dark">
+                        <Typography variant="body1" color="text.primary">
                           {card.price}
                         </Typography>
+                        <Box display="flex" alignItems="center" mt={2}>
+                          <Star color="primary" />
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            ml={1}
+                          >
+                            {card.rating} / 5
+                          </Typography>
+                        </Box>
                       </CardContent>
                     </CardActionArea>
                   </Card>
