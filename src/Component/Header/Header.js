@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./header.css";
 import { Link, useNavigate } from "react-router-dom";
 import logos from "../../Assets/image/bay.png";
-import {
-  Badge, 
-  Grid,
-  IconButton,
-  Menu,
-  MenuItem, 
-} from "@mui/material";
+import { Badge, Grid, IconButton, Menu, MenuItem } from "@mui/material";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -19,7 +13,7 @@ const Header = () => {
   const [anchorE2, setAnchorE2] = React.useState(null);
   const open = Boolean(anchorEl);
   const opens = Boolean(anchorE2);
-  const [categoriesList, setCategoriesList] = useState([]); 
+  const [categoriesList, setCategoriesList] = useState([]);
   const userData = localStorage.getItem("@userData");
   const data = JSON.parse(userData);
 
@@ -32,7 +26,7 @@ const Header = () => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(null); 
+    setAnchorEl(null);
   };
   const handleClicks = (event) => {
     setAnchorE2(event.currentTarget);
@@ -45,12 +39,10 @@ const Header = () => {
     getCategories();
   }, []);
 
-  const handleCategorySelect = (category) => { 
-    navigate(`/category/${category?.id}`, { state: { category: category } }); 
+  const handleCategorySelect = (category) => {
+    navigate(`/category/${category?.id}`, { state: { category: category } });
     setAnchorEl(null);
   };
- ;
-
   const getCategories = () => {
     try {
       apiCallNew("get", {}, ApiEndPoints.CategoriesList).then((response) => {
@@ -205,28 +197,11 @@ const Header = () => {
               </Link>
             </li>
             <li className="nav-item dropdown">
-              <a
-                className="nav-link first-titless dropdown-toggle"
-                href="#"
-                id="dropdownMenu1"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Wathchlist
-              </a>
-              <div className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <a className="dropdown-item" href="#">
-                  Action 1
+              <Link to="/watch-list">
+                <a className="nav-link first-titless " href="#">
+                  Wathchlist
                 </a>
-                <a className="dropdown-item" href="#">
-                  Action 2
-                </a>
-                <a className="dropdown-item" href="#">
-                  Action 3
-                </a>
-              </div>
+              </Link>
             </li>
             <li className="nav-item dropdown">
               <a
@@ -260,7 +235,7 @@ const Header = () => {
             <li className="nav-item">
               <Link to={"/add-to-cart"} className="text-dark">
                 {/* <a className="nav-link first-icon" href="#"> */}
-                  {/* <i className="fas fa-shopping-cart"></i>
+                {/* <i className="fas fa-shopping-cart"></i>
                   <span
                     style={{
                       backgroundColor: "red",
@@ -273,15 +248,15 @@ const Header = () => {
                   >
                     3
                   </span> */}
-              <IconButton 
-              className="mt-2"
-                aria-label="show 4 new mails"
-                color="inherit"
-              >
-                <Badge badgeContent={3} color="error">
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
+                <IconButton
+                  className="mt-2"
+                  aria-label="show 4 new mails"
+                  color="inherit"
+                >
+                  <Badge badgeContent={3} color="error">
+                    <ShoppingCartIcon />
+                  </Badge>
+                </IconButton>
                 {/* </a> */}
               </Link>
             </li>

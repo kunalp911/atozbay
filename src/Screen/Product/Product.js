@@ -2,28 +2,100 @@ import React, { useState } from "react";
 import "./product.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
+import Zoom from "react-medium-image-zoom"; 
+import ReactImageMagnify from "react-image-magnify";
+
+import "react-medium-image-zoom/dist/styles.css";
 const Product = () => {
+  const images = [
+    "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
+    " https://i.ebayimg.com/images/g/1GEAAOSwt69jPeFq/s-l1600.webp",
+    "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
+    "https://i.ebayimg.com/images/g/azkAAOSwQGFmjs8k/s-l960.webp",
+    "https://i.ebayimg.com/images/g/azkAAOSwQGFmjs8k/s-l960.webp",
+  ];
   return (
     <div>
       <Header />
       <div className="container mt-4 mb-4">
-        <div className="row">
+        <div className="row justify-content-center">
           <div
-            className="col-lg-6 col-md-12"
+            className="col-lg-6 col-md-12 d-flex flex-column align-items-center"
             style={{
               backgroundColor: "#f8f9fa",
-              justifyContent: "center",
-              textAlign: "center",
             }}
           >
             <div className="viewed-info badge badge-danger mb-2">
               6 VIEWED IN THE LAST 24 HOURS
             </div>
-            <img
-              src="https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp"
-              className="img-fluid rounded"
-              alt="Product Image"
-            />
+            <div
+              id="productCarousel"
+              className="carousel slide main-image-container"
+              data-ride="carousel"
+            >
+              <div className="carousel-inner">
+                {images.map((src, index) => (
+                  <div
+                    key={index}
+                    className={`carousel-item ${index === 0 ? "active" : ""}`}
+                  >
+                    <Zoom>
+                      <img
+                        className="c"
+                        alt={`Product Image ${index + 1}`}
+                        src={src}
+                        style={{
+                          width: "100%",
+                          height: "500px",
+                          objectFit: "contain",
+                        }}
+                      />
+                    </Zoom>
+                  </div>
+                ))}
+              </div>
+              <a
+                className="carousel-control-prev"
+                href="#productCarousel"
+                role="button"
+                data-slide="prev"
+                style={{ color: "black" }}
+              >
+                <span
+                  className="carousel-control-prev-icon"
+                  aria-hidden="true"
+                  style={{ filter: "invert(100%)" }}  
+                ></span>
+                <span className="sr-only">Previous</span>
+              </a>
+              <a
+                className="carousel-control-next"
+                href="#productCarousel"
+                role="button"
+                data-slide="next"
+                style={{ color: "black" }}
+              >
+                <span
+                  className="carousel-control-next-icon"
+                  aria-hidden="true"
+                  style={{ filter: "invert(100%)" }}  
+                ></span>
+                <span className="sr-only">Next</span>
+              </a>
+            </div>
+            <div className="d-flex justify-content-center mt-2">
+              {images.map((src, index) => (
+                <img
+                  key={index}
+                  src={src}
+                  className="img-thumbnail mx-1"
+                  style={{ width: "50px", height: "50px", cursor: "pointer" }}
+                  alt={`Thumbnail ${index + 1}`}
+                  data-target="#productCarousel"
+                  data-slide-to={index}
+                />
+              ))}
+            </div>
           </div>
           <div className="col-lg-6 col-md-12">
             <h1 className="product-titlee">
@@ -49,13 +121,12 @@ const Product = () => {
               <span>Condition: New</span>
             </div>
             <div className="quantitye mb-3">
-               <label for="quantity" className="mr-2">
+              <label htmlFor="quantity" className="mr-2">
                 Quantity:
-              </label> 
+              </label>
               <select
                 id="quantity"
-                type="number" 
-                defaultValue={1} 
+                defaultValue={1}
                 className="form-control quantity-input w-25 text-center"
               >
                 <option value="0" hidden></option>
@@ -75,10 +146,10 @@ const Product = () => {
               <button className="btn buyitnow-btn btn-block mb-2">
                 Buy It Now
               </button>
-              <button className="btn btn-secondary btn-block mb-2">
+              <button className="btn btn-secondary addcarditnow-btn btn-block mb-2">
                 Add to Cart
               </button>
-              <button className="btn btn-info btn-block mb-2">
+              <button className="btn btn-info additnow-btn btn-block mb-2">
                 Add to Watchlist
               </button>
             </div>

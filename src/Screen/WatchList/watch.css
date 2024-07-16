@@ -1,0 +1,12 @@
+.fill-btn {
+  width: 231px;
+  border-radius: 50px;
+}
+.no-fill-btn {
+  width: 231px;
+  border-radius: 50px;
+  background-color: white;
+}
+.watch {
+  background-color: #e8e8e8;
+}

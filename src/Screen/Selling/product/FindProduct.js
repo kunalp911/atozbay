@@ -5,7 +5,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import Findmodal from "../../../ShopCategoryComponent/Findmodal";
 import ItemDetailmodal from "../../../ShopCategoryComponent/ItemDetailmodal";
-
+import "../selling.css";
 const brands = [
   {
     category: "Add custom value",

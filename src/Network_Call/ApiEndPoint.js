@@ -36,6 +36,9 @@ const APPConfig = {
     AttributesList: `${APPConfig.API_URL}/attributes-list`, 
     AttributesValueList: `${APPConfig.API_URL}/attributevalues-by-attribute/`, 
     AttributesByCategory: `${APPConfig.API_URL}/attributes-by-category/`, 
+    ProductList: `${APPConfig.API_URL}/products-list`, 
+    ShopProductList: `${APPConfig.API_URL}/shop-products-list`, 
+    ProductSellerDetail: `${APPConfig.API_URL}/product/`, 
   }
 
   export default ApiEndPoints

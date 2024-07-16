@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logos from "../../Assets/image/bay.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./addproduct.css";
 import { useDropzone } from "react-dropzone";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -21,10 +21,12 @@ import {
   FormControlLabel,
   Radio,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
 import { makeStyles } from "@material-ui/core";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
   dialogPaper: {
@@ -32,14 +34,18 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "80vh",
   },
 }));
+
 const AddProduct = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
+  const conditionName = location.state?.condition;
+  const fitName = location.state?.fitName;
   const [colorList, setColorList] = React.useState([]);
   const [brandList, setBrandList] = React.useState([]);
   const [isPhoto, setIsPhoto] = useState(true);
   const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState([]);
+  const [video, setVideo] = useState(null);
   const [categoriesList, setCategoriesList] = useState([]);
   const [subCategoriesList, setSubCategoriesList] = React.useState([]);
   const [attributesList, setAttributesList] = useState([]);
@@ -50,15 +56,27 @@ const AddProduct = () => {
   const [opensss, setOpensss] = useState(false);
   const [step, setStep] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedValue, setSelectedValue] = useState("New");
+  const [selectedValue, setSelectedValue] = useState("");
   const [categoryName, setCategoryName] = useState("");
+  const [load, setload] = useState(false);
+  const [addProductFormData, setAddProductFormData] = useState({
+    name: fitName ? fitName : "",
+    sku: "",
+    condition_description: "",
+    description: "",
+    price: "",
+    price_format: "",
+    auction_duration: "",
+    available_quantity: "",
+    starting_bid: "",
+    brand_id: "",
+    color_id: 4,
+    category_id: "",
+    short_desc: "short description",
+  });
 
-  const postData = Object.keys(selectedAttributes).map((attributeId) => ({
-    attributeId,
-    valueId: selectedAttributes[attributeId],
-  }));
+  console.log("videos", video);
 
-  console.log("postdata", postData, selectedAttributes);
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
@@ -83,7 +101,7 @@ const AddProduct = () => {
     setStep(0);
   };
 
-  const handleCategoryClick = (category) => {
+  const handleCategoryClick = () => {
     setStep(step + 1);
   };
 
@@ -95,6 +113,9 @@ const AddProduct = () => {
     handleClose();
     setCategoryName(item?.category_name);
     getAttributesList(item?.id);
+    setAddProductFormData((addProductFormData) => {
+      return { ...addProductFormData, category_id: item?.id };
+    });
   };
 
   const handleBack = () => {
@@ -161,10 +182,11 @@ const AddProduct = () => {
       if (isPhoto) {
         setImages((prevImages) => [...prevImages, ...imageFiles]);
       } else {
-        if (videos.length === 0 && videoFiles.length > 0) {
-          setVideos((prevVideos) => [...prevVideos, ...videoFiles]);
+        if (!video && videoFiles.length > 0) {
+          setVideo(videoFiles[0]);
         } else if (videoFiles.length > 0) {
           alert("Only one video can be uploaded.");
+          videoFiles.forEach((file) => URL.revokeObjectURL(file.preview));
         }
       }
     },
@@ -173,15 +195,16 @@ const AddProduct = () => {
   useEffect(() => {
     return () => {
       images.forEach((file) => URL.revokeObjectURL(file.preview));
-      videos.forEach((file) => URL.revokeObjectURL(file.preview));
+      if (video) {
+        URL.revokeObjectURL(video.preview);
+      }
     };
-  }, [images, videos]);
+  }, [images, video]);
 
   useEffect(() => {
     getColorList();
     getCategories();
     getBrandList();
-    // getAttributesList();
   }, []);
 
   const handleAttributeChange = (event, attributeId) => {
@@ -196,26 +219,6 @@ const AddProduct = () => {
   const handleAttributeFocus = (attributeId) => {
     getAttributesValueList(attributeId);
   };
-
-  // const getAttributesList = () => {
-  //   apiCallNew("get", {}, ApiEndPoints.AttributesList)
-  //     .then((response) => {
-  //       if (response.success) {
-  //         setAttributesList(response.result);
-  //         const initialSelectedAttributes = response.result.reduce(
-  //           (acc, item) => {
-  //             acc[item.id] = "";
-  //             return acc;
-  //           },
-  //           {}
-  //         );
-  //         setSelectedAttributes(initialSelectedAttributes);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   const getAttributesList = (id) => {
     apiCallNew("get", {}, ApiEndPoints.AttributesByCategory + id)
@@ -301,8 +304,66 @@ const AddProduct = () => {
     }
   };
 
+  const handleaddProductChange = (event) => {
+    const { name, value } = event.target;
+    setAddProductFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    const attribute_ids = [];
+    const attribute_value_ids = [];
+
+    attributesList.forEach((attribute, index) => {
+      const attributeId = attribute.id;
+      const attributeValueId = selectedAttributes[attributeId];
+
+      if (attributeValueId) {
+        attribute_ids.push(attributeId);
+        attribute_value_ids.push(attributeValueId);
+      }
+    });
+    const payload = {
+      attribute_id: attribute_ids,
+      attribute_value_id: attribute_value_ids,
+      item_condition: selectedValue ? selectedValue : conditionName,
+      video: video ? video : null,
+      images: images,
+      ...addProductFormData,
+    };
+    console.log("payload", payload);
+    setload(true);
+
+    try {
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.ProductAdd
+      );
+      setload(true);
+      if (response.success === true) {
+        navigate("/product-list");
+        toast.success(response.msg);
+        setload(false);
+      } else {
+        toast.error(response.msg);
+        setload(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <div className="col-12 d-flex justify-content-center border-bottom">
         <img
           src={logos}
@@ -335,7 +396,7 @@ const AddProduct = () => {
             </div>
           </div>
           <div>
-            {images.length > 0 && <h6>Uploaded Images</h6>}
+            {/* {images.length > 0 && <h6>Uploaded Images</h6>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {images.map((file, index) => (
                 <>
@@ -374,7 +435,49 @@ const AddProduct = () => {
                     }
                   ></i>
                 </>
+              ))} */}
+            {images.length > 0 && <h6>Uploaded Images</h6>}
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+              {images.map((file, index) => (
+                <>
+                  <img
+                    key={index}
+                    src={file.preview}
+                    alt={`img-${index}`}
+                    style={mediaPreviewStyle}
+                  />
+                  <i
+                    className="fa fa-times"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      URL.revokeObjectURL(file.preview);
+                      setImages(images.filter((_, i) => i !== index));
+                    }}
+                  ></i>
+                </>
               ))}
+            </div>
+
+            {video && <h6>Uploaded Video</h6>}
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+              {video && (
+                <>
+                  <video
+                    src={video.preview}
+                    controls
+                    width="200"
+                    style={{ margin: "10px" }}
+                  />
+                  <i
+                    className="fa fa-times"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      URL.revokeObjectURL(video.preview);
+                      setVideo(null);
+                    }}
+                  ></i>
+                </>
+              )}
             </div>
           </div>
         </section>
@@ -388,6 +491,9 @@ const AddProduct = () => {
                 className="form-control"
                 id="item-title"
                 placeholder="title"
+                name="name"
+                value={addProductFormData.name}
+                onChange={handleaddProductChange}
               />
             </div>
           </div>
@@ -395,7 +501,14 @@ const AddProduct = () => {
             <div className="section-header">SKU</div>
             <div className="form-group">
               <label for="item-title">sku</label>
-              <input type="text" className="form-control" id="item-title" />
+              <input
+                type="text"
+                className="form-control"
+                id="item-title"
+                name="sku"
+                value={addProductFormData.sku}
+                onChange={handleaddProductChange}
+              />
             </div>
           </div>
           <div className="listing-section">
@@ -434,7 +547,13 @@ const AddProduct = () => {
                 Brand
               </label>
               <div className="col-sm-10">
-                <select className="form-control" id="brand">
+                <select
+                  className="form-control"
+                  id="brand"
+                  name="brand_id"
+                  value={addProductFormData.brand_id}
+                  onChange={handleaddProductChange}
+                >
                   <option value={""} hidden>
                     select brand
                   </option>
@@ -457,6 +576,7 @@ const AddProduct = () => {
                 <div className="col-sm-10">
                   <select
                     className="form-control"
+                    name={item.attribute_name}
                     id={`attribute-${item.id}`}
                     value={selectedAttributes[item.id] || ""}
                     onChange={(e) => handleAttributeChange(e, item.id)}
@@ -593,15 +713,24 @@ const AddProduct = () => {
             <div className="section-header">CONDITION</div>
             <div className="form-group">
               <h6 className="mt-3">Item condition</h6>
-              <p className="item-condition-name" onClick={handleOpenss}>
-                <u>{selectedValue}</u>
-              </p>
+              <div className="d-flex justify-content-between">
+                <p className="item-condition-name" onClick={handleOpenss}>
+                  <u>{selectedValue ? selectedValue : conditionName}</u>
+                </p>
+                <p className="item-condition-name" onClick={handleOpenss}>
+                  <EditIcon />
+                  Edit
+                </p>
+              </div>
               <div className="form-group">
                 <label for="description">Condition description</label>
                 <textarea
                   className="form-control"
                   id="description"
                   rows="2"
+                  name="condition_description"
+                  value={addProductFormData.condition_description}
+                  onChange={handleaddProductChange}
                 ></textarea>
               </div>
               <Dialog
@@ -707,8 +836,8 @@ const AddProduct = () => {
                     <i className="fa fa-times"></i>
                   </Button>
                 </Grid>
-                <DialogContent dividers >
-                  <form>
+                <DialogContent dividers>
+                  <form action="javascript:void(0)">
                     <div className="form-group">
                       <label>Name</label>
                       <input type="text" className="form-control" />
@@ -720,9 +849,7 @@ const AddProduct = () => {
                       Example: 2017
                     </div>
                     <div className="d-flex justify-content-end">
-                      <button type="submit" className="btn btn-closess">
-                        Close
-                      </button>
+                      <button className="btn btn-closess">Close</button>
                       <button type="submit" className="btn btn-savss ms-3">
                         Save
                       </button>
@@ -775,6 +902,9 @@ const AddProduct = () => {
                 id="description"
                 rows="5"
                 placeholder="Enter description here..."
+                name="description"
+                value={addProductFormData.description}
+                onChange={handleaddProductChange}
               ></textarea>
             </div>
           </div>
@@ -784,38 +914,73 @@ const AddProduct = () => {
               <div className="col-sm-4 p-0">
                 <label for="brand">Format</label>
                 <div className="">
-                  <select className="form-control" id="brand">
-                    <option>cash</option>
-                    <option>online</option>
+                  <select
+                    className="form-control"
+                    id="brand"
+                    name="price_format"
+                    value={addProductFormData.price_format}
+                    onChange={handleaddProductChange}
+                  >
+                    <option value="" hidden></option>
+                    <option value="1">cash</option>
+                    <option value="2">online</option>
                   </select>
                 </div>
               </div>
               <div className="col-sm-4 p-0">
                 <label for="brand">Price</label>
                 <div className="">
-                  <select className="form-control" id="brand">
-                    <option>23123</option>
-                    <option>123</option>
-                    <option>12313</option>
-                    <option>123</option>
-                  </select>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="brand"
+                    name="price"
+                    value={addProductFormData.price}
+                    onChange={handleaddProductChange}
+                  />
+                </div>
+              </div>
+              <div className="col-sm-4 p-0">
+                <label for="brand">Available Quantity</label>
+                <div className="">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="brand"
+                    name="available_quantity"
+                    value={addProductFormData.available_quantity}
+                    onChange={handleaddProductChange}
+                  />
                 </div>
               </div>
               <div className="col-sm-4 p-0">
                 <label for="brand">Action duration</label>
                 <div className="">
-                  <select className="form-control" id="brand">
-                    <option>3 days</option>
-                    <option>5 days</option>
-                    <option>7 days</option>
-                    <option>10 days</option>
+                  <select
+                    className="form-control"
+                    id="brand"
+                    name="auction_duration"
+                    value={addProductFormData.auction_duration}
+                    onChange={handleaddProductChange}
+                  >
+                    <option value="3">3 days</option>
+                    <option value="5">5 days</option>
+                    <option value="7">7 days</option>
+                    <option value="10">10 days</option>
                   </select>
                 </div>
               </div>
               <div className="col-sm-4 p-0">
                 <label for="brand">Starting bid</label>
                 <div className="">
-                  <input type="text" className="form-control" id="brand" />
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="brand"
+                    name="starting_bid"
+                    value={addProductFormData.starting_bid}
+                    onChange={handleaddProductChange}
+                  />
                 </div>
               </div>
             </div>
@@ -878,7 +1043,9 @@ const AddProduct = () => {
                 A <a href="#">final value fee</a> applies when your item sells.
               </p>
 
-              <button className="btn btn-customs">List it</button>
+              <button className="btn btn-customs" onClick={handleAddProduct}>
+                List it
+              </button>
               <button className="btn btn-customss">Save for later</button>
               <button className="btn btn-customss">Preview</button>
             </div>
@@ -912,4 +1079,21 @@ const mediaPreviewStyle = {
   margin: "10px",
 };
 
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
+};
 export default AddProduct;

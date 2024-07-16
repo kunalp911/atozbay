@@ -1,5 +1,5 @@
 {
-  "name": "ebay",
+  "name": "atozbay",
   "version": "0.1.0",
   "homepage": "https://atozbay.com/web",
   "private": true,
@@ -16,6 +16,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
+    "browser-image-compression": "^2.0.2",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
@@ -27,7 +28,10 @@
     "react-slideshow-image": "^4.3.1",
     "react-toastify": "^10.0.5",
     "web-vitals": "^2.1.4",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "react-image-magnify": "^2.7.4",
+    "react-medium-image-zoom": "^5.2.8"
+
   },
   "scripts": {
     "start": "react-scripts start",
