@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./product.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
-import Zoom from "react-medium-image-zoom"; 
+import Zoom from "react-medium-image-zoom";
 import ReactImageMagnify from "react-image-magnify";
 
 import "react-medium-image-zoom/dist/styles.css";
@@ -64,7 +64,7 @@ const Product = () => {
                 <span
                   className="carousel-control-prev-icon"
                   aria-hidden="true"
-                  style={{ filter: "invert(100%)" }}  
+                  style={{ filter: "invert(100%)" }}
                 ></span>
                 <span className="sr-only">Previous</span>
               </a>
@@ -78,7 +78,7 @@ const Product = () => {
                 <span
                   className="carousel-control-next-icon"
                   aria-hidden="true"
-                  style={{ filter: "invert(100%)" }}  
+                  style={{ filter: "invert(100%)" }}
                 ></span>
                 <span className="sr-only">Next</span>
               </a>

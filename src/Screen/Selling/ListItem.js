@@ -11,7 +11,7 @@ const ListItem = () => {
   const [productLists, setProductLists] = React.useState([]);
   const [keyword, setKeyword] = React.useState("");
 
-  console.log("first", keyword);
+  console.log("first", keyword, productLists);
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (keyword) {
@@ -21,24 +21,27 @@ const ListItem = () => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [keyword]);
+
   const getProductList = () => {
     const payload = {
       page: 0,
       keyword: keyword,
     };
     try {
-      apiCallNew("post", payload, ApiEndPoints.ProductList).then((response) => {
-        if (response.success) {
-          setProductLists(response.result);
+      apiCallNew("post", payload, ApiEndPoints.ShopProductList).then(
+        (response) => {
+          if (response.success) {
+            setProductLists(response.result);
+          }
         }
-      });
+      );
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleFilter = (name) => {
-    navigate("/selling/select-condition", { state: { fitName: name } });
+  const handleFilter = (id) => {
+    navigate("/selling/find-product", { state: { cateid: id } });
   };
   return (
     <div>
@@ -66,16 +69,20 @@ const ListItem = () => {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
-          <button className="btn search-item-button" onClick={getProductList}>
+          <button className="btn search-item-button">
             <SearchIcon />
           </button>
-        </div> 
+        </div>
         <div className="search-resultss w-100">
           {keyword &&
             (productLists?.length > 0 ? (
               <ul className="list-groups">
-                 {productLists.map((product, index) => (
-                  <li key={index} className="list-group-items" onClick={() => handleFilter(product?.name)}>
+                {productLists.map((product, index) => (
+                  <li
+                    key={index}
+                    className="list-group-items"
+                    onClick={() => handleFilter(product?.category_id)}
+                  >
                     {product.name}{" "}
                   </li>
                 ))}

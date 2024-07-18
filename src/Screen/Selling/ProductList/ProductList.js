@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ProductDetailsmodal from "../../../ShopCategoryComponent/ProductDetailsmodal";
-import "./productlist.css"; 
+import "./productlist.css";
 import {
   Container,
   Row,
@@ -56,7 +56,7 @@ const ProductList = () => {
                   <Card className="mt-2">
                     <Card.Header className="d-flex justify-content-between">
                       <Typography variant="h6">
-                        {index+1}. {" "}Title: {product?.name}
+                        {index + 1}. Title: {product?.name}
                       </Typography>
                       <i className="fa fa-trash"></i>
                     </Card.Header>
@@ -111,7 +111,8 @@ const ProductList = () => {
                                   <strong>Auction Duration</strong>
                                 </td>
                                 <td>
-                                  {product?.product_prices?.auction_duration} days
+                                  {product?.product_prices?.auction_duration}{" "}
+                                  days
                                 </td>
                               </tr>
                             </tbody>
@@ -169,18 +170,20 @@ const ImageCarousel = ({ productImages }) => {
   return (
     <div>
       <Image src={productImages[currentIndex]?.product_image} fluid />
-      <div className="carousel-control container justify-content-between d-flex">
-        <i
-          className="fa fa-angle-left"
-          onClick={handlePrev}
-          style={{ cursor: "pointer", fontSize: "30px" }}
-        ></i>
-        <i
-          className="fa fa-angle-right"
-          onClick={handleNext}
-          style={{ cursor: "pointer", fontSize: "30px" }}
-        ></i>
-      </div>
+      {productImages?.length > 1 && (
+        <div className="carousel-control container justify-content-between d-flex">
+          <i
+            className="fa fa-angle-left"
+            onClick={handlePrev}
+            style={{ cursor: "pointer", fontSize: "30px" }}
+          ></i>
+          <i
+            className="fa fa-angle-right"
+            onClick={handleNext}
+            style={{ cursor: "pointer", fontSize: "30px" }}
+          ></i>
+        </div>
+      )}
     </div>
   );
 };

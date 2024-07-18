@@ -36,7 +36,7 @@ const WatchList = () => {
             <Form className="me-3">
               <Form.Control type="text" placeholder="Search your Watchlist" />
             </Form>
-            <Button style={{ borderRadius: "50px" }} variant="primary">
+            <Button className="watch-search" style={{ borderRadius: "25px" }}>
               Search
             </Button>
           </Col>
@@ -170,12 +170,12 @@ const WatchList = () => {
                 <Button className="fill-btn">Buy It Now</Button>
               </div>
               <div className="mt-2">
-                <Button className="text-primary no-fill-btn" block>
+                <Button className="no-fill-btn" block>
                   Make Best Offer
                 </Button>
               </div>
               <div className="mt-2">
-                <Button className="text-primary no-fill-btn" block>
+                <Button className="no-fill-btn" block>
                   More Actions
                 </Button>
               </div>
@@ -229,12 +229,12 @@ const WatchList = () => {
                 <Button className="fill-btn">Buy It Now</Button>
               </div>
               <div className="mt-2">
-                <Button className="text-primary no-fill-btn" block>
+                <Button className="no-fill-btn" block>
                   Make Best Offer
                 </Button>
               </div>
               <div className="mt-2">
-                <Button className="text-primary no-fill-btn" block>
+                <Button className=" no-fill-btn" block>
                   More Actions
                 </Button>
               </div>

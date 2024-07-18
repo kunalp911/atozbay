@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logos from "../../Assets/image/bay.png";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { json, Link, useLocation, useNavigate } from "react-router-dom";
 import "./addproduct.css";
 import { useDropzone } from "react-dropzone";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -40,7 +40,6 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const conditionName = location.state?.condition;
-  const fitName = location.state?.fitName;
   const [colorList, setColorList] = React.useState([]);
   const [brandList, setBrandList] = React.useState([]);
   const [isPhoto, setIsPhoto] = useState(true);
@@ -60,7 +59,7 @@ const AddProduct = () => {
   const [categoryName, setCategoryName] = useState("");
   const [load, setload] = useState(false);
   const [addProductFormData, setAddProductFormData] = useState({
-    name: fitName ? fitName : "",
+    name: "",
     sku: "",
     condition_description: "",
     description: "",
@@ -75,8 +74,19 @@ const AddProduct = () => {
     short_desc: "short description",
   });
 
-  console.log("videos", video);
+  console.log("addProductFormData", addProductFormData);
 
+  useEffect(() => {
+    setAddProductFormData((prevState) => ({
+      ...prevState,
+      available_quantity:
+        addProductFormData?.price_format == 2
+          ? addProductFormData?.available_quantity
+          : addProductFormData?.price_format == 1
+          ? 1
+          : "", // default value when price_format is not 2
+    }));
+  }, [addProductFormData.price_format]);
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
@@ -391,7 +401,7 @@ const AddProduct = () => {
               </div>
               <div style={boxStyle} onClick={() => setIsPhoto(false)}>
                 <VideoLibraryIcon />
-                <p>Upload videos</p>
+                <p>Upload addProductFormData</p>
               </div>
             </div>
           </div>
@@ -857,40 +867,6 @@ const AddProduct = () => {
                   </form>
                 </DialogContent>
               </Dialog>
-              {/* <div className="col-sm-4 p-0">
-                <label for="brand">Condition type</label>
-                <div className="">
-                  <select className="form-control" id="brand">
-                    <option>Graded: Professionally graded</option>
-                    <option>
-                      Ungraded: Not in original packaging or professionally
-                      graded
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-sm-4 p-0">
-                <label for="brand">Brand</label>
-                <div className="">
-                  <select className="form-control" id="brand">
-                    <option>nike</option>
-                    <option>adidas</option>
-                    <option>puma</option>
-                    <option>reebok</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-sm-4 p-0">
-                <label for="brand">Brand</label>
-                <div className="">
-                  <select className="form-control" id="brand">
-                    <option>nike</option>
-                    <option>adidas</option>
-                    <option>puma</option>
-                    <option>reebok</option>
-                  </select>
-                </div>
-              </div> */}
             </div>
           </div>
           <div className="listing-section">
@@ -921,13 +897,124 @@ const AddProduct = () => {
                     value={addProductFormData.price_format}
                     onChange={handleaddProductChange}
                   >
-                    <option value="" hidden></option>
-                    <option value="1">cash</option>
-                    <option value="2">online</option>
+                    <option value="" hidden>
+                      select format
+                    </option>
+                    <option value="1">Auction</option>
+                    <option value="2">Buy it now</option>
                   </select>
+                  {console.log(
+                    "ddProductFormData.price_format",
+                    addProductFormData.price_format
+                  )}
                 </div>
               </div>
-              <div className="col-sm-4 p-0">
+              {addProductFormData.price_format == 2 ? (
+                <>
+                  <div className="col-sm-4 p-0 mt-2">
+                    <label for="brand">Price</label>
+                    <div className="">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="brand"
+                        name="price"
+                        value={addProductFormData.price}
+                        onChange={handleaddProductChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-sm-4 p-0 mt-2">
+                    <label for="brand">Quantity</label>
+                    <div className="">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="brand"
+                        name="available_quantity"
+                        value={addProductFormData.available_quantity}
+                        onChange={handleaddProductChange}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : addProductFormData.price_format == 1 ? (
+                <>
+                  <div className="col-sm-4 p-0 mt-2">
+                    <label for="brand">Action duration</label>
+                    <div className="">
+                      <select
+                        className="form-control"
+                        id="brand"
+                        name="auction_duration"
+                        value={addProductFormData.auction_duration}
+                        onChange={handleaddProductChange}
+                      >
+                        <option value="3">3 days</option>
+                        <option value="5">5 days</option>
+                        <option value="7">7 days</option>
+                        <option value="10">10 days</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="col-sm-4 p-0 mt-2">
+                    <label for="brand">Starting bid</label>
+                    <div className="">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="brand"
+                        name="starting_bid"
+                        value={addProductFormData.starting_bid}
+                        onChange={handleaddProductChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-sm-4 p-0 mt-2">
+                    <label for="brand">Buy It Now(optional)</label>
+                    <div className="">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="brand"
+                        name="starting_bid"
+                        value={addProductFormData.starting_bid}
+                        onChange={handleaddProductChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-sm-4 p-0 mt-2">
+                    <label for="brand">Reserve price(optional)</label>
+                    <div className="">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="brand"
+                        name="starting_bid"
+                        value={addProductFormData.starting_bid}
+                        onChange={handleaddProductChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-sm-4 p-0 mt-2">
+                    <label for="brand">Quantity</label>
+                    <div className="">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="brand"
+                        name="available_quantity"
+                        disabled
+                        defaultValue={1}
+                        value={addProductFormData.price_format == 1 ? 1 : ""}
+                        onChange={handleaddProductChange}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : null}
+
+              {/* <div className="col-sm-4 p-0">
                 <label for="brand">Price</label>
                 <div className="">
                   <input
@@ -954,23 +1041,6 @@ const AddProduct = () => {
                 </div>
               </div>
               <div className="col-sm-4 p-0">
-                <label for="brand">Action duration</label>
-                <div className="">
-                  <select
-                    className="form-control"
-                    id="brand"
-                    name="auction_duration"
-                    value={addProductFormData.auction_duration}
-                    onChange={handleaddProductChange}
-                  >
-                    <option value="3">3 days</option>
-                    <option value="5">5 days</option>
-                    <option value="7">7 days</option>
-                    <option value="10">10 days</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-sm-4 p-0">
                 <label for="brand">Starting bid</label>
                 <div className="">
                   <input
@@ -982,7 +1052,7 @@ const AddProduct = () => {
                     onChange={handleaddProductChange}
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="listing-section">
