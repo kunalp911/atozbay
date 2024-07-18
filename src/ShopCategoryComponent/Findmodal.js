@@ -20,8 +20,6 @@ const Findmodal = ({ brands, title, setSelectedBrandss, open, setOpen }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrands, setSelectedBrands] = useState([]);
 
-  console.log("selectedBrands", selectedBrands, searchTerm);
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -45,7 +43,6 @@ const Findmodal = ({ brands, title, setSelectedBrandss, open, setOpen }) => {
       item.toLowerCase().includes(searchTerm.toLowerCase())
     ),
   }));
-  console.log("filteredBrands", filteredBrands);
 
   return (
     <div>
@@ -91,7 +88,6 @@ const Findmodal = ({ brands, title, setSelectedBrandss, open, setOpen }) => {
                   variant: "subtitle1",
                   fontWeight: "bold",
                 }}
-                
               />
             </ListItem>
           )}

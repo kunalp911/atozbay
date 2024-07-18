@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
   const navigate = useNavigate();
   const token = getToken();
-  console.log("first", token);
   const handleClose = () => {
     setItemOpen(false);
   };
@@ -86,7 +85,7 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
         <DialogActions sx={{ justifyContent: "center" }}>
           <button
             onClick={handleContenue}
-            className="btn btn-continesss" 
+            className="btn btn-continesss"
             // sx={{ width: "40%", borderRadius: "20px", color: "white",backgroundColor: "#3665f3" }}
           >
             Continue
@@ -97,5 +96,3 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
   );
 };
 export default ItemDetailmodal;
-
-

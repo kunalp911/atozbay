@@ -1,12 +1,27 @@
 .fill-btn {
   width: 231px;
   border-radius: 50px;
+  background-color: #3665f3;
 }
 .no-fill-btn {
   width: 231px;
   border-radius: 50px;
   background-color: white;
+  color: #3665f3;
+}
+.no-fill-btn:hover {
+  color: #fff;
 }
 .watch {
   background-color: #e8e8e8;
+}
+.helo {
+  color: #000;
+  font-weight: 500;
+  text-align: left;
+  font-size: 25px;
+}
+.watch-search {
+  border-radius: 50px;
+  background-color: #3665f3;
 }

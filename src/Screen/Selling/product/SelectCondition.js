@@ -45,8 +45,6 @@ const conditions = [
 
 const SelectCondition = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { fitName } = location?.state || {};
   const classes = useStyles();
   const [selected, setSelected] = React.useState(null);
   const [conditionName, setConditionName] = React.useState("");
@@ -64,7 +62,6 @@ const SelectCondition = () => {
     navigate("/add-product", {
       state: {
         condition: conditionName,
-        fitName: fitName ? fitName : "",
       },
     });
   };

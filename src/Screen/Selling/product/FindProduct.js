@@ -1,48 +1,90 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logos from "../../../Assets/image/bay.png";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 import Findmodal from "../../../ShopCategoryComponent/Findmodal";
 import ItemDetailmodal from "../../../ShopCategoryComponent/ItemDetailmodal";
 import "../selling.css";
-const brands = [
-  {
-    category: "Add custom value",
-    items: [ ],
-  },
-  {
-    category: "All results",
-    items: ["Nike", "Adidas", "Puma", "Reebok", "Vans"],
-  },
-];
-
-const colors = [
-  {
-    category: "Add custom value",
-    items: [ ],
-  },
-  {
-    category: "All results",
-    items: ["Red", "Blue", "Green"],
-  },
-];
+import { apiCallNew } from "../../../Network_Call/apiservices";
+import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 
 const FindProduct = () => {
   const navigate = useNavigate();
-  const [selectedBrandss, setSelectedBrandss] = useState([]);
-  const [selectColors, setSelectColors] = useState([]);
-  const [status, setStatus] = useState("");
-  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const ids = location.state?.cateid;
   const [itemOpen, setItemOpen] = React.useState(false);
- 
-  const handleOpen = () => {
-    setOpen(true);
-  }; 
+  const [attributesList, setAttributesList] = useState([]);
+  const [attributesValueList, setAttributesValueList] = useState({});
+  const [selectedAttributes, setSelectedAttributes] = useState({});
+  const [load, setload] = useState(false);
+
+  console.log("iddddd", ids);
+  useEffect(() => {
+    getAttributesList(ids);
+  }, []);
+
+  const handleAttributeChange = (event, attributeId) => {
+    const { value } = event.target;
+    setSelectedAttributes((prevState) => ({
+      ...prevState,
+      [attributeId]: value,
+    }));
+    getAttributesValueList(attributeId);
+  };
+
+  const handleAttributeFocus = async (attributeId) => {
+    await getAttributesValueList(attributeId);
+  };
+  const getAttributesList = (id) => {
+    apiCallNew("get", {}, ApiEndPoints.AttributesByCategory + id)
+      .then((response) => {
+        if (response.success) {
+          setAttributesList(response.result);
+          const initialSelectedAttributes = response.result.reduce(
+            (acc, item) => {
+              acc[item.id] = "";
+              return acc;
+            },
+            {}
+          );
+          setSelectedAttributes(initialSelectedAttributes);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getAttributesValueList = (id) => {
+    apiCallNew("get", {}, ApiEndPoints.AttributesValueList + id)
+      .then((response) => {
+        if (response.success) {
+          setAttributesValueList((prevState) => ({
+            ...prevState,
+            [id]: response.result,
+          }));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div>
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <ItemDetailmodal itemOpen={itemOpen} setItemOpen={setItemOpen} />
-      <Findmodal
+      {/* <Findmodal
         brands={status == "Brand" ? brands : colors}
         title={status == "Brand" ? "Brands" : "Colors"}
         setSelectedBrandss={
@@ -50,8 +92,8 @@ const FindProduct = () => {
         }
         open={open}
         setOpen={setOpen}
-      />
-      <div className="container col-12 d-flex justify-content-between border-bottom">
+      /> */}
+      <div className=" col-12 d-flex justify-content-between border-bottom">
         <ArrowBackIosIcon
           onClick={() => navigate("/selling/list-item")}
           style={{ cursor: "pointer", margin: "20px 0px" }}
@@ -71,7 +113,36 @@ const FindProduct = () => {
             <h4> Find a match</h4>
             <p>Clothing, Shoes & Accessories Men Men's Shoes Athletic Shoes</p>
             <p className="border-top">Add details to sharpen results</p>
-            <div className="row">
+            {attributesList?.map((item, index) => (
+              <div className="form-group row" key={index}>
+                <label
+                  htmlFor={`attribute-${item.id}`}
+                  className="col-sm-3 col-form-label"
+                >
+                  {item.attribute_name}
+                </label>
+                <div className="col-sm-9">
+                  <select
+                    className="form-control"
+                    name={item.attribute_name}
+                    id={`attribute-${item.id}`}
+                    value={selectedAttributes[item.id] || ""}
+                    onChange={(e) => handleAttributeChange(e, item.id)}
+                    onFocus={() => handleAttributeFocus(item.id)}
+                  >
+                    <option value="" hidden>
+                      Select {item.attribute_name}
+                    </option>
+                    {attributesValueList[item.id]?.map((attrValue, idx) => (
+                      <option key={idx} value={attrValue.id}>
+                        {attrValue.attr_val_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ))}
+            {/* <div className="row">
               <p
                 className="col-6 border p-2 finddroptext"
                 onClick={() => {
@@ -91,8 +162,8 @@ const FindProduct = () => {
               >
                 Color :{selectColors} <i className="fa fa-angle-down ml-2"></i>
               </p>
-            </div>
-            <div className="row">
+            </div> */}
+            {/* <div className="row">
               <p className="col-6 border p-2 finddroptext">
                 Color :{selectedBrandss}{" "}
                 <i className="fa fa-angle-down ml-2"></i>
@@ -111,7 +182,7 @@ const FindProduct = () => {
                 Size :{selectedBrandss}{" "}
                 <i className="fa fa-angle-down ml-2"></i>
               </p>
-            </div>
+            </div> */}
           </div>
           <div
             className="col-md-8 scrollssec"
@@ -391,4 +462,21 @@ const FindProduct = () => {
   );
 };
 
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
+};
 export default FindProduct;

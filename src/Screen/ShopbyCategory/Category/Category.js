@@ -27,8 +27,7 @@ const Category = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
- 
- 
+
   useEffect(() => {
     if (id) {
       getSubCategories(id);
@@ -74,7 +73,6 @@ const Category = () => {
       console.log(error);
     }
   };
-
   const filterProductListBySubCategory = (subcategoryId) => {
     const filteredProducts = shopProductLists.filter(
       (product) => product.category_id === subcategoryId
@@ -130,10 +128,7 @@ const Category = () => {
                           alt={card.title}
                         />
                         <CardContent>
-                          <p className="font-weight-bold mt-2">
-                            {" "}
-                            {card?.name}
-                          </p>
+                          <p className="font-weight-bold mt-2"> {card?.name}</p>
                           <Typography variant="body1" color="text.primary">
                             {card?.condition_description}
                           </Typography>
