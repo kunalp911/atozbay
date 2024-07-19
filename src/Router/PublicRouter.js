@@ -51,7 +51,7 @@ const PublicRouter = () => {
         <Route path="/account-setting" element={<PersonalInfo />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermandServices />} />
-        <Route path="/product" element={<Product />} />
+        <Route path="/product/:id" element={<Product />} />
         <Route path="/contact-info" element={<ContactInfo />} />
         <Route path="/add-to-cart" element={<AddtoCart />} />
         <Route path="/add-product" element={<AddProduct />} />

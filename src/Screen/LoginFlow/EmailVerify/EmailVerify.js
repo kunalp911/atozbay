@@ -15,7 +15,6 @@ const EmailVerify = () => {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
 
-  console.log("dddddddtttt", data);
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
@@ -73,7 +72,7 @@ const EmailVerify = () => {
                 ></i>
               </Link>
               <div className="card-body p-4 p-sm-5">
-              <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center">
                   <Link to="/">
                     <img
                       src={logos}

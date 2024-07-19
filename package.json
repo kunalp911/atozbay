@@ -21,17 +21,17 @@
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
+    "react-image-magnify": "^2.7.4",
+    "react-medium-image-zoom": "^5.2.8",
     "react-otp-input": "^3.1.1",
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
     "react-slideshow-image": "^4.3.1",
     "react-toastify": "^10.0.5",
+    "sweetalert2": "^11.12.2",
     "web-vitals": "^2.1.4",
-    "yup": "^1.4.0",
-    "react-image-magnify": "^2.7.4",
-    "react-medium-image-zoom": "^5.2.8"
-
+    "yup": "^1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

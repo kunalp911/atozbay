@@ -40,6 +40,7 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const conditionName = location.state?.condition;
+  const updateProduct = location.state?.product;
   const [colorList, setColorList] = React.useState([]);
   const [brandList, setBrandList] = React.useState([]);
   const [isPhoto, setIsPhoto] = useState(true);
@@ -72,9 +73,75 @@ const AddProduct = () => {
     color_id: 4,
     category_id: "",
     short_desc: "short description",
+    shipping_in_days: "",
   });
 
+  console.log("images", images);
+  useEffect(() => {
+    if (updateProduct) {
+      setAddProductFormData({
+        name: updateProduct.name,
+        sku: updateProduct.sku,
+        condition_description: updateProduct.condition_description,
+        description: updateProduct.description,
+        price: updateProduct.product_prices.price,
+        price_format: updateProduct.product_prices.price_format,
+        auction_duration: updateProduct.product_prices.auction_duration,
+        available_quantity: updateProduct.product_prices.available_quantity,
+        starting_bid: updateProduct.product_prices.starting_bid,
+        brand_id: updateProduct.brand_id,
+        color_id: updateProduct.color_id || 4,
+        category_id: updateProduct.category_id,
+        short_desc: updateProduct.short_desc,
+        shipping_in_days: updateProduct.product_shipping.shipping_in_days,
+      });
+
+      // Initialize attributes
+      const initialSelectedAttributes = updateProduct.product_attributes.reduce(
+        (acc, item) => {
+          acc[item.product_attr_id] = item.product_attr_value_id;
+          return acc;
+        },
+        {}
+      );
+      console.log("initialSelectedAttributes", initialSelectedAttributes);
+      setSelectedAttributes(initialSelectedAttributes);
+      setImages(updateProduct.product_images);
+      getAttributesList(updateProduct.category_id);
+    }
+  }, [updateProduct]);
+
+  console.log("updateProduct", updateProduct);
   console.log("addProductFormData", addProductFormData);
+  console.log("attributesList", attributesList);
+  console.log("attributesValueList", attributesValueList);
+
+  const handleUpdateProduct = async (e) => {
+    e.preventDefault();
+    const attribute_ids = [];
+    const attribute_value_ids = [];
+
+    attributesList?.forEach((attribute) => {
+      const attributeId = attribute.id;
+      const attributeValueId = selectedAttributes[attributeId];
+
+      if (attributeValueId) {
+        attribute_ids.push(attributeId);
+        attribute_value_ids.push(attributeValueId);
+      }
+    });
+
+    const payload = {
+      attribute_id: attribute_ids,
+      attribute_value_id: attribute_value_ids,
+      item_condition: conditionName, // Adjust this logic if needed
+      video: video || null,
+      images: images,
+      ...addProductFormData,
+    };
+
+    console.log("payloadupdate", payload);
+  };
 
   useEffect(() => {
     setAddProductFormData((prevState) => ({
@@ -84,9 +151,24 @@ const AddProduct = () => {
           ? addProductFormData?.available_quantity
           : addProductFormData?.price_format == 1
           ? 1
-          : "", // default value when price_format is not 2
+          : "",
     }));
   }, [addProductFormData.price_format]);
+
+  useEffect(() => {
+    attributesList?.forEach((item) => {
+      getAttributesValueList(item.product_attr_id);
+    });
+  }, [attributesList]);
+
+  // useEffect(() => {
+  //   if (updateProduct) {
+  //     attributesList?.forEach((item) => {
+  //       getAttributesValueList(item.id);
+  //     });
+  //   }
+  // }, [attributesList]);
+
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
@@ -226,15 +308,18 @@ const AddProduct = () => {
     getAttributesValueList(attributeId);
   };
 
-  const handleAttributeFocus = (attributeId) => {
-    getAttributesValueList(attributeId);
-  };
+  // const handleAttributeFocus = (attributeId) => {
+  //   getAttributesValueList(attributeId);
+  // };
 
   const getAttributesList = (id) => {
     apiCallNew("get", {}, ApiEndPoints.AttributesByCategory + id)
       .then((response) => {
         if (response.success) {
           setAttributesList(response.result);
+          response.result.forEach((attribute) => {
+            getAttributesValueList(attribute.id);
+          });
           const initialSelectedAttributes = response.result.reduce(
             (acc, item) => {
               acc[item.id] = "";
@@ -327,7 +412,7 @@ const AddProduct = () => {
     const attribute_ids = [];
     const attribute_value_ids = [];
 
-    attributesList.forEach((attribute, index) => {
+    attributesList?.forEach((attribute, index) => {
       const attributeId = attribute.id;
       const attributeValueId = selectedAttributes[attributeId];
 
@@ -336,6 +421,7 @@ const AddProduct = () => {
         attribute_value_ids.push(attributeValueId);
       }
     });
+
     const payload = {
       attribute_id: attribute_ids,
       attribute_value_id: attribute_value_ids,
@@ -385,7 +471,7 @@ const AddProduct = () => {
       </div>
       <div className="container" style={{ padding: "10px 40px" }}>
         <div className="d-flex justify-content-between">
-          <h4>Complete your listing</h4>
+          <h4 onClick={handleUpdateProduct}>Complete your listing</h4>
         </div>
         <section className="photos-video mt-2">
           <h6 style={{ fontWeight: "bold" }}>PHOTOS OR VIDEO</h6>
@@ -401,79 +487,57 @@ const AddProduct = () => {
               </div>
               <div style={boxStyle} onClick={() => setIsPhoto(false)}>
                 <VideoLibraryIcon />
-                <p>Upload addProductFormData</p>
+                <p>Upload video</p>
               </div>
             </div>
           </div>
           <div>
-            {/* {images.length > 0 && <h6>Uploaded Images</h6>}
+            {images?.length > 0 && <h6 className="mt-3">Uploaded Images</h6>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {images.map((file, index) => (
-                <>
-                  <img
-                    key={index}
-                    src={file.preview}
-                    alt={`img-${index}`}
-                    style={mediaPreviewStyle}
-                  />
-                  <i
-                    className="fa fa-times"
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      setImages(images.filter((_, i) => i !== index))
-                    }
-                  ></i>
-                </>
-              ))}
+              {updateProduct
+                ? images?.map((file, index) => (
+                    <>
+                      <img
+                        key={index}
+                        src={file.product_image}
+                        alt={`img-${index}`}
+                        style={mediaPreviewStyle}
+                      />
+                      <i
+                        className="fa fa-times"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          URL.revokeObjectURL(file.preview);
+                          setImages(images.filter((_, i) => i !== index));
+                        }}
+                      ></i>
+                    </>
+                  ))
+                : images?.map((file, index) => (
+                    <>
+                      <img
+                        key={index}
+                        src={file.preview}
+                        alt={`img-${index}`}
+                        style={mediaPreviewStyle}
+                      />
+                      <i
+                        className="fa fa-times"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          URL.revokeObjectURL(file.preview);
+                          setImages(images.filter((_, i) => i !== index));
+                        }}
+                      ></i>
+                    </>
+                  ))}
             </div>
-            {videos.length > 0 && <h6>Uploaded Videos</h6>}
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {videos.slice(0, 1).map((file, index) => (
-                <>
-                  <video
-                    key={index}
-                    src={file.preview}
-                    controls
-                    width="200"
-                    style={{ margin: "10px" }}
-                  />
-                  <i
-                    className="fa fa-times"
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      setVideos(videos.filter((_, i) => i !== index))
-                    }
-                  ></i>
-                </>
-              ))} */}
-            {images.length > 0 && <h6>Uploaded Images</h6>}
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {images.map((file, index) => (
-                <>
-                  <img
-                    key={index}
-                    src={file.preview}
-                    alt={`img-${index}`}
-                    style={mediaPreviewStyle}
-                  />
-                  <i
-                    className="fa fa-times"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      URL.revokeObjectURL(file.preview);
-                      setImages(images.filter((_, i) => i !== index));
-                    }}
-                  ></i>
-                </>
-              ))}
-            </div>
-
             {video && <h6>Uploaded Video</h6>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {video && (
                 <>
                   <video
-                    src={video.preview}
+                    src={video?.preview}
                     controls
                     width="200"
                     style={{ margin: "10px" }}
@@ -531,17 +595,6 @@ const AddProduct = () => {
                 <EditIcon />
                 Edit
               </p>
-              {/* <label for="item-category">Category</label>
-              <select className="form-control" id="item-category">
-                <option value={""} hidden>
-                  select category
-                </option>
-                {categoriesList?.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.category_name}
-                  </option>
-                ))}
-              </select> */}
             </div>
           </div>
           <div className="listing-section">
@@ -590,20 +643,54 @@ const AddProduct = () => {
                     id={`attribute-${item.id}`}
                     value={selectedAttributes[item.id] || ""}
                     onChange={(e) => handleAttributeChange(e, item.id)}
-                    onFocus={() => handleAttributeFocus(item.id)}
                   >
                     <option value="" hidden>
-                      Select {item.attribute_name}
+                      Select {item?.attribute_name}
                     </option>
-                    {attributesValueList[item.id]?.map((attrValue, idx) => (
-                      <option key={idx} value={attrValue.id}>
-                        {attrValue.attr_val_name}
-                      </option>
-                    ))}
+                    {Array.isArray(attributesValueList[item.id]) &&
+                      attributesValueList[item.id].map((attrValue, idx) => (
+                        <option key={idx} value={attrValue.id}>
+                          {attrValue.attr_val_name}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
             ))}
+            {/* {attributesList?.map((item, index) => (
+              <div className="form-group row" key={index}>
+                <label
+                  htmlFor={`attribute-${item.id}`}
+                  className="col-sm-2 col-form-label"
+                >
+                  {item.attribute_name}
+                </label>
+                <div className="col-sm-10">
+                  <select
+                    className="form-control"
+                    name={item.attribute_name}
+                    id={`attribute-${item.id}`}
+                    value={selectedAttributes[item.id] || ""}
+                    onChange={(e) => handleAttributeChange(e, item.id)}
+                  >
+                    <option value="" hidden>
+                      Select {item?.attribute_name}
+                    </option>
+                    {Array.isArray(attributesValueList[item.id]) &&
+                      attributesValueList[item.id].map((attrValue, idx) => (
+                        <option key={idx} value={attrValue.id}>
+                          {attrValue.attr_val_name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            ))} */}
+            {/*  {attributesValueList[item.id]?.map((attrValue, idx) => (
+                      <option key={idx} value={attrValue.id}>
+                        {attrValue.attr_val_name}
+                      </option>
+                    ))}*/}
             <Dialog
               open={open}
               onClose={handleClose}
@@ -642,73 +729,6 @@ const AddProduct = () => {
                 <List>{renderContent()}</List>
               </DialogContent>
             </Dialog>
-
-            {/* <div className="form-group row">
-              <label for="card-name" className="col-sm-2 col-form-label">
-                Card Name
-              </label>
-              <div className="col-sm-10">
-                <input type="text" className="form-control" id="card-name" />
-              </div>
-            </div>
-            <div className="form-group row">
-              <label for="UPC" className="col-sm-2 col-form-label">
-                UPC
-              </label>
-              <div className="col-sm-10">
-                <input type="text" className="form-control" id="UPC" />
-              </div>
-            </div>
-            <div className="form-group row">
-              <label for="quantity" className="col-sm-2 col-form-label">
-                Available quantity
-              </label>
-              <div className="col-sm-10">
-                <select className="form-control" id="quantity">
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                </select>
-              </div>
-            </div>
-            <div className="mt-2 mb-2">
-              <h6>Additional (optional)</h6>
-              <p className="text-muted">
-                Buyers also search for these details.
-              </p>
-            </div>
-            <div className="form-group row">
-              <label for="age-level" className="col-sm-2 col-form-label">
-                Age Level
-              </label>
-              <div className="col-sm-10">
-                <input type="text" className="form-control" id="age-level" />
-              </div>
-            </div>
-            <div className="form-group row">
-              <label for="features" className="col-sm-2 col-form-label">
-                Features
-              </label>
-              <div className="col-sm-10">
-                <input type="text" className="form-control" id="features" />
-              </div>
-            </div>
-            <div className="form-group row">
-              <label for="brand" className="col-sm-2 col-form-label">
-                Color
-              </label>
-              <div className="col-sm-10">
-                <select className="form-control" id="brand">
-                  <option value="" hidden>
-                    select color
-                  </option>
-                  {colorList?.map((item, index) => (
-                    <option key={index}>{item?.color_name}</option>
-                  ))}
-                </select>
-              </div>
-            </div> */}
             <div className="form-group">
               <div className="mt-5">
                 <p onClick={handleOpensss}>
@@ -859,7 +879,12 @@ const AddProduct = () => {
                       Example: 2017
                     </div>
                     <div className="d-flex justify-content-end">
-                      <button className="btn btn-closess">Close</button>
+                      <button
+                        className="btn btn-closess"
+                        onClick={handleClosesss}
+                      >
+                        Close
+                      </button>
                       <button type="submit" className="btn btn-savss ms-3">
                         Save
                       </button>
@@ -903,10 +928,6 @@ const AddProduct = () => {
                     <option value="1">Auction</option>
                     <option value="2">Buy it now</option>
                   </select>
-                  {console.log(
-                    "ddProductFormData.price_format",
-                    addProductFormData.price_format
-                  )}
                 </div>
               </div>
               {addProductFormData.price_format == 2 ? (
@@ -950,6 +971,7 @@ const AddProduct = () => {
                         value={addProductFormData.auction_duration}
                         onChange={handleaddProductChange}
                       >
+                        <option value="" hidden></option>
                         <option value="3">3 days</option>
                         <option value="5">5 days</option>
                         <option value="7">7 days</option>
@@ -977,8 +999,8 @@ const AddProduct = () => {
                         type="text"
                         className="form-control"
                         id="brand"
-                        name="starting_bid"
-                        value={addProductFormData.starting_bid}
+                        name="buy_it_now"
+                        value={addProductFormData.buy_it_now}
                         onChange={handleaddProductChange}
                       />
                     </div>
@@ -990,8 +1012,8 @@ const AddProduct = () => {
                         type="text"
                         className="form-control"
                         id="brand"
-                        name="starting_bid"
-                        value={addProductFormData.starting_bid}
+                        name="reserve_price"
+                        value={addProductFormData.reserve_price}
                         onChange={handleaddProductChange}
                       />
                     </div>
@@ -1013,109 +1035,37 @@ const AddProduct = () => {
                   </div>
                 </>
               ) : null}
-
-              {/* <div className="col-sm-4 p-0">
-                <label for="brand">Price</label>
-                <div className="">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="brand"
-                    name="price"
-                    value={addProductFormData.price}
-                    onChange={handleaddProductChange}
-                  />
-                </div>
-              </div>
-              <div className="col-sm-4 p-0">
-                <label for="brand">Available Quantity</label>
-                <div className="">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="brand"
-                    name="available_quantity"
-                    value={addProductFormData.available_quantity}
-                    onChange={handleaddProductChange}
-                  />
-                </div>
-              </div>
-              <div className="col-sm-4 p-0">
-                <label for="brand">Starting bid</label>
-                <div className="">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="brand"
-                    name="starting_bid"
-                    value={addProductFormData.starting_bid}
-                    onChange={handleaddProductChange}
-                  />
-                </div>
-              </div> */}
             </div>
           </div>
-          <div className="listing-section">
-            <div className="section-header">SHIPPING</div>
-            <div className="form-group col-sm-6 p-0">
-              <label for="shipping-service">Shipping method</label>
-              <select className="form-control" id="shipping-service">
-                <option>Select Shipping Service</option>
-                <option>Shipping Service</option>
+          <div className="col-sm-4 p-0 mt-2">
+            <label for="brand">Shipping in days</label>
+            <div className="">
+              <select
+                className="form-control"
+                id="brand"
+                name="shipping_in_days"
+                value={addProductFormData.shipping_in_days}
+                onChange={handleaddProductChange}
+              >
+                <option value="" hidden></option>
+                <option value="2">2 days</option>
+                <option value="5">5 days</option>
+                <option value="7">7 days</option>
+                <option value="10">10 days</option>
+                <option value="15">15 days</option>
               </select>
             </div>
-            <div className="form-group">
-              <div className="col-sm-12 p-0">
-                <label for="shipping-fee">Shipping fee</label>
-                <div className="input-group mb-3">
-                  <input
-                    type="text"
-                    className="form-control col-sm-4"
-                    id="shipping-fee"
-                  />
-                  <input
-                    type="text"
-                    className="form-control ms-2 col-sm-3"
-                    id="shipping-fee"
-                  />
-                  <input
-                    type="text"
-                    className="form-control ms-2 col-sm-3"
-                    id="shipping-fee"
-                  />
-                  <input
-                    type="text"
-                    className="form-control ms-2 col-sm-3"
-                    id="shipping-fee"
-                  />
-                  <input
-                    type="text"
-                    className="form-control ms-2 col-sm-3"
-                    id="shipping-fee"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
-          {/* <div className="listing-section">
-            <div className="section-header">Preferences</div>
-            <div className="form-group border p-3">
-              <div className="d-flex justify-content-between">
-                <p>Your settings</p>
-                <p>Edit</p>
-              </div>
-            </div>
-          </div> */}
-          <div className="listing-section ">
+          <div className="listing-section mt-4">
             <div className="container-custom">
               <h3>List it for free.</h3>
               <p>
                 A <a href="#">final value fee</a> applies when your item sells.
               </p>
-
               <button className="btn btn-customs" onClick={handleAddProduct}>
                 List it
               </button>
+              {/* <button className="btn btn-customs">Update it</button> */}
               <button className="btn btn-customss">Save for later</button>
               <button className="btn btn-customss">Preview</button>
             </div>
@@ -1144,8 +1094,8 @@ const boxStyle = {
 };
 
 const mediaPreviewStyle = {
-  maxWidth: "100px",
-  maxHeight: "100px",
+  maxWidth: "200px",
+  maxHeight: "170px",
   margin: "10px",
 };
 

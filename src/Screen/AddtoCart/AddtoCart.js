@@ -255,7 +255,7 @@ const AddtoCart = () => {
                     type="button"
                     className="btn btn-lg btn-block checkout-btn"
                   >
-                   Go to checkout
+                    Go to checkout
                   </button>
                 </div>
               </div>

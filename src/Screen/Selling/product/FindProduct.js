@@ -18,17 +18,24 @@ import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 const FindProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const ids = location.state?.cateid;
+  const ids = location.state?.cateId;
   const [itemOpen, setItemOpen] = React.useState(false);
   const [attributesList, setAttributesList] = useState([]);
   const [attributesValueList, setAttributesValueList] = useState({});
   const [selectedAttributes, setSelectedAttributes] = useState({});
+  const [shopProductLists, setShopProductLists] = React.useState([]);
   const [load, setload] = useState(false);
-
-  console.log("iddddd", ids);
+  const [proId, setProId] = useState(null);
   useEffect(() => {
     getAttributesList(ids);
+    getShopProductList();
   }, []);
+
+  useEffect(() => {
+    attributesList?.forEach((item) => {
+      getAttributesValueList(item.id);
+    });
+  }, [attributesList]);
 
   const handleAttributeChange = (event, attributeId) => {
     const { value } = event.target;
@@ -39,9 +46,10 @@ const FindProduct = () => {
     getAttributesValueList(attributeId);
   };
 
-  const handleAttributeFocus = async (attributeId) => {
-    await getAttributesValueList(attributeId);
-  };
+  // const handleAttributeFocus = async (attributeId) => {
+  //   await getAttributesValueList(attributeId);
+  // };
+
   const getAttributesList = (id) => {
     apiCallNew("get", {}, ApiEndPoints.AttributesByCategory + id)
       .then((response) => {
@@ -76,6 +84,22 @@ const FindProduct = () => {
       });
   };
 
+  const getShopProductList = () => {
+    const payload = {
+      page: 0,
+    };
+    try {
+      apiCallNew("post", payload, ApiEndPoints.ShopProductList).then(
+        (response) => {
+          if (response.success) {
+            setShopProductLists(response.result);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       {load && (
@@ -83,7 +107,11 @@ const FindProduct = () => {
           <CircularProgress style={styles.loader} />
         </div>
       )}
-      <ItemDetailmodal itemOpen={itemOpen} setItemOpen={setItemOpen} />
+      <ItemDetailmodal
+        itemOpen={itemOpen}
+        setItemOpen={setItemOpen}
+        id={proId}
+      />
       {/* <Findmodal
         brands={status == "Brand" ? brands : colors}
         title={status == "Brand" ? "Brands" : "Colors"}
@@ -128,7 +156,7 @@ const FindProduct = () => {
                     id={`attribute-${item.id}`}
                     value={selectedAttributes[item.id] || ""}
                     onChange={(e) => handleAttributeChange(e, item.id)}
-                    onFocus={() => handleAttributeFocus(item.id)}
+                    // onFocus={() => handleAttributeFocus(item.id)}
                   >
                     <option value="" hidden>
                       Select {item.attribute_name}
@@ -189,7 +217,56 @@ const FindProduct = () => {
             style={{ height: "70vh", overflow: "auto" }}
           >
             <p>Top picks from the product library</p>
-            <Card
+            {shopProductLists?.map((item, index) => (
+              <Card
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  alignItems: "center",
+                  m: 2,
+                }}
+                onClick={() => {
+                  setItemOpen(true);
+                  setProId(item?.id);
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  sx={{
+                    width: { xs: "100%", md: 150 },
+                    height: "150px",
+                    objectFit: "contain",
+                    marginLeft: "5px",
+                  }}
+                  image={item?.product_images[0]?.product_image || logos}
+                  alt="Product Image"
+                />
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    textAlign: { xs: "left", md: "left" },
+                    ml: { md: 2 },
+                  }}
+                >
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    {item?.name}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {item?.product_attributes?.map((item) => (
+                      <>
+                        <strong>{item?.attribute_name}:</strong>
+                        {item?.product_attr_value_id}
+                        <br />
+                      </>
+                    ))}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* <Card
               sx={{
                 display: "flex",
                 flexDirection: { xs: "column", md: "row" },
@@ -200,7 +277,48 @@ const FindProduct = () => {
             >
               <CardMedia
                 component="img"
-                sx={{ width: { xs: "100%", md: 150 }, height: "auto" }}
+                sx={{
+                  width: { xs: "100%", md: 150 },
+                  height: "150px",
+                  objectFit: "contain",
+                }}
+                image="https://i.ebayimg.com/00/s/MzYyWDczNw==/z/3LYAAOSwR7Rmb853/$_57.JPG"
+                alt="Product Image"
+              />
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  textAlign: { xs: "left", md: "left" },
+                  ml: { md: 2 },
+                }}
+              >
+                <Typography sx={{ fontWeight: "bold" }}>
+                  Size 10 - Nike Kendrick Lamar x Cortez Basic Slip House Shoes
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  <strong>Brand:</strong> Nike <br />
+                  <strong>Shoes Size:</strong> 10 <br />
+                  <strong>Style Code:</strong> AV2950-100
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                alignItems: "center",
+                m: 2,
+              }}
+            >
+              <CardMedia
+                component="img"
+                sx={{
+                  width: { xs: "100%", md: 150 },
+                  height: "150px",
+                  objectFit: "contain",
+                }}
                 image="https://i.ebayimg.com/images/g/FtMAAOSwvK1jl6Zg/s-l1600.png"
                 alt="Product Image"
               />
@@ -230,7 +348,6 @@ const FindProduct = () => {
                 alignItems: "center",
                 m: 2,
               }}
-              onClick={() => setItemOpen(true)}
             >
               <CardMedia
                 component="img"
@@ -301,39 +418,6 @@ const FindProduct = () => {
               <CardMedia
                 component="img"
                 sx={{ width: { xs: "100%", md: 150 }, height: "auto" }}
-                image="https://i.ebayimg.com/00/s/MzYyWDczNw==/z/3LYAAOSwR7Rmb853/$_57.JPG"
-                alt="Product Image"
-              />
-              <CardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  textAlign: { xs: "left", md: "left" },
-                  ml: { md: 2 },
-                }}
-              >
-                <Typography sx={{ fontWeight: "bold" }}>
-                  Size 10 - Nike Kendrick Lamar x Cortez Basic Slip House Shoes
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  <strong>Brand:</strong> Nike <br />
-                  <strong>Shoes Size:</strong> 10 <br />
-                  <strong>Style Code:</strong> AV2950-100
-                </Typography>
-              </CardContent>
-            </Card>
-            <Card
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                alignItems: "center",
-                m: 2,
-              }}
-            >
-              <CardMedia
-                component="img"
-                sx={{ width: { xs: "100%", md: 150 }, height: "auto" }}
                 image="https://i.ebayimg.com/images/g/FtMAAOSwvK1jl6Zg/s-l1600.png"
                 alt="Product Image"
               />
@@ -421,40 +505,7 @@ const FindProduct = () => {
                   <strong>Style Code:</strong> AV2950-100
                 </Typography>
               </CardContent>
-            </Card>
-            <Card
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                alignItems: "center",
-                m: 2,
-              }}
-            >
-              <CardMedia
-                component="img"
-                sx={{ width: { xs: "100%", md: 150 }, height: "auto" }}
-                image="https://i.ebayimg.com/images/g/FtMAAOSwvK1jl6Zg/s-l1600.png"
-                alt="Product Image"
-              />
-              <CardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  textAlign: { xs: "left", md: "left" },
-                  ml: { md: 2 },
-                }}
-              >
-                <Typography sx={{ fontWeight: "bold" }}>
-                  Size 10 - Nike Kendrick Lamar x Cortez Basic Slip House Shoes
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  <strong>Brand:</strong> Nike <br />
-                  <strong>Shoes Size:</strong> 10 <br />
-                  <strong>Style Code:</strong> AV2950-100
-                </Typography>
-              </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>

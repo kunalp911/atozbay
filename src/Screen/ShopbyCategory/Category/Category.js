@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "../../../Component/Header/Header";
 import Topheader from "../../../ShopCategoryComponent/Topheader";
 import Footer from "../../../Component/Footer/Footer";
@@ -18,22 +18,24 @@ import {
 
 const Category = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const location = useLocation();
   const categoryName = location?.state?.category?.category_name;
   const [subCategoriesList, setSubCategoriesList] = React.useState([]);
   const [shopProductLists, setShopProductLists] = React.useState([]);
   const [filteredProductLists, setFilteredProductLists] = useState([]);
   const [title, setTitle] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const pages = page - 1;
+  const itemsPerPage = 20;
 
   useEffect(() => {
     if (id) {
       getSubCategories(id);
       getShopProductList();
     }
-  }, [id, currentPage]);
+  }, [id, page]);
 
   const getSubCategoriesId = (item) => {
     filterProductListBySubCategory(item?.id);
@@ -52,12 +54,16 @@ const Category = () => {
       console.log(error);
     }
   };
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
+
+  const handleChange = (event, value) => {
+    setPage(value);
+    getShopProductList();
   };
+  const currentItems = filteredProductLists?.slice(page - 1);
+
   const getShopProductList = () => {
     const payload = {
-      page: currentPage,
+      page: pages,
     };
     try {
       apiCallNew("post", payload, ApiEndPoints.ShopProductList).then(
@@ -65,7 +71,7 @@ const Category = () => {
           if (response.success) {
             setShopProductLists(response.result);
             setFilteredProductLists(response.result);
-            setTotalPages(Math.ceil(response.result.length / itemsPerPage));
+            setCount(response.product_count);
           }
         }
       );
@@ -73,8 +79,9 @@ const Category = () => {
       console.log(error);
     }
   };
+
   const filterProductListBySubCategory = (subcategoryId) => {
-    const filteredProducts = shopProductLists.filter(
+    const filteredProducts = shopProductLists?.filter(
       (product) => product.category_id === subcategoryId
     );
     setFilteredProductLists(filteredProducts);
@@ -113,10 +120,12 @@ const Category = () => {
             </div>
             <div className="mt-3">
               <div className="row mx-0 mt-0">
-                {filteredProductLists?.map((card, index) => (
+                {currentItems?.map((card, index) => (
                   <div className="col-md-3 mb-4" key={index}>
                     <Card sx={{ maxWidth: 345 }}>
-                      <CardActionArea>
+                      <CardActionArea
+                        onClick={() => navigate(`/product/${card?.id}`)}
+                      >
                         <CardMedia
                           component="img"
                           sx={{ height: 200, objectFit: "contain", p: 2 }}
@@ -144,9 +153,9 @@ const Category = () => {
               <Box display="flex" justifyContent="center" mt={4}>
                 {filteredProductLists?.length > 0 && (
                   <Pagination
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={handlePageChange}
+                    count={Math.ceil(count / itemsPerPage)}
+                    page={page}
+                    onChange={handleChange}
                   />
                 )}
               </Box>

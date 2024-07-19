@@ -1,22 +1,57 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./product.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
 import Zoom from "react-medium-image-zoom";
 import ReactImageMagnify from "react-image-magnify";
-
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import "react-medium-image-zoom/dist/styles.css";
+import { Link, useParams } from "react-router-dom";
+import { apiCallNew } from "../../Network_Call/apiservices";
+import ApiEndPoints from "../../Network_Call/ApiEndPoint";
+import { CircularProgress } from "@mui/material";
 const Product = () => {
-  const images = [
-    "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
-    " https://i.ebayimg.com/images/g/1GEAAOSwt69jPeFq/s-l1600.webp",
-    "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
-    "https://i.ebayimg.com/images/g/azkAAOSwQGFmjs8k/s-l960.webp",
-    "https://i.ebayimg.com/images/g/azkAAOSwQGFmjs8k/s-l960.webp",
-  ];
+  const { id } = useParams();
+  const [productDetails, setProductLists] = React.useState({});
+  const [load, setload] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      getProductDetails(id);
+    }
+  }, [id]);
+  const getProductDetails = (id) => {
+    try {
+      setload(true);
+      apiCallNew("get", {}, ApiEndPoints.ProductShopDetail + id).then(
+        (response) => {
+          if (response.success) {
+            setProductLists(response.result);
+            setload(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
   return (
     <div>
       <Header />
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
+      <Link to={`/category/${productDetails?.category_id}`}>
+        <div className="p-2 d-flex" style={{ cursor: "pointer" }}>
+          <ChevronLeftIcon />
+          <p className="">
+            <u>Back to previous page</u>
+          </p>
+        </div>
+      </Link>
       <div className="container mt-4 mb-4">
         <div className="row justify-content-center">
           <div
@@ -25,16 +60,16 @@ const Product = () => {
               backgroundColor: "#f8f9fa",
             }}
           >
-            <div className="viewed-info badge badge-danger mb-2">
+            {/* <div className="viewed-info badge badge-danger mb-2">
               6 VIEWED IN THE LAST 24 HOURS
-            </div>
+            </div> */}
             <div
               id="productCarousel"
               className="carousel slide main-image-container"
               data-ride="carousel"
             >
               <div className="carousel-inner">
-                {images.map((src, index) => (
+                {productDetails?.product_images?.map((src, index) => (
                   <div
                     key={index}
                     className={`carousel-item ${index === 0 ? "active" : ""}`}
@@ -43,7 +78,7 @@ const Product = () => {
                       <img
                         className="c"
                         alt={`Product Image ${index + 1}`}
-                        src={src}
+                        src={src?.product_image}
                         style={{
                           width: "100%",
                           height: "500px",
@@ -84,10 +119,10 @@ const Product = () => {
               </a>
             </div>
             <div className="d-flex justify-content-center mt-2">
-              {images.map((src, index) => (
+              {productDetails?.product_images?.map((src, index) => (
                 <img
                   key={index}
-                  src={src}
+                  src={src?.product_image}
                   className="img-thumbnail mx-1"
                   style={{ width: "50px", height: "50px", cursor: "pointer" }}
                   alt={`Thumbnail ${index + 1}`}
@@ -98,12 +133,10 @@ const Product = () => {
             </div>
           </div>
           <div className="col-lg-6 col-md-12">
-            <h1 className="product-titlee">
-              Apple iPad Pro 3rd Gen. 64GB, Wi-Fi, 12.9 in - Silver
-            </h1>
+            <h1 className="product-titlee">{productDetails?.name}</h1>
             <div className="seller-infoe mb-3">
               <span className="seller-name d-block font-weight-bold">
-                KARTECH LLC
+                {productDetails?.description}
               </span>
               <span className="seller-rating text-success">99.8% positive</span>
               <a href="#" className="d-block">
@@ -114,11 +147,13 @@ const Product = () => {
               </a>
             </div>
             <div className="price mb-3">
-              <span className="price-valuee h4 text-danger">$1,299.99</span>
+              <span className="price-valuee h4 text-danger">
+                ${productDetails?.product_prices?.price}
+              </span>
               <span className="price-offere d-block">or Best Offer</span>
             </div>
             <div className="conditione mb-3">
-              <span>Condition: New</span>
+              <span>Condition: {productDetails?.item_condition}</span>
             </div>
             <div className="quantitye mb-3">
               <label htmlFor="quantity" className="mr-2">
@@ -164,6 +199,24 @@ const Product = () => {
       <Footer />
     </div>
   );
+};
+
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
 };
 
 export default Product;
