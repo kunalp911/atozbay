@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../../../Component/Header/Header";
 import Footer from "../../../Component/Footer/Footer";
 import { Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ProductDetailsmodal from "../../../ShopCategoryComponent/ProductDetailsmodal";
@@ -16,8 +16,15 @@ import {
   Image,
   Button,
 } from "react-bootstrap";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 const ProductList = () => {
+  const navigate = useNavigate();
   const [productLists, setProductLists] = React.useState([]);
 
   useEffect(() => {
@@ -35,10 +42,44 @@ const ProductList = () => {
       console.log(error);
     }
   };
+
+  const deletePrduct = (id) => {
+    try {
+      apiCallNew("delete", {}, ApiEndPoints.ProductSellDelete + id).then(
+        (response) => {
+          if (response.success) {
+            getProductList();
+            toast.success(response.msg);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdate = (product) => {
+    console.log("update", product);
+    navigate("/add-product", { state: { product: product } });
+  };
+  const confirmDeletion = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deletePrduct(id);
+      }
+    });
+  };
   return (
     <div>
       <Header />
-      {/* <ProductDetailsmodal itemOpen={itemOpen} setItemOpen={setItemOpen} /> */}
       <div className="" style={{ padding: "0px 40px" }}>
         <div className="row">
           <div className="col-md-2">
@@ -58,7 +99,17 @@ const ProductList = () => {
                       <Typography variant="h6">
                         {index + 1}. Title: {product?.name}
                       </Typography>
-                      <i className="fa fa-trash"></i>
+                      <div>
+                        <EditIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleUpdate(product)}
+                        />
+                        <DeleteIcon
+                          className="ms-3"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => confirmDeletion(product?.id)}
+                        />
+                      </div>
                     </Card.Header>
                     <Card.Body>
                       <Row>
@@ -172,16 +223,28 @@ const ImageCarousel = ({ productImages }) => {
       <Image src={productImages[currentIndex]?.product_image} fluid />
       {productImages?.length > 1 && (
         <div className="carousel-control container justify-content-between d-flex">
-          <i
-            className="fa fa-angle-left"
-            onClick={handlePrev}
-            style={{ cursor: "pointer", fontSize: "30px" }}
-          ></i>
-          <i
-            className="fa fa-angle-right"
-            onClick={handleNext}
-            style={{ cursor: "pointer", fontSize: "30px" }}
-          ></i>
+          <ChevronLeftIcon
+            onClick={currentIndex === 0 ? null : handlePrev}
+            disabled={currentIndex === 0 && true}
+            style={{
+              cursor: currentIndex === 0 ? "not-allowed" : "pointer",
+              fontSize: "30px",
+              opacity: currentIndex === 0 ? 0.5 : 1,
+            }}
+          />
+          <ChevronRightIcon
+            onClick={
+              currentIndex === productImages.length - 1 ? null : handleNext
+            }
+            style={{
+              cursor:
+                currentIndex === productImages.length - 1
+                  ? "not-allowed"
+                  : "pointer",
+              fontSize: "30px",
+              opacity: currentIndex === productImages.length - 1 ? 0.5 : 1,
+            }}
+          />
         </div>
       )}
     </div>

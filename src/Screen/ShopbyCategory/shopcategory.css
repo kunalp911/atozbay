@@ -1,20 +1,27 @@
 .custom-image {
-    max-width:  100%;
-    height: auto;
-    width: 100%;
-  }
-  .custom-text {
-    text-align: center;
-    margin-top: 10px;
-  }
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+}
+.custom-text {
+  text-align: center;
+  margin-top: 10px;
+}
 
-  .list-group .list-group-item{
-    border:none;
-    padding: 5px ;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .list-group .list-group-item:hover{
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ccc;
-  }
+.list-group .list-group-item {
+  border: none;
+  padding: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.list-group .list-group-item:hover {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ccc;
+}
+.descriptionsa {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: -10px;
+}

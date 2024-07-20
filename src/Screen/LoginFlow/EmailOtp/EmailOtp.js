@@ -1,66 +1,64 @@
 import React, { useState } from "react";
-import OTPInput from "react-otp-input";  
+import OTPInput from "react-otp-input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { apiCallNew } from "../../../Network_Call/apiservices";
-import ApiEndPoints from "../../../Network_Call/ApiEndPoint"; 
+import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
 import logos from "../../../Assets/image/bay.png";
 import { setToken, setUserData } from "../../../Helper/Storage";
 const EmailOtp = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const email = location?.state?.email;
-    const data = location?.state?.data;
-    const [otp, setOtp] = useState("");
-    const [load, setload] = useState(false); 
-    const [errors, setErrors] = useState({}); 
-       
+  const location = useLocation();
+  const navigate = useNavigate();
+  const email = location?.state?.email;
+  const data = location?.state?.data;
+  const [otp, setOtp] = useState("");
+  const [load, setload] = useState(false);
+  const [errors, setErrors] = useState({});
 
-    const validation = ()=>{
-      const newError = {};
-      if(!otp){
-        newError.otp = "OTP is required";
-      }
-      setErrors(newError);
-      return Object.keys(newError).length === 0;
+  const validation = () => {
+    const newError = {};
+    if (!otp) {
+      newError.otp = "OTP is required";
     }
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        if(validation()){
+    setErrors(newError);
+    return Object.keys(newError).length === 0;
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validation()) {
+      try {
+        setErrors({});
+        const payload = {
+          email: email,
+          otp: otp,
+        };
 
-          try {
-            setErrors({});
-            const payload = {
-              email: email,
-              otp: otp,
-            };
-            
-            setload(true);
-            const response = await apiCallNew(
-              "post",
-              payload,
-              ApiEndPoints.VerifyEmailOTP
-            );
-            if (response.success === true) {
-                setToken(data?.data?.api_token)
-                setUserData(data?.data)
-              navigate("/payment");
-              setload(false);
-              toast.success(response.msg);
-            } else {
-              setload(false);
-              toast.error(response.result[0]);
-            }
-          } catch (error) {
-             console.log(error)
-          }
+        setload(true);
+        const response = await apiCallNew(
+          "post",
+          payload,
+          ApiEndPoints.VerifyEmailOTP
+        );
+        if (response.success === true) {
+          setToken(data?.data?.api_token);
+          setUserData(data?.data);
+          navigate("/");
+          setload(false);
+          toast.success(response.msg);
+        } else {
+          setload(false);
+          toast.error(response.result[0]);
         }
-      };
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   return (
     <div>
       <div className="container mt-5">
-      {load && (
+        {load && (
           <div style={styles.backdrop}>
             <CircularProgress style={styles.loader} />
           </div>
@@ -76,7 +74,7 @@ const EmailOtp = () => {
                 ></i>
               </Link>
               <div className="card-body p-4 p-sm-5">
-              <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center">
                   <Link to="/">
                     <img
                       src={logos}
@@ -105,7 +103,9 @@ const EmailOtp = () => {
                       )}
                     />
                   </div>
-                    {errors.otp && <div className="text-danger">{errors.otp}</div>}
+                  {errors.otp && (
+                    <div className="text-danger">{errors.otp}</div>
+                  )}
                   <div className="d-grid mt-5">
                     <button
                       className="btn btn-login text-uppercase fw-bold"
@@ -125,21 +125,21 @@ const EmailOtp = () => {
 };
 
 const styles = {
-    backdrop: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      zIndex: 1000,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    loader: {
-      color: "white",
-    },
-  };
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
+};
 
 export default EmailOtp;

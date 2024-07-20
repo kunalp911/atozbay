@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,14 +8,27 @@ import {
   Button,
   IconButton,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { getToken } from "../Helper/Storage";
 import { useNavigate } from "react-router-dom";
+import { apiCallNew } from "../Network_Call/apiservices";
+import ApiEndPoints from "../Network_Call/ApiEndPoint";
+import logos from "../Assets/image/bay.png";
 
-const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
+const ItemDetailmodal = ({ itemOpen, setItemOpen, id }) => {
   const navigate = useNavigate();
   const token = getToken();
+  const [productDetails, setProductLists] = React.useState({});
+  const [load, setload] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      getProductDetails(id);
+    }
+  }, [id]);
+
   const handleClose = () => {
     setItemOpen(false);
   };
@@ -28,8 +41,30 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
       navigate("/login");
     }
   };
+
+  const getProductDetails = (id) => {
+    try {
+      setload(true);
+      apiCallNew("get", {}, ApiEndPoints.ProductShopDetail + id).then(
+        (response) => {
+          if (response.success) {
+            setProductLists(response.result);
+            setload(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
   return (
     <div>
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <Dialog
         open={itemOpen}
         onClose={handleClose}
@@ -61,7 +96,12 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={6} display="flex" justifyContent="center">
               <img
-                src="https://i.ebayimg.com/images/g/FtMAAOSwvK1jl6Zg/s-l1600.png"
+                src={
+                  productDetails?.product_images &&
+                  productDetails.product_images.length > 0
+                    ? productDetails.product_images[0].product_image
+                    : logos
+                }
                 alt="img"
                 style={{
                   width: "100%",
@@ -72,22 +112,22 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography sx={{ mb: 1, fontWeight: "600" }}>
-                Size 10 - Nike Kendrick Lamar x Cortez Basic Slip House Shoes
+                {productDetails?.name}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                <strong>Brand:</strong> Nick <br />
-                <strong>Shoes Size:</strong> 10 <br />
-                <strong>Style Code:</strong> AV2950-100
+                {productDetails?.product_attributes?.map((item) => (
+                  <>
+                    <strong>{item?.attribute_name}:</strong>{" "}
+                    {item?.attr_val_name}
+                    <br />
+                  </>
+                ))}
               </Typography>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center" }}>
-          <button
-            onClick={handleContenue}
-            className="btn btn-continesss"
-            // sx={{ width: "40%", borderRadius: "20px", color: "white",backgroundColor: "#3665f3" }}
-          >
+          <button onClick={handleContenue} className="btn btn-continesss">
             Continue
           </button>
         </DialogActions>
@@ -95,4 +135,23 @@ const ItemDetailmodal = ({ itemOpen, setItemOpen }) => {
     </div>
   );
 };
+
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
+};
+
 export default ItemDetailmodal;

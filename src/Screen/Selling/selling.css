@@ -1,11 +1,20 @@
 .listanbutton {
+  background-color: #3665f3;
+  border-radius: 20px;
+  font-weight: 500;
+  color: #fff;
+}
+.listanbutton:hover {
+  color: #fff;
+}
+.continue-listanbutton {
   background-color: #fff;
   border-radius: 20px;
   font-weight: 500;
   color: #3665f3;
   border: 1px solid #3665f3;
 }
-.listanbutton:hover {
+.continue-listanbutton:hover {
   color: #3665f3;
 }
 .search-item-button {

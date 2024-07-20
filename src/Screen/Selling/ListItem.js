@@ -10,8 +10,8 @@ const ListItem = () => {
   const navigate = useNavigate();
   const [productLists, setProductLists] = React.useState([]);
   const [keyword, setKeyword] = React.useState("");
-
-  console.log("first", keyword, productLists);
+  const [cateId, setCateId] = React.useState(0);
+  console.log("first", keyword, productLists, cateId);
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (keyword) {
@@ -28,20 +28,29 @@ const ListItem = () => {
       keyword: keyword,
     };
     try {
-      apiCallNew("post", payload, ApiEndPoints.ShopProductList).then(
-        (response) => {
-          if (response.success) {
-            setProductLists(response.result);
-          }
+      apiCallNew("post", payload, ApiEndPoints.ProductList).then((response) => {
+        if (response.success) {
+          setProductLists(response.result);
         }
-      );
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleFilter = (id) => {
-    navigate("/selling/find-product", { state: { cateid: id } });
+  const handleSearch = () => {
+    if (keyword.trim()) {
+      navigate("/selling/find-product", { state: { cateId: cateId } });
+      getProductList();
+    } else {
+      console.log("Please enter a search term");
+    }
+  };
+
+  const handleListItemClick = (item) => {
+    setKeyword(item.name);
+    setCateId(item.category_id);
+    getProductList();
   };
   return (
     <div>
@@ -57,9 +66,6 @@ const ListItem = () => {
       <div className="container" style={{ padding: "10px 40px" }}>
         <div className="d-flex justify-content-between">
           <h4>Start Your Listing</h4>
-          <Link to={"/selling/select-condition"}>
-            <button className="btn listanbutton">Continue without match</button>
-          </Link>
         </div>
         <div className="my-4 d-flex justify-content-center">
           <input
@@ -69,7 +75,7 @@ const ListItem = () => {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
-          <button className="btn search-item-button">
+          <button className="btn search-item-button" onClick={handleSearch}>
             <SearchIcon />
           </button>
         </div>
@@ -81,14 +87,21 @@ const ListItem = () => {
                   <li
                     key={index}
                     className="list-group-items"
-                    onClick={() => handleFilter(product?.category_id)}
+                    onClick={() => handleListItemClick(product)}
                   >
                     {product.name}{" "}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="no-products-found">No products found</p>
+              <div className="text-center p-5">
+                <p className="no-products-found">No products found</p>
+                <Link to={"/selling/select-condition"}>
+                  <button className="btn continue-listanbutton">
+                    Continue without match
+                  </button>
+                </Link>
+              </div>
             ))}
         </div>
         <div className="row mt-5">

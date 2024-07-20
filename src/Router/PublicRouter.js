@@ -26,6 +26,7 @@ import AddProduct from "../Screen/AddProduct/AddProduct";
 import Category from "../Screen/ShopbyCategory/Category/Category";
 import ProductList from "../Screen/Selling/ProductList/ProductList";
 import WatchList from "../Screen/WatchList/WatchList";
+import CheckOut from "../Screen/CheckOut/CheckOut";
 
 const PublicRouter = () => {
   return (
@@ -51,13 +52,14 @@ const PublicRouter = () => {
         <Route path="/account-setting" element={<PersonalInfo />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermandServices />} />
-        <Route path="/product" element={<Product />} />
+        <Route path="/product/:id" element={<Product />} />
         <Route path="/contact-info" element={<ContactInfo />} />
         <Route path="/add-to-cart" element={<AddtoCart />} />
         <Route path="/add-product" element={<AddProduct />} />
         <Route path="/category/:id" element={<Category />} />
         <Route path="/product-list" element={<ProductList />} />
         <Route path="/watch-list" element={<WatchList />} />
+        <Route path="/checkout" element={<CheckOut />} />
       </Routes>
     </BrowserRouter>
   );
