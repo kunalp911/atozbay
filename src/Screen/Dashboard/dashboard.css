@@ -1,71 +1,92 @@
 .custom-card {
-    border-radius: 10px;
-    background-color: #f8f9fa;
-    padding: 15px;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  padding: 15px;
 }
 .code-badge {
-    border: 1px solid #ced4da;
-    border-radius: 20px;
-    padding: 5px 10px;
-    font-weight: bold;
-    display: inline-block;
-    margin-left: auto;
-} 
-.offer-details:hover.cardsname:hover{
+  border: 1px solid #ced4da;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-weight: bold;
+  display: inline-block;
+  margin-left: auto;
+}
+.offer-details:hover.cardsname:hover {
   border-bottom: 1px solid #505050;
 }
 .custom-cardss {
-    background-color: #f8f9fa; /* Yellow background */
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-  }
+  background-color: #f8f9fa; /* Yellow background */
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .custom-cards {
-    background-color: #ffd700; /* Yellow background */
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-  }
-  .custom-card-text {
-    max-width: 50%;
-  }
-  .custom-card-text h2 {
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  .custom-card-text p {
-    font-size: 1.2rem;
-  }
-  .custom-card-images img {
-    max-width: 100px;
-    margin-right: 15px;
-  }
-  .custom-card-button {
-    background-color: transparent;
-    border: 2px solid #000;
-    border-radius: 20px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #000;
-  }
+  background-color: #ffd700; /* Yellow background */
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.custom-card-text {
+  max-width: 50%;
+}
+.custom-card-text h2 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+.custom-card-text p {
+  font-size: 1.2rem;
+}
+.custom-card-images img {
+  max-width: 100px;
+  margin-right: 15px;
+}
+.custom-card-button {
+  background-color: transparent;
+  border: 2px solid #000;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #000;
+}
 
+/* *******************daily deal card*********************** */
+.offer-details {
+  text-align: center;
+  /* padding: 1rem; */
+}
 
+.image-container {
+  width: 150px;
+  height: 150px;
+  background-color: #f0f0f0; /* Set your desired background color here */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  margin: 0 auto; /* Center the container */
+  cursor: pointer;
+}
 
-  /* *******************daily deal card*********************** */
-
-  /* Font */
-@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700');
+.offer-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.subname {
+  cursor: pointer;
+}
+/* Font */
+@import url("https://fonts.googleapis.com/css?family=Quicksand:400,700");
 
 /* Design */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-} 
+}

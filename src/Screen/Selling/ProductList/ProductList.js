@@ -21,6 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 const ProductList = () => {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ const ProductList = () => {
         (response) => {
           if (response.success) {
             getProductList();
+            toast.success(response.msg);
           }
         }
       );

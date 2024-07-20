@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
 import "./dashboard.css";
@@ -13,129 +13,171 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  CircularProgress,
   Typography,
 } from "@mui/material";
 import { Star } from "@mui/icons-material";
+import { apiCallNew } from "../../Network_Call/apiservices";
+import ApiEndPoints from "../../Network_Call/ApiEndPoint";
+import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
+import { useNavigate } from "react-router-dom";
+
+const divStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundSize: "cover",
+  height: "400px",
+  borderRadius: "15px",
+  margin: "20px 0px",
+};
+
+const slideImages = [
+  {
+    url: "https://i.ebayimg.com/00/s/NTgxWDE2MDA=/z/su8AAOSwJFRmWI32/$_57.JPG",
+    caption: "Slide 1",
+  },
+  {
+    url: "https://i.ebayimg.com/thumbs/images/g/cjsAAOSwJRNlqAa5/s-l1200.webp",
+    caption: "Slide 2",
+  },
+  {
+    url: "https://i.ebayimg.com/00/s/MTM4OFgzODEw/z/RdYAAOSwzZtmbBpI/$_57.JPG",
+    caption: "Slide 2",
+  },
+  {
+    url: "https://i.ebayimg.com/00/s/NDk2WDE0NDA=/z/hcQAAOSwg2dj6n~7/$_57.JPG",
+    caption: "Slide 3",
+  },
+];
+
+const offers = [
+  {
+    img: "https://ir.ebaystatic.com/cr/v/c01/01_PopularDestination_Luxury.jpg",
+    label: "Luxury",
+  },
+  {
+    img: "https://ir.ebaystatic.com/cr/v/c01/02_PopularDestination_Sneakers.jpg",
+    label: "Sneakers",
+  },
+  {
+    img: "https://ir.ebaystatic.com/cr/v/c01/03_PopularDestination_Tire.jpg",
+    label: "P&A",
+  },
+  {
+    img: "https://ir.ebaystatic.com/cr/v/c01/ECM_PopularDestination_Reburbished.jpg",
+    label: "Refurbished",
+  },
+  {
+    img: "https://ir.ebaystatic.com/cr/v/c01/05_PopularDestination_Cards.jpg",
+    label: "Trading cards",
+  },
+  {
+    img: "https://ir.ebaystatic.com/cr/v/c01/07_PopularDestination_Toys.jpg",
+    label: "Toys",
+  },
+];
+
+const cardData = [
+  {
+    image: "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
+    title: "Green Iguana",
+    price: "$49.99",
+    status: "New",
+    rating: 4.5,
+  },
+  {
+    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
+    title: "Red Parrot",
+    price: "$59.99",
+    status: "Sale",
+    rating: 4.0,
+  },
+  {
+    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
+    title: "Red Parrot",
+    price: "$59.99",
+    status: "Sale",
+    rating: 4.0,
+  },
+  {
+    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
+    title: "Red Parrot",
+    price: "$59.99",
+    status: "Sale",
+    rating: 4.0,
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
+    title: "Red Parrot",
+    price: "$59.99",
+    status: "Sale",
+    rating: 4.0,
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
+    title: "Red Parrot",
+    price: "$59.99",
+    status: "Sale",
+    rating: 4.0,
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
+    title: "Red Parrot",
+    price: "$59.99",
+    status: "Sale",
+    rating: 4.0,
+  },
+  {
+    title: "Lizard",
+    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
+    date: "8 July",
+    price: "$10001",
+  },
+];
 const Dashboard = () => {
-  const divStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundSize: "cover",
-    height: "400px",
-    borderRadius: "15px",
-    margin: "20px 0px",
+  const navigate = useNavigate();
+  const [subCategoriesList, setSubCategoriesList] = React.useState([]);
+  const [load, setload] = useState(false);
+
+  console.log("subCategoriesList", subCategoriesList);
+  const ReverseOrder = [...subCategoriesList].reverse();
+  useEffect(() => {
+    getSubCategories();
+  }, []);
+  const getSubCategories = () => {
+    try {
+      setload(true);
+      apiCallNew("get", {}, ApiEndPoints.SubCategoriesList + 181).then(
+        (response) => {
+          if (response.success) {
+            setSubCategoriesList(response.result);
+            setload(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
   };
 
-  const slideImages = [
-    {
-      url: "https://i.ebayimg.com/00/s/NTgxWDE2MDA=/z/su8AAOSwJFRmWI32/$_57.JPG",
-      caption: "Slide 1",
-    },
-    {
-      url: "https://i.ebayimg.com/thumbs/images/g/cjsAAOSwJRNlqAa5/s-l1200.webp",
-      caption: "Slide 2",
-    },
-    {
-      url: "https://i.ebayimg.com/00/s/MTM4OFgzODEw/z/RdYAAOSwzZtmbBpI/$_57.JPG",
-      caption: "Slide 2",
-    },
-    {
-      url: "https://i.ebayimg.com/00/s/NDk2WDE0NDA=/z/hcQAAOSwg2dj6n~7/$_57.JPG",
-      caption: "Slide 3",
-    },
-  ];
+  const handleSelectSubCategory = (item) => {
+    navigate(`/category/${item?.id}`, { state: { category: item } });
+    console.log("OOOOOO", item);
+  };
 
-  const offers = [
-    {
-      img: "https://ir.ebaystatic.com/cr/v/c01/01_PopularDestination_Luxury.jpg",
-      label: "Luxury",
-    },
-    {
-      img: "https://ir.ebaystatic.com/cr/v/c01/02_PopularDestination_Sneakers.jpg",
-      label: "Sneakers",
-    },
-    {
-      img: "https://ir.ebaystatic.com/cr/v/c01/03_PopularDestination_Tire.jpg",
-      label: "P&A",
-    },
-    {
-      img: "https://ir.ebaystatic.com/cr/v/c01/ECM_PopularDestination_Reburbished.jpg",
-      label: "Refurbished",
-    },
-    {
-      img: "https://ir.ebaystatic.com/cr/v/c01/05_PopularDestination_Cards.jpg",
-      label: "Trading cards",
-    },
-    {
-      img: "https://ir.ebaystatic.com/cr/v/c01/07_PopularDestination_Toys.jpg",
-      label: "Toys",
-    },
-  ];
-
-  const cardData = [
-    {
-      image: "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
-      title: "Green Iguana",
-      price: "$49.99",
-      status: "New",
-      rating: 4.5,
-    },
-    {
-      image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-      title: "Red Parrot",
-      price: "$59.99",
-      status: "Sale",
-      rating: 4.0,
-    },
-    {
-      image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-      title: "Red Parrot",
-      price: "$59.99",
-      status: "Sale",
-      rating: 4.0,
-    },
-    {
-      image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-      title: "Red Parrot",
-      price: "$59.99",
-      status: "Sale",
-      rating: 4.0,
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
-      title: "Red Parrot",
-      price: "$59.99",
-      status: "Sale",
-      rating: 4.0,
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
-      title: "Red Parrot",
-      price: "$59.99",
-      status: "Sale",
-      rating: 4.0,
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
-      title: "Red Parrot",
-      price: "$59.99",
-      status: "Sale",
-      rating: 4.0,
-    },
-    {
-      title: "Lizard",
-      image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-      date: "8 July",
-      price: "$10001",
-    },
-  ];
   return (
     <>
       <Header />
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <div className="mt-2 mb-5" style={{ padding: "0px 40px" }}>
         <div className=" slide-container">
           <Slide>
@@ -175,19 +217,25 @@ const Dashboard = () => {
           </div>
           <div className="container mt-3">
             <div className="row">
-              {offers.map((offer, index) => (
+              {subCategoriesList.map((offer, index) => (
                 <div
                   key={index}
-                  className="col-6 col-md-4 col-lg-2 mb-3 text-center"
+                  className="col-6 col-md-4 col-lg-2 mb-3 text-center p-0"
                 >
-                  <div className="offer-details">
-                    <img
-                      src={offer.img}
-                      width="160"
-                      className="rounded-circle img-fluid"
-                      alt={offer.label}
-                    />
-                    <p className="font-weight-bold mt-2">{offer.label}</p>
+                  <div
+                    className="offer-details"
+                    onClick={() => handleSelectSubCategory(offer)}
+                  >
+                    <div className="image-container">
+                      <img
+                        src={offer.image}
+                        className="rounded-circle img-fluid offer-image"
+                        alt={offer.category_name}
+                      />
+                    </div>
+                    <p className="font-weight-bold mt-2 subname">
+                      {formatCapitalize(offer.category_name)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -226,23 +274,6 @@ const Dashboard = () => {
                       </CardContent>
                     </CardActionArea>
                   </Card>
-                  {/* <Card sx={{ maxWidth: 345 }}>
-                    <CardActionArea>
-                      <CardMedia
-                        component="img"
-                        sx={{ height: 200, objectFit: "contain" }}
-                        image={card.image}
-                        alt="green iguana"
-                      />
-                      <CardContent>
-                        <p className="font-weight-bold mt-2">{card.title}</p>
-
-                        <Typography variant="body1" color="dark">
-                          {card.price}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card> */}
                 </div>
               ))}
             </div>
@@ -276,20 +307,47 @@ const Dashboard = () => {
             <h3>Popular Destinations</h3>
           </div>
           <div className="container mt-3">
-            <div className="row">
-              {offers.map((offer, index) => (
+            {/* <div className="row" style={{ alignItems: "center" }}>
+              {ReverseOrder.map((offer, index) => (
                 <div
                   key={index}
                   className="col-6 col-md-4 col-lg-2 mb-3 text-center"
                 >
                   <div className="offer-details">
                     <img
-                      src={offer.img}
+                      src={offer.image}
                       width="150"
                       className="rounded-circle img-fluid"
-                      alt={offer.label}
+                      alt={offer.category_name}
+                      style={{ backgroundColor: "#ccc" }}
                     />
-                    <p className="font-weight-bold mt-2">{offer.label}</p>
+                    <p className="font-weight-bold mt-2">
+                      {offer.category_name}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div> */}
+            <div className="row">
+              {ReverseOrder.map((offer, index) => (
+                <div
+                  key={index}
+                  className="col-6 col-md-4 col-lg-2 mb-3 text-center p-0"
+                >
+                  <div
+                    className="offer-details"
+                    onClick={() => handleSelectSubCategory(offer)}
+                  >
+                    <div className="image-container">
+                      <img
+                        src={offer.image}
+                        className="rounded-circle img-fluid offer-image"
+                        alt={offer.category_name}
+                      />
+                    </div>
+                    <p className="font-weight-bold mt-2">
+                      {formatCapitalize(offer.category_name)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -362,6 +420,23 @@ const Dashboard = () => {
       <Footer />
     </>
   );
+};
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
 };
 
 export default Dashboard;

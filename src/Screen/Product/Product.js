@@ -6,14 +6,20 @@ import Zoom from "react-medium-image-zoom";
 import ReactImageMagnify from "react-image-magnify";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import "react-medium-image-zoom/dist/styles.css";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
+import logos from "../../Assets/image/bay.png";
+import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 const Product = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [productDetails, setProductLists] = React.useState({});
   const [load, setload] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+
+  console.log("quintity", quantity);
 
   useEffect(() => {
     if (id) {
@@ -35,6 +41,10 @@ const Product = () => {
       console.log(error);
       setload(false);
     }
+  };
+
+  const handleCheckout = () => {
+    navigate("/checkout", { state: { product: productDetails, quantity } });
   };
   return (
     <div>
@@ -78,7 +88,7 @@ const Product = () => {
                       <img
                         className="c"
                         alt={`Product Image ${index + 1}`}
-                        src={src?.product_image}
+                        src={src?.product_image ? src?.product_image : logos}
                         style={{
                           width: "100%",
                           height: "500px",
@@ -122,7 +132,7 @@ const Product = () => {
               {productDetails?.product_images?.map((src, index) => (
                 <img
                   key={index}
-                  src={src?.product_image}
+                  src={src?.product_image ? src?.product_image : logos}
                   className="img-thumbnail mx-1"
                   style={{ width: "50px", height: "50px", cursor: "pointer" }}
                   alt={`Thumbnail ${index + 1}`}
@@ -133,7 +143,9 @@ const Product = () => {
             </div>
           </div>
           <div className="col-lg-6 col-md-12">
-            <h1 className="product-titlee">{productDetails?.name}</h1>
+            <h1 className="product-titlee">
+              {formatCapitalize(productDetails?.name)}
+            </h1>
             <div className="seller-infoe mb-3">
               <span className="seller-name d-block font-weight-bold">
                 {productDetails?.description}
@@ -163,6 +175,8 @@ const Product = () => {
                 id="quantity"
                 defaultValue={1}
                 className="form-control quantity-input w-25 text-center"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
               >
                 <option value="0" hidden></option>
                 <option value="1">1</option>
@@ -178,9 +192,13 @@ const Product = () => {
               </select>
             </div>
             <div className="buttonse mb-3">
-              <button className="btn buyitnow-btn btn-block mb-2">
+              <button
+                className="btn buyitnow-btn btn-block mb-2"
+                onClick={handleCheckout}
+              >
                 Buy It Now
               </button>
+
               <button className="btn btn-secondary addcarditnow-btn btn-block mb-2">
                 Add to Cart
               </button>

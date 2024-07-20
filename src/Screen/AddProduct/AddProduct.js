@@ -40,7 +40,7 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const conditionName = location.state?.condition;
-  const updateProduct = location.state?.product;
+  const updateProduct = location.state?.product || {};
   const [colorList, setColorList] = React.useState([]);
   const [brandList, setBrandList] = React.useState([]);
   const [isPhoto, setIsPhoto] = useState(true);
@@ -76,45 +76,44 @@ const AddProduct = () => {
     shipping_in_days: "",
   });
 
-  console.log("images", images);
-  useEffect(() => {
-    if (updateProduct) {
-      setAddProductFormData({
-        name: updateProduct.name,
-        sku: updateProduct.sku,
-        condition_description: updateProduct.condition_description,
-        description: updateProduct.description,
-        price: updateProduct.product_prices.price,
-        price_format: updateProduct.product_prices.price_format,
-        auction_duration: updateProduct.product_prices.auction_duration,
-        available_quantity: updateProduct.product_prices.available_quantity,
-        starting_bid: updateProduct.product_prices.starting_bid,
-        brand_id: updateProduct.brand_id,
-        color_id: updateProduct.color_id || 4,
-        category_id: updateProduct.category_id,
-        short_desc: updateProduct.short_desc,
-        shipping_in_days: updateProduct.product_shipping.shipping_in_days,
-      });
+  // useEffect(() => {
+  //   if (updateProduct) {
+  //     setAddProductFormData({
+  //       name: updateProduct.name,
+  //       sku: updateProduct.sku,
+  //       condition_description: updateProduct.condition_description,
+  //       description: updateProduct.description,
+  //       price: updateProduct.product_prices.price,
+  //       price_format: updateProduct.product_prices.price_format,
+  //       auction_duration: updateProduct.product_prices.auction_duration,
+  //       available_quantity: updateProduct.product_prices.available_quantity,
+  //       starting_bid: updateProduct.product_prices.starting_bid,
+  //       brand_id: updateProduct.brand_id,
+  //       color_id: updateProduct.color_id || 4,
+  //       category_id: updateProduct.category_id,
+  //       short_desc: updateProduct.short_desc,
+  //       shipping_in_days: updateProduct.product_shipping.shipping_in_days,
+  //     });
 
-      // Initialize attributes
-      const initialSelectedAttributes = updateProduct.product_attributes.reduce(
-        (acc, item) => {
-          acc[item.product_attr_id] = item.product_attr_value_id;
-          return acc;
-        },
-        {}
-      );
-      console.log("initialSelectedAttributes", initialSelectedAttributes);
-      setSelectedAttributes(initialSelectedAttributes);
-      setImages(updateProduct.product_images);
-      getAttributesList(updateProduct.category_id);
-    }
-  }, [updateProduct]);
+  //     // Initialize attributes
+  //     const initialSelectedAttributes = updateProduct.product_attributes.reduce(
+  //       (acc, item) => {
+  //         acc[item.product_attr_id] = item.product_attr_value_id;
+  //         return acc;
+  //       },
+  //       {}
+  //     );
+  //     console.log("initialSelectedAttributes", initialSelectedAttributes);
+  //     setSelectedAttributes(initialSelectedAttributes);
+  //     setImages(updateProduct.product_images);
+  //     getAttributesList(updateProduct.category_id);
+  //   }
+  // }, [updateProduct]);
 
-  console.log("updateProduct", updateProduct);
-  console.log("addProductFormData", addProductFormData);
-  console.log("attributesList", attributesList);
-  console.log("attributesValueList", attributesValueList);
+  // console.log("updateProduct", updateProduct);
+  // console.log("addProductFormData", addProductFormData);
+  // console.log("attributesList", attributesList);
+  // console.log("attributesValueList", attributesValueList);
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
@@ -155,19 +154,19 @@ const AddProduct = () => {
     }));
   }, [addProductFormData.price_format]);
 
-  useEffect(() => {
-    attributesList?.forEach((item) => {
-      getAttributesValueList(item.product_attr_id);
-    });
-  }, [attributesList]);
-
   // useEffect(() => {
-  //   if (updateProduct) {
-  //     attributesList?.forEach((item) => {
-  //       getAttributesValueList(item.id);
-  //     });
-  //   }
+  //   attributesList?.forEach((item) => {
+  //     getAttributesValueList(item.product_attr_id);
+  //   });
   // }, [attributesList]);
+
+  useEffect(() => {
+    if (updateProduct) {
+      attributesList?.forEach((item) => {
+        getAttributesValueList(item.id);
+      });
+    }
+  }, [attributesList]);
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
@@ -445,7 +444,7 @@ const AddProduct = () => {
         toast.success(response.msg);
         setload(false);
       } else {
-        toast.error(response.msg);
+        toast.error(response.msg[0]);
         setload(false);
       }
     } catch (error) {
@@ -494,43 +493,24 @@ const AddProduct = () => {
           <div>
             {images?.length > 0 && <h6 className="mt-3">Uploaded Images</h6>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {updateProduct
-                ? images?.map((file, index) => (
-                    <>
-                      <img
-                        key={index}
-                        src={file.product_image}
-                        alt={`img-${index}`}
-                        style={mediaPreviewStyle}
-                      />
-                      <i
-                        className="fa fa-times"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          URL.revokeObjectURL(file.preview);
-                          setImages(images.filter((_, i) => i !== index));
-                        }}
-                      ></i>
-                    </>
-                  ))
-                : images?.map((file, index) => (
-                    <>
-                      <img
-                        key={index}
-                        src={file.preview}
-                        alt={`img-${index}`}
-                        style={mediaPreviewStyle}
-                      />
-                      <i
-                        className="fa fa-times"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          URL.revokeObjectURL(file.preview);
-                          setImages(images.filter((_, i) => i !== index));
-                        }}
-                      ></i>
-                    </>
-                  ))}
+              {images?.map((file, index) => (
+                <>
+                  <img
+                    key={index}
+                    src={file.preview}
+                    alt={`img-${index}`}
+                    style={mediaPreviewStyle}
+                  />
+                  <i
+                    className="fa fa-times"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      URL.revokeObjectURL(file.preview);
+                      setImages(images.filter((_, i) => i !== index));
+                    }}
+                  ></i>
+                </>
+              ))}
             </div>
             {video && <h6>Uploaded Video</h6>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
