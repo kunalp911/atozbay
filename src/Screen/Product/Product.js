@@ -12,6 +12,7 @@ import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
 import logos from "../../Assets/image/bay.png";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
+import { toast } from "react-toastify";
 const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Product = () => {
   const [load, setload] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
-  console.log("quintity", quantity);
+  console.log("productDetails", productDetails);
 
   useEffect(() => {
     if (id) {
@@ -43,6 +44,32 @@ const Product = () => {
     }
   };
 
+  const handleAddToCart = () => {
+    try {
+      setload(true);
+      const payload = {
+        product_id: productDetails.id,
+        product_price_id: productDetails.product_prices.id,
+        cart_quantity: quantity,
+      };
+      apiCallNew("post", payload, ApiEndPoints.AddToCart).then((response) => {
+        if (response.success) {
+          console.log("res", response);
+          toast.success(response.msg);
+          navigate("/add-to-cart");
+          setload(false);
+        } else {
+          toast.error(response.msg);
+          setload(false);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+
+      setload(false);
+    }
+  };
+
   const handleCheckout = () => {
     navigate("/checkout", { state: { product: productDetails, quantity } });
   };
@@ -55,9 +82,12 @@ const Product = () => {
         </div>
       )}
       <Link to={`/category/${productDetails?.category_id}`}>
-        <div className="p-2 d-flex" style={{ cursor: "pointer" }}>
+        <div
+          className="p-1 d-flex"
+          style={{ cursor: "pointer", color: "#000" }}
+        >
           <ChevronLeftIcon />
-          <p className="">
+          <p className="" style={{ fontSize: "14px" }}>
             <u>Back to previous page</u>
           </p>
         </div>
@@ -129,17 +159,19 @@ const Product = () => {
               </a>
             </div>
             <div className="d-flex justify-content-center mt-2">
-              {productDetails?.product_images?.map((src, index) => (
-                <img
-                  key={index}
-                  src={src?.product_image ? src?.product_image : logos}
-                  className="img-thumbnail mx-1"
-                  style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                  alt={`Thumbnail ${index + 1}`}
-                  data-target="#productCarousel"
-                  data-slide-to={index}
-                />
-              ))}
+              <div className="scrollable-containeras">
+                {productDetails?.product_images?.map((src, index) => (
+                  <img
+                    key={index}
+                    src={src?.product_image ? src?.product_image : logos}
+                    className="img-thumbnail mx-1"
+                    style={{ width: "50px", height: "50px", cursor: "pointer" }}
+                    alt={`Thumbnail ${index + 1}`}
+                    data-target="#productCarousel"
+                    data-slide-to={index}
+                  />
+                ))}
+              </div>
             </div>
           </div>
           <div className="col-lg-6 col-md-12">
@@ -159,7 +191,7 @@ const Product = () => {
               </a>
             </div>
             <div className="price mb-3">
-              <span className="price-valuee h4 text-danger">
+              <span className="price-valuee h4">
                 ${productDetails?.product_prices?.price}
               </span>
               <span className="price-offere d-block">or Best Offer</span>
@@ -199,7 +231,10 @@ const Product = () => {
                 Buy It Now
               </button>
 
-              <button className="btn btn-secondary addcarditnow-btn btn-block mb-2">
+              <button
+                className="btn btn-secondary addcarditnow-btn btn-block mb-2"
+                onClick={handleAddToCart}
+              >
                 Add to Cart
               </button>
               <button className="btn btn-info additnow-btn btn-block mb-2">

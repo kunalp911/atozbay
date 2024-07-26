@@ -1,33 +1,47 @@
- 
-  
-  .btn-login {
-    font-size: 0.9rem;
-    letter-spacing: 0.05rem;
-    padding: 0.75rem 1rem;
-    background-color: #3665f3;
-    color: #fff;
-    border-radius: 25px;
-  }
-  .btn-login:hover {
-    background-color: #1a51f7;
-    color: #fff;
-  }
-  
-  .btn-google {
-    color: #000 !important;
-    background-color: #fff;
-    border: 1px solid #8a8989;
-  }
-  .btn-google:hover {
-    color: #000 !important;
-    background-color: #f5f2f2; 
-  }
-  
-  .btn-facebook {
-    color: white !important;
-    background-color: #3b5998;
-  }
-  .logintitle2{
-    font-weight: 400;
-  }
-  
+.btn-login {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+  background-color: #3665f3;
+  color: #fff;
+  border-radius: 25px;
+}
+.btn-login:hover {
+  background-color: #1a51f7;
+  color: #fff;
+}
+
+.btn-google {
+  color: #000 !important;
+  background-color: #fff;
+  border: 1px solid #8a8989;
+  font-size: 0.9rem;
+}
+.btn-google:hover {
+  color: #000 !important;
+  background-color: #f5f2f2;
+}
+
+.btn-facebook {
+  color: white !important;
+  background-color: #3b5998;
+  width: 100%;
+}
+.btn-facebook:hover {
+  color: white !important;
+  background-color: #3b5998;
+}
+.btn-facebook img {
+  margin-right: 6px;
+}
+.logintitle2 {
+  font-weight: 400;
+}
+.btn-apple {
+  color: #fff !important;
+  background-color: #000;
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+  border-radius: 25px;
+}

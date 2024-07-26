@@ -1,69 +1,97 @@
-.list-groupss .list-group-itemss{
-    border:none;
-    padding: 7px ;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: 600;
+.list-groupss .list-group-itemss {
+  border: none;
+  padding: 7px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.list-groupss .list-group-itemss:hover {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ccc;
+}
 
-  }
-  .list-groupss .list-group-itemss:hover{
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ccc;
-  }
+.list-group-itemsss {
+  border: none;
+  padding: 7px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #1f7df8;
+  font-weight: 600;
+}
 
-  .list-group-itemsss{
-    border:none;
-    padding: 7px ;
-    font-size: 16px;
-    cursor: pointer;
-    color: #1f7df8;
-    font-weight: 600;
-  } 
+.save-btn {
+  background-color: #1a51f7;
+  color: white;
+}
+.save-btn:hover {
+  background-color: #3665f3;
+  color: white;
+}
 
-  .save-btn{
-    background-color: #1a51f7;
-    color: white;
-  }
-  .save-btn:hover{
-    background-color: #3665f3;
-    color: white;
-  }
+.cancel-btn {
+  background-color: #ccc;
+  color: #4b4a4a;
+}
 
-  .cancel-btn{
-    background-color: #ccc;
-    color: #4b4a4a;
-  }
+.usernamess {
+  font-weight: 600;
+  font-size: 14px;
+  color: #383838;
+  /* background-color: #1f7df8; */
+}
 
-  .usernamess{
-    font-weight: 600;
-    font-size: 14px;
-    color: #383838;
-    /* background-color: #1f7df8; */
-  }
+/* ***************shiping address********************** */
+.shipping-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #383838;
+}
+.shipping-titless {
+  font-weight: 700;
+  font-size: 17px;
+  color: #383838;
+}
+.shipping-para {
+  font-weight: 600;
+  font-size: 14px;
+  color: #383838;
+  margin-top: -12px;
+}
+.ship-btn {
+  border: 2px solid #1f7df8;
+  color: #1f7df8;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 3px 12px;
+  border-radius: 5px;
+  float: right;
+}
 
-  /* ***************shiping address********************** */
-  .shipping-title{
-    font-weight: 600;
-    font-size: 16px;
-    color: #383838;
-  }
-  .shipping-titless{
-    font-weight: 700;
-    font-size: 17px;
-    color: #383838;
-  }
-  .shipping-para{
-    font-weight: 600;
-    font-size: 14px;
-    color: #383838;
-    margin-top: -12px;
-  }
-  .ship-btn{
-    border: 2px solid #1f7df8;
-    color: #1f7df8;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 3px 12px;
-    border-radius: 5px;
-    float: right;
-  }
+.addsavebtn {
+  background-color: #3665f3;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+}
+.addcancelbtn {
+  color: #3665f3;
+  padding: 5px 10px;
+  border-radius: 25px;
+  border: 1px solid #3665f3;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+}
+.addcancelbtn:hover {
+  background-color: #f1f1f1;
+  color: #3665f3;
+}
+.addsavebtn:hover {
+  background-color: #3665f3;
+  color: #fff;
+}

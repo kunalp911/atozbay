@@ -41,6 +41,11 @@ const ApiEndPoints = {
   ProductSellerDetail: `${APPConfig.API_URL}/product/`,
   ProductSellDelete: `${APPConfig.API_URL}/product/`,
   ProductShopDetail: `${APPConfig.API_URL}/shop-product/`,
+  AddToCart: `${APPConfig.API_URL}/add-to-cart`,
+  CartProductsList: `${APPConfig.API_URL}/cart-products`,
+  CartUpdate: `${APPConfig.API_URL}/update-cart`,
+  CartProductCount: `${APPConfig.API_URL}/cart-product-count`,
+  DeleteCartProduct: `${APPConfig.API_URL}/delete-cart-product`,
 };
 
 export default ApiEndPoints;

@@ -12,23 +12,37 @@ import { toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import logos from "../../../Assets/image/bay.png";
+import googlelogo from "../../../Assets/image/google-icon.png";
+import facebooklogo from "../../../Assets/image/Facebook.svg.png";
+import FacebookLogin from "react-facebook-login";
+import applelogo from "../../../Assets/image/Apple_gray.png";
+import AppleLogin from "react-apple-login";
+
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [errors, setErrors] = useState({});
   const [googleData, setGoogleData] = useState("");
   const [socialID, setSocialID] = useState(Number);
+  const [faceGoogleData, setFaceGoogleData] = useState("");
+  const [faceSocialID, setFaceSocialID] = useState(Number);
   const [formData, setFormData] = React.useState({
     email: "",
     password: "",
   });
-  const [load, setload] = useState(false); 
-  
+  const [load, setload] = useState(false);
+
   useEffect(() => {
     if (googleData && socialID) {
       GooglePostApi();
     }
   }, [googleData, socialID]);
+
+  useEffect(() => {
+    if (faceGoogleData && faceSocialID) {
+      FacebookPostApi();
+    }
+  }, [faceGoogleData, faceSocialID]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +59,17 @@ const Login = () => {
   });
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
+  const responseFacebook = (response) => {
+    try {
+      if (response) {
+        setFaceSocialID(response.id);
+        setFaceGoogleData(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("response", response);
+  };
   const GoogleDataGet = useGoogleLogin({
     onSuccess: async (response) => {
       try {
@@ -79,11 +104,12 @@ const Login = () => {
       console.error("Missing googleData or socialID");
       return;
     }
+
     const formData = new FormData();
     formData.append("email", googleData.email);
     formData.append("name", googleData.name);
     formData.append("social_id", socialID);
-    formData.append("user_type", "Customer");
+    formData.append("login_type", 3);
 
     try {
       const response = await apiCallNew(
@@ -97,6 +123,40 @@ const Login = () => {
         setUserData(response?.result);
         toast.success(response.msg);
         navigate("/");
+        window.location.reload();
+        setload(false);
+      } else {
+        toast.error(response.msg);
+        setload(false);
+      }
+    } catch (error) {
+      toast.error(error.message || "An error occurred");
+    }
+  };
+  const FacebookPostApi = async () => {
+    if (!faceGoogleData || !faceSocialID) {
+      console.error("Missing googleData or socialID");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("email", faceGoogleData.email);
+    formData.append("name", faceGoogleData.name);
+    formData.append("social_id", faceSocialID);
+    formData.append("login_type", 2);
+
+    try {
+      const response = await apiCallNew(
+        "post",
+        formData,
+        ApiEndPoints.SocialLogin
+      );
+      setload(true);
+      if (response.success === true) {
+        setToken(response?.result?.api_token);
+        setUserData(response?.result);
+        toast.success(response.msg);
+        navigate("/");
+        window.location.reload();
         setload(false);
       } else {
         toast.error(response.msg);
@@ -107,7 +167,6 @@ const Login = () => {
     }
   };
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     try {
       setErrors({});
@@ -125,7 +184,7 @@ const Login = () => {
         setload(false);
         toast.error(response.msg);
       }
-    } catch (error) { 
+    } catch (error) {
       const newErrors = {};
       error?.inner?.forEach((err) => {
         newErrors[err.path] = err.message;
@@ -134,8 +193,34 @@ const Login = () => {
     }
   };
 
+  // const appleResponse = (response) => {
+  //   console.log("rrrrr", response);
+  //   if (!response.error) {
+  //     axios
+  //       .post("/auth", response)
+  //       .then((res) => this.setState({ authResponse: res.data }))
+  //       .catch((err) => console.log(err));
+  //   }
+  // };
 
+  // const handleAppleLogin = () => {
+  //   window.AppleID.auth
+  //     .signIn()
+  //     .then((response) => {
+  //       console.log(response);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // };
 
+  // const handleAppleLoginSuccess = (response) => {
+  //   console.log("Apple login successful:", response);
+  // };
+
+  // const handleAppleLoginError = (error) => {
+  //   console.error("Apple login error:", error);
+  // };
 
   return (
     <div>
@@ -162,9 +247,8 @@ const Login = () => {
                 <h2 className="h3 text-center mt-2">Sign in</h2>
                 <div className="d-flex justify-content-center">
                   <p className="logintitle2">Sign in to atozbay or</p>
-                  <Link to={"/signup"}> 
+                  <Link to={"/signup"}>
                     <a className="ms-2">create an account</a>
-
                   </Link>
                 </div>
                 <form onSubmit={handleSubmit}>
@@ -231,26 +315,56 @@ const Login = () => {
                     </button>
                   </div>
                   <hr className="my-4" />
-
-                  {/* <div className="d-grid mt-5 text-center">
-                    <p>
-                      Don't have an account? <a href="#">Sign Up</a>
-                    </p>
-                  </div> */}
                 </form>
                 <div className="d-grid mb-2">
                   <button
-                    className="btn btn-google btn-login google-btn text-uppercase fw-bold"
+                    className="btn btn-google btn-login text-uppercase fw-bold"
                     type="submit"
                     onClick={GoogleDataGet}
                   >
-                    <img
-                      src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png"
-                      width={"20px"}
-                    />{" "}
-                    Sign in with Google
+                    <img src={googlelogo} width={"20px"} /> Sign in with Google
                   </button>
                 </div>
+                <div className="d-grid mb-2">
+                  <FacebookLogin
+                    appId="1001017301349702"
+                    autoLoad={false}
+                    fields="name,email,picture"
+                    callback={responseFacebook}
+                    cssClass="btn btn-facebook btn-login text-uppercase fw-bold"
+                    icon={<img src={facebooklogo} width={"20px"} />}
+                    textButton="Sign in with Facebook"
+                  />
+                </div>
+                {/* <div className="d-grid mb-2">
+                  <AppleLogin
+                    clientId="SVQ8PKD9L2"
+                    scope="name email"
+                    redirectURI="https://atozbay.com/web"
+                    state="state"
+                    nonce="nonce"
+                    responseType="code id_token"
+                    responseMode="query"
+                    usePopup={true}
+                    callback={handleAppleLoginSuccess}
+                    onError={handleAppleLoginError}
+                    render={(props) => (
+                      <button
+                        onClick={props.onClick}
+                        className="btn btn-apple text-uppercase fw-bold"
+                        type="submit"
+                      >
+                        <img
+                          src={applelogo}
+                          width={"20px"}
+                          style={{ marginTop: "-5px", marginRight: "-3px" }}
+                          alt="Apple logo"
+                        />{" "}
+                        Continue with Apple
+                      </button>
+                    )}
+                  />
+                </div> */}
               </div>
             </div>
           </div>

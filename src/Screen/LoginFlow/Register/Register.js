@@ -10,6 +10,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import logos from "../../../Assets/image/bay.png";
 import { setToken, setUserData } from "../../../Helper/Storage";
+import PhoneInput from "react-phone-input-2";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -18,13 +19,17 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [businessErrors, setBusinessErrors] = useState({});
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showPasswords, setShowPasswords] = React.useState(false);
   const [countryList, setCountriesList] = useState([]);
   const [countryId, setCountryId] = useState();
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("91");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
     password: "",
-    mobile_number: "",
+    surname: "",
     device_type: "android",
   });
   const [businessformData, setBusinessFormData] = React.useState({
@@ -34,12 +39,14 @@ const Register = () => {
     business_phone: "",
     device_type: "android",
   });
+  console.log("formData", formData);
 
   useEffect(() => {
     getCountries();
   }, []);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleClickShowPasswords = () => setShowPasswords(!showPasswords);
 
   const countryhandleChange = (e) => {
     const { name, value } = e.target;
@@ -66,6 +73,18 @@ const Register = () => {
     });
   };
 
+  const handlePhoneChange = (value, country) => {
+    const countryCode = country.dialCode;
+    const phoneNumber = value.slice(countryCode.length);
+    setCountryCode(countryCode);
+    setPhone(phoneNumber);
+    setFormData({
+      ...formData,
+      mobile_number: phoneNumber,
+      country_code: countryCode,
+    });
+  };
+
   const businesshandleChange = (e) => {
     const { name, value } = e.target;
     setBusinessFormData({
@@ -73,30 +92,30 @@ const Register = () => {
       [name]: value,
     });
   };
-  const handleActive = (e) => {
-    setActive(!active);
-  };
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Full name is required"),
+    name: Yup.string().required("First name is required"),
+    surname: Yup.string().required("Surname is required"),
     email: Yup.string()
       .required("Email is Required")
       .email("Invalid email format"),
+    mobile_number: Yup.string()
+      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
+      .required("Mobile number is required"),
+  });
+
+  const validationSchemapass = Yup.object({
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .matches(/[0-9]/, "Password must contain at least one number")
-      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .min(6, "Password must be at least 6 characters")
       .matches(
         /[@$!%*?&]/,
         "Password must contain at least one special character"
       )
       .required("Password is required"),
-    mobile_number: Yup.string()
-      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
-      .required("Mobile number is required"),
-    country_id: Yup.string().required("Country is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
   });
-
   const validationBusinessSchema = Yup.object({
     business_email: Yup.string()
       .required("Email is Required")
@@ -117,15 +136,43 @@ const Register = () => {
     business_country_id: Yup.string().required("Country is required"),
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleActive = async () => {
     try {
       setErrors({});
       await validationSchema.validate(formData, { abortEarly: false });
+      setActive(false); // Validation passed, set active to false
+    } catch (error) {
+      const newErrors = {};
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+      setErrors(newErrors);
+      setActive(true); // Validation failed, keep active as true
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const valid = {
+      password: formData.password,
+      confirmPassword: confirmPassword,
+    };
+    const payload = {
+      name: formData.name,
+      surname: formData.surname,
+      email: formData.email,
+      password: formData.password,
+      mobile_number: formData.mobile_number,
+      country_code: formData.country_code,
+      device_type: "android",
+    };
+    try {
+      setErrors({});
+      await validationSchemapass.validate(valid, { abortEarly: false });
       setload(true);
       const response = await apiCallNew(
         "post",
-        formData,
+        payload,
         ApiEndPoints.CustomerRegister
       );
       if (response.success === true) {
@@ -134,6 +181,7 @@ const Register = () => {
         navigate("/");
         setload(false);
         toast.success(response.msg);
+        window.location.reload();
       } else {
         setload(false);
         toast.error(response.result[0]);
@@ -214,7 +262,7 @@ const Register = () => {
                 <div className="card-body p-3 p-md-4 p-xl-5">
                   <div className="row">
                     <div className="col-12">
-                      <div className="mb-5">
+                      <div className="mb-4">
                         <div className="d-flex justify-content-center">
                           <Link to="/">
                             <img
@@ -227,9 +275,19 @@ const Register = () => {
                         </div>
                         <h2 className="h3">Create an account</h2>
                       </div>
+                      {active ? (
+                        " "
+                      ) : (
+                        <p
+                          className="backregister-btn"
+                          onClick={() => setActive(true)}
+                        >
+                          <i className="fa fa-arrow-left p-2"></i>Back
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <ul className="tab-group">
+                  {/* <ul className="tab-group">
                     <li
                       className={active ? "tab active" : "tab"}
                       onClick={handleActive}
@@ -242,9 +300,9 @@ const Register = () => {
                     >
                       <a>Business</a>
                     </li>
-                  </ul>
+                  </ul> */}
                   {active ? (
-                    <form onSubmit={handleSubmit}>
+                    <form action="javascript:void(0);">
                       <div className="form-floating mb-3">
                         <input
                           type="text"
@@ -258,7 +316,22 @@ const Register = () => {
                         {errors.name && (
                           <div className="text-danger">{errors.name}</div>
                         )}
-                        <label for="floatingInput">Full Name</label>
+                        <label for="floatingInput">First Name</label>
+                      </div>
+                      <div className="form-floating mb-3">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="surname"
+                          name="surname"
+                          value={formData.surname}
+                          onChange={handleChange}
+                        />
+                        {errors.surname && (
+                          <div className="text-danger">{errors.surname}</div>
+                        )}
+                        <label for="floatingInput">Surname</label>
                       </div>
 
                       <div className="form-floating mb-3">
@@ -276,6 +349,100 @@ const Register = () => {
                         )}
                         <label for="floatingInput">Email Address</label>
                       </div>
+                      {/* <div className="form-floating mb-3">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          className="form-control"
+                          id="floatingPassword"
+                          placeholder="Password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                        />
+                        {showPassword ? (
+                          <VisibilityIcon
+                            style={{
+                              position: "absolute",
+                              top: "18px",
+                              right: "10px",
+                            }}
+                            onClick={handleClickShowPassword}
+                          />
+                        ) : (
+                          <VisibilityOffIcon
+                            style={{
+                              position: "absolute",
+                              top: "18px",
+                              right: "10px",
+                            }}
+                            onClick={handleClickShowPassword}
+                          />
+                        )}
+                        {errors.password && (
+                          <div className="text-danger">{errors.password}</div>
+                        )}
+                        <label for="floatingPassword">Password</label>
+                      </div> */}
+
+                      <div className="form-floating mb-3">
+                        <PhoneInput
+                          country={"in"}
+                          name="mobile_number"
+                          value={`${countryCode}${phone}`}
+                          onChange={(value, country) =>
+                            handlePhoneChange(value, country)
+                          }
+                          inputProps={{
+                            name: "country_code",
+                            required: true,
+                            autoFocus: true,
+                          }}
+                          containerStyle={{ width: "100%" }}
+                          inputStyle={{
+                            width: "100%",
+                            paddingLeft: "50px",
+                            fontSize: "16px",
+                            height: "55px",
+                          }}
+                        />
+                        {errors.mobile_number && (
+                          <div className="text-danger">
+                            {errors.mobile_number}
+                          </div>
+                        )}
+                      </div>
+                      {/* <div className="form-floating mb-3">
+                        <select
+                          className="form-control"
+                          id="floatingCountry"
+                          name="country_id"
+                          value={countryId}
+                          onChange={countryhandleChangecustomer}
+                        >
+                          <option value=""></option>
+                          {countryList.map((item, index) => (
+                            <option value={item.id} key={item.id}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.country_id && (
+                          <div className="text-danger">{errors.country_id}</div>
+                        )}
+                        <label for="floatingCountry">Select Country</label>
+                      </div> */}
+                      <div className="d-grid">
+                        <button
+                          className="btn btn-login text-uppercase fw-bold"
+                          type="submit"
+                          onClick={() => handleActive()}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <form action="javascript:void(0);" onSubmit={handleSubmit}>
                       <div className="form-floating mb-3">
                         <input
                           type={showPassword ? "text" : "password"}
@@ -312,53 +479,53 @@ const Register = () => {
                       </div>
                       <div className="form-floating mb-3">
                         <input
-                          type="number"
+                          type={showPasswords ? "text" : "password"}
                           className="form-control"
-                          id="floatingInput"
-                          placeholder="mobile number"
-                          name="mobile_number"
-                          value={formData.mobile_number}
-                          onChange={handleChange}
+                          id="floatingPassword"
+                          placeholder="Password"
+                          name="confirmPassword"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
                         />
-
-                        {errors.mobile_number && (
+                        {showPassword ? (
+                          <VisibilityIcon
+                            style={{
+                              position: "absolute",
+                              top: "18px",
+                              right: "10px",
+                            }}
+                            onClick={handleClickShowPasswords}
+                          />
+                        ) : (
+                          <VisibilityOffIcon
+                            style={{
+                              position: "absolute",
+                              top: "18px",
+                              right: "10px",
+                            }}
+                            onClick={handleClickShowPasswords}
+                          />
+                        )}
+                        {errors.confirmPassword && (
                           <div className="text-danger">
-                            {errors.mobile_number}
+                            {errors.confirmPassword}
                           </div>
                         )}
-                        <label for="floatingInput">Mobile Number</label>
+                        <label for="floatingPassword">Confirm Password</label>
                       </div>
-                      <div className="form-floating mb-3">
-                        <select
-                          className="form-control"
-                          id="floatingCountry"
-                          name="country_id"
-                          value={countryId}
-                          onChange={countryhandleChangecustomer}
-                        >
-                          <option value=""></option>
-                          {countryList.map((item, index) => (
-                            <option value={item.id} key={item.id}>
-                              {item.name}
-                            </option>
-                          ))}
-                        </select>
-                        {errors.country_id && (
-                          <div className="text-danger">{errors.country_id}</div>
-                        )}
-                        <label for="floatingCountry">Select Country</label>
-                      </div>
+
                       <div className="d-grid">
                         <button
                           className="btn btn-login text-uppercase fw-bold"
                           type="submit"
                         >
-                          Create personal account
+                          Create Account
                         </button>
                       </div>
                     </form>
-                  ) : (
-                    <form onSubmit={handleBusinessSubmit}>
+                  )}
+                  {/* ) : ( */}
+                  {/* <form onSubmit={handleBusinessSubmit}>
                       <div className="form-floating mb-3">
                         <input
                           type="text"
@@ -474,8 +641,8 @@ const Register = () => {
                           Create Business account
                         </button>
                       </div>
-                    </form>
-                  )}
+                    </form> */}
+                  {/* )} */}
 
                   <div className="row">
                     <div className="col-12">

@@ -1,35 +1,34 @@
-// AuthContext.js
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
+import { apiCallNew } from "../../Network_Call/apiservices";
+import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 
-const AuthContext = createContext();
+const CartContext = createContext();
 
-const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState({
-    token: null,
-    userData: null,
-  });
+export const CartProvider = ({ children }) => {
+  const [cartCount, setCartCount] = useState(0);
 
-  const setToken = (token) => {
-    setAuthState((prevState) => ({
-      ...prevState,
-      token,
-    }));
-    localStorage.setItem('token', token);
-  };
-
-  const setUserData = (userData) => {
-    setAuthState((prevState) => ({
-      ...prevState,
-      userData,
-    }));
-    localStorage.setItem('userData', JSON.stringify(userData));
+  const updateCartCount = () => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.CartProductCount).then((response) => {
+        if (response.success) {
+          setCartCount(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ authState, setToken, setUserData }}>
+    <CartContext.Provider
+      value={{
+        cartCount,
+        updateCartCount,
+      }}
+    >
       {children}
-    </AuthContext.Provider>
+    </CartContext.Provider>
   );
 };
 
-export { AuthContext, AuthProvider };
+export const useCart = () => useContext(CartContext);

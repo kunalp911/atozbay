@@ -18,7 +18,7 @@ const ContactInfo = () => {
   const [countryList, setCountriesList] = useState([]);
   const [stateList, setStateList] = useState([]);
   const [countryId, setCountryId] = useState();
-  const [stateId, setStateId] = useState(); 
+  const [stateId, setStateId] = useState();
   const [errors, setErrors] = useState({});
   const [businessErrors, setbusinessErrors] = useState({});
   const [contactData, setContactData] = useState({
@@ -651,5 +651,3 @@ const styles = {
   },
 };
 export default ContactInfo;
-
- 

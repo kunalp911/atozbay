@@ -47,7 +47,7 @@
   background-color: #3665f3;
 }
 
-/* *************bottom header******************* */ 
+/* *************bottom header******************* */
 
 /* Styles for the search bar */
 .img-fluid {
@@ -81,7 +81,7 @@
   font-size: 15px;
   color: #000;
   cursor: pointer;
-} 
+}
 @media (max-width: 768px) {
   .input-group {
     flex-direction: row;
@@ -111,7 +111,7 @@
   }
 
   .shopcategorytitle {
-    font-size: 9px;
+    font-size: 11px;
     color: #000;
     width: 150px;
   }
@@ -207,6 +207,9 @@
 
   .main-navbar .navbar-nav {
     flex-direction: column;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+
     /* text-align: center; */
   }
 
@@ -226,7 +229,7 @@
     margin-top: -16px;
   }
   .shopcategorytitle {
-    font-size: 9px;
+    font-size: 11px;
     color: #000;
     width: 150px;
   }
