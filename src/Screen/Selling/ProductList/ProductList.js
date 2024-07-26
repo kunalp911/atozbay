@@ -94,7 +94,7 @@ const ProductList = () => {
             <div className="mt-2">
               <Container fluid className="my-4">
                 {productLists?.map((product, index) => (
-                  <Card className="mt-2">
+                  <Card className="mt-2" key={index}>
                     <Card.Header className="d-flex justify-content-between">
                       <Typography variant="h6">
                         {index + 1}. Title: {product?.name}

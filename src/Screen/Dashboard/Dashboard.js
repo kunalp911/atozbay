@@ -167,7 +167,6 @@ const Dashboard = () => {
 
   const handleSelectSubCategory = (item) => {
     navigate(`/category/${item?.id}`, { state: { category: item } });
-    console.log("OOOOOO", item);
   };
 
   return (

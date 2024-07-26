@@ -6,6 +6,7 @@ import { Badge, Grid, IconButton, Menu, MenuItem } from "@mui/material";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useCart } from "../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -14,13 +15,22 @@ const Header = () => {
   const open = Boolean(anchorEl);
   const opens = Boolean(anchorE2);
   const [categoriesList, setCategoriesList] = useState([]);
+
   const userData = localStorage.getItem("@userData");
   const data = JSON.parse(userData);
+  const firstChars = data?.email?.substring(0, 6);
+  const { cartCount, updateCartCount } = useCart();
+
+  useEffect(() => {
+    updateCartCount();
+  }, [updateCartCount]);
 
   const Logout = () => {
     localStorage.clear("@userToken");
     handleCloses();
     navigate("/");
+    updateCartCount("");
+    window.location.reload();
   };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -59,6 +69,18 @@ const Header = () => {
     navigate("/account-setting");
     window.location.reload();
   };
+
+  // const handleCartCount = () => {
+  //   try {
+  //     apiCallNew("get", {}, ApiEndPoints.CartProductCount).then((response) => {
+  //       if (response.success) {
+  //         setCartCount(response.result);
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   return (
     <div>
       <nav className="navbar navbar-expand-lg main-navbar">
@@ -82,7 +104,7 @@ const Header = () => {
           id="navbarSupportedContent"
           style={{ padding: "0px 40px" }}
         >
-          <ul className="navbar-nav mr-auto">
+          <ul className="navbar-nav mr-auto border-top">
             <li className="nav-item">
               <p
                 className="navbar-toggler"
@@ -115,7 +137,7 @@ const Header = () => {
                   cursor: "pointer",
                 }}
               >
-                {data?.name ? data?.name : data?.username}
+                {firstChars}
               </a>
               <Menu
                 id="basic-menu"
@@ -129,7 +151,7 @@ const Header = () => {
                 <Grid container spacing={2}>
                   <Grid sx={{ padding: "10px 20px" }}>
                     <MenuItem sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                      {data?.username}
+                      {firstChars}
                     </MenuItem>
                     <MenuItem
                       sx={{
@@ -188,7 +210,7 @@ const Header = () => {
               </a>
             </li>
           </ul>
-          <ul className="navbar-nav">
+          <ul className="navbar-nav border-bottom">
             <li className="nav-item">
               <Link to="/selling">
                 <a className="nav-link first-titless" href="#">
@@ -199,7 +221,7 @@ const Header = () => {
             <li className="nav-item dropdown">
               <Link to="/watch-list">
                 <a className="nav-link first-titless " href="#">
-                  Wathchlist
+                  Watchlist
                 </a>
               </Link>
             </li>
@@ -234,30 +256,15 @@ const Header = () => {
             </li>
             <li className="nav-item">
               <Link to={"/add-to-cart"} className="text-dark">
-                {/* <a className="nav-link first-icon" href="#"> */}
-                {/* <i className="fas fa-shopping-cart"></i>
-                  <span
-                    style={{
-                      backgroundColor: "red",
-                      color: "white",
-                      borderRadius: "50%",
-                      padding: "5px",
-                      width: "5px",
-                      height: "5px",
-                    }}
-                  >
-                    3
-                  </span> */}
                 <IconButton
                   className="mt-2"
                   aria-label="show 4 new mails"
                   color="inherit"
                 >
-                  <Badge badgeContent={3} color="error">
+                  <Badge badgeContent={cartCount} color="error">
                     <ShoppingCartIcon />
                   </Badge>
                 </IconButton>
-                {/* </a> */}
               </Link>
             </li>
           </ul>
@@ -266,12 +273,15 @@ const Header = () => {
       <div style={{ borderBottom: "1px solid #e5e5e5", paddingBottom: "10px" }}>
         <div className="container mt-3">
           <div className="row align-items-center">
-            <div className="col-2 text-center text-lg-left logodiv">
+            <div
+              className="col-2 text-center text-lg-left logodiv"
+              style={{ marginRight: "10px" }}
+            >
               <Link to="/">
                 <img src={logos} alt="Logo" className="img-fluid logo" />
               </Link>
             </div>
-            <div className="col shopcategorydrop">
+            <div className="col shopcategorydrop p-1">
               <a
                 className="shopcategorytitle"
                 id="basic-button"
@@ -307,7 +317,7 @@ const Header = () => {
                 </Grid>
               </Menu>
             </div>
-            <div className="col-8 second-header">
+            <div className="col-8 second-header ">
               <div className="input-group">
                 <input
                   type="text"
@@ -315,8 +325,8 @@ const Header = () => {
                   placeholder="Search for anything"
                   aria-label="Search"
                 />
-                <div class="input-group-append search-drop">
-                  <select class="form-control category-select">
+                <div className="input-group-append search-drop">
+                  <select className="form-control category-select">
                     <option>All Categories</option>
                     <option>Books</option>
                     <option>Electronics</option>

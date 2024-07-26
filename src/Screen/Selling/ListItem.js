@@ -5,13 +5,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import "./selling.css";
+import { getToken } from "../../Helper/Storage";
 
 const ListItem = () => {
   const navigate = useNavigate();
+  const token = getToken();
   const [productLists, setProductLists] = React.useState([]);
   const [keyword, setKeyword] = React.useState("");
   const [cateId, setCateId] = React.useState(0);
-  console.log("first", keyword, productLists, cateId);
+  console.log("first", token);
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (keyword) {
@@ -28,11 +31,13 @@ const ListItem = () => {
       keyword: keyword,
     };
     try {
-      apiCallNew("post", payload, ApiEndPoints.ProductList).then((response) => {
-        if (response.success) {
-          setProductLists(response.result);
+      apiCallNew("post", payload, ApiEndPoints.ShopProductList).then(
+        (response) => {
+          if (response.success) {
+            setProductLists(response.result);
+          }
         }
-      });
+      );
     } catch (error) {
       console.log(error);
     }
@@ -51,6 +56,14 @@ const ListItem = () => {
     setKeyword(item.name);
     setCateId(item.category_id);
     getProductList();
+  };
+
+  const handleContenue = () => {
+    if (token) {
+      navigate("/selling/select-condition");
+    } else {
+      navigate("/login");
+    }
   };
   return (
     <div>
@@ -96,11 +109,12 @@ const ListItem = () => {
             ) : (
               <div className="text-center p-5">
                 <p className="no-products-found">No products found</p>
-                <Link to={"/selling/select-condition"}>
-                  <button className="btn continue-listanbutton">
-                    Continue without match
-                  </button>
-                </Link>
+                <button
+                  className="btn continue-listanbutton"
+                  onClick={handleContenue}
+                >
+                  Continue without match
+                </button>
               </div>
             ))}
         </div>

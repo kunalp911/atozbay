@@ -9,6 +9,7 @@
 
 .price-valuee {
   font-size: 24px;
+  font-weight: bold;
 }
 
 .price-offere {
@@ -44,12 +45,12 @@
 }
 .buyitnow-btn:hover {
   color: #fff;
-} 
-.addcarditnow-btn{
-  border-radius: 25px ;
 }
-.additnow-btn{
-  border-radius: 25px ;
+.addcarditnow-btn {
+  border-radius: 25px;
+}
+.additnow-btn {
+  border-radius: 25px;
 }
 .main-image-container {
   width: auto;
@@ -68,5 +69,27 @@
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  filter: invert(100%);  
+  filter: invert(100%);
+}
+
+.scrollable-containeras {
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 300px;
+}
+.scrollable-containeras img {
+  flex: 0 0 auto;
+}
+.scrollable-containeras::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollable-containeras::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.scrollable-containeras::-webkit-scrollbar-thumb {
+  background: #888;
+}
+.scrollable-containeras::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

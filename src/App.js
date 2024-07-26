@@ -1,16 +1,15 @@
 import { ToastContainer } from "react-toastify";
-import { AuthProvider } from "./Component/context/AuthContext";
-import { getToken } from "./Helper/Storage";
 import PublicRouter from "./Router/PublicRouter";
 import "react-toastify/dist/ReactToastify.css";
+import React from "react";
+import { CartProvider } from "./Component/context/AuthContext";
 
 function App() {
-  const token = getToken("@userToken");
   return (
-    <AuthProvider>
+    <CartProvider>
       <ToastContainer autoClose={1500} />
       <PublicRouter />
-    </AuthProvider>
+    </CartProvider>
   );
 }
 

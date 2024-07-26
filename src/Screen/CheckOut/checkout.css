@@ -60,3 +60,45 @@
   cursor: pointer;
   width: 25%;
 }
+
+.applybtn:hover {
+  background-color: #3665f3;
+  color: #fff;
+}
+
+.addchanges {
+  cursor: pointer;
+}
+.addaddress {
+  cursor: pointer;
+  border-top: 1px solid #d4d1d1;
+  margin-top: 15px;
+}
+.addsavebtn {
+  background-color: #3665f3;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+}
+.addcancelbtn {
+  color: #3665f3;
+  padding: 5px 10px;
+  border-radius: 25px;
+  border: 1px solid #3665f3;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+}
+.addcancelbtn:hover {
+  background-color: #f1f1f1;
+  color: #3665f3;
+}
+.addsavebtn:hover {
+  background-color: #3665f3;
+  color: #fff;
+}

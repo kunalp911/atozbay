@@ -13,6 +13,9 @@ import Footer from "../../Component/Footer/Footer";
 import "./checkout.css";
 import { useLocation } from "react-router-dom";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
+import { Typography } from "@mui/material";
+import { apiCallNew } from "../../Network_Call/apiservices";
+import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 const CheckOut = () => {
   const location = useLocation();
   const data = location?.state;
@@ -20,11 +23,31 @@ const CheckOut = () => {
   const [totalPrice, setTotalPrice] = useState(
     data?.product?.product_prices?.price
   );
+  const [shipAddList, setShipAddList] = useState([]);
+  const [primaryAddress, setPrimaryAddress] = useState(0);
 
+  const handlePrimaryChange = (index) => {
+    setPrimaryAddress(index);
+  };
+  console.log("shipAddList", shipAddList, primaryAddress);
   useEffect(() => {
     setTotalPrice(quantity * data?.product?.product_prices?.price);
   }, [quantity, data?.product?.product_prices?.price]);
 
+  useEffect(() => {
+    getShipAddressList();
+  }, []);
+  const getShipAddressList = () => {
+    try {
+      apiCallNew("post", {}, ApiEndPoints.ShipAddressList).then((response) => {
+        if (response.success) {
+          setShipAddList(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <Header />
@@ -167,34 +190,84 @@ const CheckOut = () => {
             <Card className="mb-3">
               <Card.Body>
                 <h5 className="paywithname">Ship to</h5>
-                <Form>
-                  <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter your name"
-                      defaultValue="kunal"
+                {shipAddList?.map((item, index) => (
+                  <Card.Text key={index}>
+                    <Form.Check
+                      type="radio"
+                      id={`primary-address-${index}`}
+                      name="primaryAddress"
+                      checked={primaryAddress === index}
+                      onChange={() => handlePrimaryChange(index)}
+                      label={
+                        <>
+                          <p className="mb-0">{item?.address_1}</p>
+                          <p className="mb-0">
+                            {item?.address_2}, {item?.city_name}, (
+                            {item?.pincode})
+                          </p>
+                        </>
+                      }
                     />
-                  </Form.Group>
-
-                  <Form.Group controlId="formBasicPassword">
-                    <Form.Label>Address</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter your address"
-                      defaultValue="indore, MP 452001"
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="formBasicPhone">
-                    <Form.Label>Phone</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter your phone number"
-                      defaultValue="911123711"
-                    />
-                  </Form.Group>
-                </Form>
+                    <Typography color="primary" className="addchanges">
+                      <u>Changes</u>
+                    </Typography>
+                    <Typography color="primary" className="addchanges">
+                      <u>Edit</u>
+                    </Typography>
+                  </Card.Text>
+                ))}
+                <Typography color="primary" className="addaddress">
+                  <u>Add Address</u>
+                </Typography>
               </Card.Body>
+              {/* <Card.Body>
+                <h5 className="paywithname">Ship to</h5>
+                <Form action="javascript:void(0);">
+                  <Row className="mb-2">
+                    <Col md={6} className="mb-2">
+                      <Form.Select>
+                        <option value="">Select State</option>
+                        <option value="1">USA</option>
+                      </Form.Select>
+                    </Col>
+                    <Col md={6} className="mb-2">
+                      <Form.Group controlId="city">
+                        <Form.Select>
+                          <option value="">Select State</option>
+                          <option value="1">USA</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row className="mb-2">
+                    <Col md={6} className="mb-2">
+                      <Form.Group controlId="state">
+                        <Form.Control type="text" placeholder="Enter state" />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6} className="mb-2">
+                      <Form.Group controlId="zip">
+                        <Form.Control type="text" placeholder="Enter zip" />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row className="mb-2">
+                    <Col md={6} className="mb-2">
+                      <Form.Group controlId="country">
+                        <Form.Control type="text" placeholder="Enter country" />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row className="mb-2">
+                    <Col md={3}>
+                      <button className="btn mt-2 addsavebtn">Save</button>
+                    </Col>
+                    <Col md={3}>
+                      <button className="btn mt-2 addcancelbtn">Cancel</button>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card.Body> */}
             </Card>
             <Card className="mt-4">
               <Card.Body>

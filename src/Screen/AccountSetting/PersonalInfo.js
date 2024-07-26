@@ -20,6 +20,8 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import "./accountsetting.css";
 import { Link } from "react-router-dom";
+import { Col, Form, Row } from "react-bootstrap";
+import OTPInput from "react-otp-input";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -92,6 +94,10 @@ const PersonalInfo = () => {
   const [shipAddList, setShipAddList] = useState([]);
   const [addId, setAddId] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [verifyEmail, setVerifyEmail] = useState("");
+  const [verifyShow, setVerifyShow] = useState(false);
+  const [otpShow, setOtpShow] = useState(false);
+  const [otp, setOtp] = useState("");
   const [contactUpdateData, setContactUpdateData] = useState({
     country_id: "",
     city_name: "",
@@ -125,6 +131,13 @@ const PersonalInfo = () => {
       updateProfileImg();
     }
   }, [file]);
+
+  useEffect(() => {
+    if (userData?.email) {
+      setVerifyEmail(userData.email);
+    }
+  }, [userData]);
+
   useEffect(() => {
     if (contactData) {
       setContactUpdateData({
@@ -164,7 +177,7 @@ const PersonalInfo = () => {
   }, [businessData]);
 
   useEffect(() => {
-    if (userData && userData.name) {
+    if (userData?.name) {
       setUserName(userData.name);
     }
   }, [userData]);
@@ -535,7 +548,7 @@ const PersonalInfo = () => {
       console.log(error);
     }
   };
-  const handleShipAddUpdate = async (addId) => { 
+  const handleShipAddUpdate = async (addId) => {
     try {
       const response = await apiCallNew(
         "post",
@@ -578,6 +591,58 @@ const PersonalInfo = () => {
     }
   };
 
+  const handleVerifyEmail = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        email: verifyEmail,
+      };
+      setload(true);
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.SendOTPEmail
+      );
+      if (response.success === true) {
+        setOtpShow(true);
+        setVerifyShow(false);
+        toast.success(response.msg);
+        setload(false);
+      } else {
+        setload(false);
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        email: verifyEmail,
+        otp: otp,
+      };
+      setload(true);
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.VerifyEmailOTP
+      );
+      if (response.success === true) {
+        setOtpShow(false);
+        toast.success(response.msg);
+        setload(false);
+      } else {
+        setload(false);
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
   return (
     <div>
       <Header />
@@ -692,7 +757,7 @@ const PersonalInfo = () => {
                         </Typography>
                       </Grid>
                     </Box>
-                    <Box className={classes.section} xs={3} md={3}>
+                    {/* <Box className={classes.section} xs={3} md={3}>
                       <Grid>
                         <Typography variant="body1">Account type</Typography>
                         <Typography
@@ -703,7 +768,8 @@ const PersonalInfo = () => {
                           {userData?.user_type}
                         </Typography>
                       </Grid>
-                    </Box>
+                    </Box> */}
+
                     <Box className={classes.section}>
                       <Grid>
                         <Typography variant="body1">Contact info</Typography>
@@ -716,7 +782,82 @@ const PersonalInfo = () => {
                           {userData?.email}
                         </Typography>
                       </Grid>
+                      <Grid>
+                        <Link onClick={() => setVerifyShow(true)}>Verify</Link>
+                        <Link className="ms-4">Edit</Link>
+                      </Grid>
                     </Box>
+                    {verifyShow && (
+                      <Box className="ms-2">
+                        <Form
+                          action="javascript:void(0);"
+                          onSubmit={handleVerifyEmail}
+                        >
+                          <Col md={6} className="mb-2">
+                            <Form.Group controlId="email">
+                              <Form.Control
+                                type="text"
+                                placeholder="Email address"
+                                value={verifyEmail}
+                                onChange={(e) => setVerifyEmail(e.target.value)}
+                              />
+                            </Form.Group>
+                          </Col>
+                          <Row className="mb-2">
+                            <Col md={3}>
+                              <button
+                                className="btn mt-2 addcancelbtn"
+                                onClick={() => setVerifyShow(false)}
+                              >
+                                Cancel
+                              </button>
+                            </Col>
+                            <Col md={3}>
+                              <button className="btn mt-2 addsavebtn">
+                                Save
+                              </button>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Box>
+                    )}
+                    {otpShow && (
+                      <Box className="ms-2">
+                        <Form
+                          action="javascript:void(0);"
+                          onSubmit={handleVerifyOtp}
+                        >
+                          <Col md={6} className="mb-2">
+                            <OTPInput
+                              value={otp}
+                              onChange={setOtp}
+                              numInputs={6}
+                              renderSeparator={
+                                <span className="otp-separator">-</span>
+                              }
+                              renderInput={(props) => (
+                                <input {...props} className="otp-input" />
+                              )}
+                            />
+                          </Col>
+                          <Row className="mb-2">
+                            <Col md={3}>
+                              <button
+                                className="btn mt-2 addcancelbtn"
+                                onClick={() => setOtpShow(false)}
+                              >
+                                Cancel
+                              </button>
+                            </Col>
+                            <Col md={3}>
+                              <button className="btn mt-2 addsavebtn">
+                                Save
+                              </button>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Box>
+                    )}
                     <Box className={classes.section}>
                       <Grid>
                         <Typography variant="body1">Phone number</Typography>
@@ -939,7 +1080,7 @@ const PersonalInfo = () => {
                                 {errors.password}
                               </div>
                             )}
-                            <label for="floatingPassword">
+                            <label htmlFor="floatingPassword">
                               Current Password
                             </label>
                           </div>
@@ -977,7 +1118,9 @@ const PersonalInfo = () => {
                                 {errors.newPassword}
                               </div>
                             )}
-                            <label for="floatingPassword">New Password</label>
+                            <label htmlFor="floatingPassword">
+                              New Password
+                            </label>
                           </div>
                           <div className="form-floating mb-3">
                             <input
@@ -996,7 +1139,7 @@ const PersonalInfo = () => {
                                 {errors.confirmPassword}
                               </div>
                             )}
-                            <label for="floatingPassword">
+                            <label htmlFor="floatingPassword">
                               Confirm Password
                             </label>
                           </div>
@@ -1365,7 +1508,7 @@ const PersonalInfo = () => {
                               </button>
                             </div>
                           </Grid>
-                        ))} 
+                        ))}
                       </Grid>
                     </Box>
                   </Box>
@@ -1508,25 +1651,23 @@ const PersonalInfo = () => {
                                   </button>
                                 </Grid>
                                 <Grid item>
-                                  {
-                                    isOpen ? (
-                                      <button
-                                        className="btn text-uppercase fw-bold save-btn"
-                                        type="submit"
-                                        onClick={() => handleShipAddUpdate(addId)}
-                                      > 
+                                  {isOpen ? (
+                                    <button
+                                      className="btn text-uppercase fw-bold save-btn"
+                                      type="submit"
+                                      onClick={() => handleShipAddUpdate(addId)}
+                                    >
                                       Update
-                                      </button>
-                                    ) : (
-                                  <button
-                                    className="btn text-uppercase fw-bold save-btn"
-                                    type="submit"
-                                    onClick={handleShipAddSubmit}
-                                  >
-                                    Save
-                                  </button>
-                                    )
-                                  }
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn text-uppercase fw-bold save-btn"
+                                      type="submit"
+                                      onClick={handleShipAddSubmit}
+                                    >
+                                      Save
+                                    </button>
+                                  )}
                                 </Grid>
                               </Grid>
                             </div>
