@@ -99,9 +99,7 @@ const Register = () => {
     email: Yup.string()
       .required("Email is Required")
       .email("Invalid email format"),
-    mobile_number: Yup.string()
-      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
-      .required("Mobile number is required"),
+    mobile_number: Yup.string().required("Mobile number is required"),
   });
 
   const validationSchemapass = Yup.object({

@@ -32,6 +32,7 @@ const ApiEndPoints = {
   GetAddress: `${APPConfig.API_URL}/address/8`,
   ShipAddressList: `${APPConfig.API_URL}/addresses-list`,
   ProductAdd: `${APPConfig.API_URL}/product-add`,
+  ProductUpdate: `${APPConfig.API_URL}/product-update/`,
   BrandList: `${APPConfig.API_URL}/brands-list`,
   AttributesList: `${APPConfig.API_URL}/attributes-list`,
   AttributesValueList: `${APPConfig.API_URL}/attributevalues-by-attribute/`,
@@ -41,11 +42,16 @@ const ApiEndPoints = {
   ProductSellerDetail: `${APPConfig.API_URL}/product/`,
   ProductSellDelete: `${APPConfig.API_URL}/product/`,
   ProductShopDetail: `${APPConfig.API_URL}/shop-product/`,
+  // ProductShopDetail: `${APPConfig.API_URL}/shop-product-detail/`,
   AddToCart: `${APPConfig.API_URL}/add-to-cart`,
   CartProductsList: `${APPConfig.API_URL}/cart-products`,
   CartUpdate: `${APPConfig.API_URL}/update-cart`,
   CartProductCount: `${APPConfig.API_URL}/cart-product-count`,
   DeleteCartProduct: `${APPConfig.API_URL}/delete-cart-product`,
+  AddToWishList: `${APPConfig.API_URL}/add-to-wishlist`,
+  WishList: `${APPConfig.API_URL}/wishlist-products`,
+  DeleteWishListProduct: `${APPConfig.API_URL}/delete-wishlist/`,
+  WishListProductCount: `${APPConfig.API_URL}/wishlist-product-count`,
 };
 
 export default ApiEndPoints;

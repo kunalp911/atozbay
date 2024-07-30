@@ -6,9 +6,9 @@ const Topheader = ({ mainTitle, description }) => {
       <div className="col-12">
         <div className="p-4 text-white topheadercss">
           <h3 className="display">{mainTitle}</h3>
-          {/* <p className="lead" style={{ fontWeight: "500" }}> 
-          {description}
-          </p> */}
+          <p className="lead" style={{ fontWeight: "500", fontSize: "16px" }}>
+            {mainTitle}
+          </p>
         </div>
       </div>
     </div>

@@ -40,11 +40,13 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const conditionName = location.state?.condition;
-  const updateProduct = location.state?.product || {};
+  const updateProduct = location.state?.product || null;
+  const isUpdateMode = !!updateProduct;
   const [colorList, setColorList] = React.useState([]);
   const [brandList, setBrandList] = React.useState([]);
   const [isPhoto, setIsPhoto] = useState(true);
   const [images, setImages] = useState([]);
+  const [updateImage, setUpdateImage] = useState(null);
   const [video, setVideo] = useState(null);
   const [categoriesList, setCategoriesList] = useState([]);
   const [subCategoriesList, setSubCategoriesList] = React.useState([]);
@@ -76,44 +78,43 @@ const AddProduct = () => {
     shipping_in_days: "",
   });
 
-  // useEffect(() => {
-  //   if (updateProduct) {
-  //     setAddProductFormData({
-  //       name: updateProduct.name,
-  //       sku: updateProduct.sku,
-  //       condition_description: updateProduct.condition_description,
-  //       description: updateProduct.description,
-  //       price: updateProduct.product_prices.price,
-  //       price_format: updateProduct.product_prices.price_format,
-  //       auction_duration: updateProduct.product_prices.auction_duration,
-  //       available_quantity: updateProduct.product_prices.available_quantity,
-  //       starting_bid: updateProduct.product_prices.starting_bid,
-  //       brand_id: updateProduct.brand_id,
-  //       color_id: updateProduct.color_id || 4,
-  //       category_id: updateProduct.category_id,
-  //       short_desc: updateProduct.short_desc,
-  //       shipping_in_days: updateProduct.product_shipping.shipping_in_days,
-  //     });
+  useEffect(() => {
+    if (updateProduct) {
+      setAddProductFormData({
+        name: updateProduct?.name,
+        sku: updateProduct?.sku,
+        condition_description: updateProduct?.condition_description,
+        description: updateProduct?.description,
+        price: updateProduct?.product_prices?.price,
+        price_format: updateProduct?.product_prices?.price_format,
+        auction_duration: updateProduct?.product_prices?.auction_duration,
+        available_quantity: updateProduct?.product_prices?.available_quantity,
+        starting_bid: updateProduct?.product_prices?.starting_bid,
+        brand_id: updateProduct?.brand_id,
+        color_id: updateProduct?.color_id || 4,
+        category_id: updateProduct?.category_id,
+        short_desc: updateProduct?.short_desc,
+        shipping_in_days: updateProduct?.product_shipping?.shipping_in_days,
+      });
 
-  //     // Initialize attributes
-  //     const initialSelectedAttributes = updateProduct.product_attributes.reduce(
-  //       (acc, item) => {
-  //         acc[item.product_attr_id] = item.product_attr_value_id;
-  //         return acc;
-  //       },
-  //       {}
-  //     );
-  //     console.log("initialSelectedAttributes", initialSelectedAttributes);
-  //     setSelectedAttributes(initialSelectedAttributes);
-  //     setImages(updateProduct.product_images);
-  //     getAttributesList(updateProduct.category_id);
-  //   }
-  // }, [updateProduct]);
+      // Initialize attributes
+      const initialSelectedAttributes =
+        updateProduct?.product_attributes?.reduce((acc, item) => {
+          acc[item?.product_attr_id] = item?.product_attr_value_id;
+          return acc;
+        }, {});
+      console.log("initialSelectedAttributes", initialSelectedAttributes);
+      setSelectedAttributes(initialSelectedAttributes);
+      setUpdateImage(updateProduct?.product_images);
+      getAttributesList(updateProduct?.category_id);
+      setCategoryName(updateProduct?.category_name);
+      setSelectedValue(updateProduct?.item_condition);
+    }
+  }, []);
 
-  // console.log("updateProduct", updateProduct);
+  // console.log("updateProduct", updateProduct, ">>>>>>", updateImage);
   // console.log("addProductFormData", addProductFormData);
-  // console.log("attributesList", attributesList);
-  // console.log("attributesValueList", attributesValueList);
+  console.log("images", images);
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
@@ -129,17 +130,37 @@ const AddProduct = () => {
         attribute_value_ids.push(attributeValueId);
       }
     });
-
+    const allImages = [...(images || []), ...(updateImage || [])];
     const payload = {
       attribute_id: attribute_ids,
       attribute_value_id: attribute_value_ids,
-      item_condition: conditionName, // Adjust this logic if needed
+      item_condition: selectedValue ? selectedValue : conditionName,
       video: video || null,
-      images: images,
+      images: allImages,
       ...addProductFormData,
     };
 
     console.log("payloadupdate", payload);
+    setload(true);
+
+    try {
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.ProductUpdate + updateProduct?.id
+      );
+      setload(true);
+      if (response.success === true) {
+        navigate("/product-list");
+        toast.success(response.msg);
+        setload(false);
+      } else {
+        toast.error(response.msg[0]);
+        setload(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -263,6 +284,7 @@ const AddProduct = () => {
 
       acceptedFiles.forEach((file) => {
         file.preview = URL.createObjectURL(file);
+        file.id = `${file.name}-${Date.now()}-${Math.random()}`;
         if (file.type.startsWith("image/")) {
           imageFiles.push(file);
         } else if (file.type.startsWith("video/")) {
@@ -271,7 +293,18 @@ const AddProduct = () => {
       });
 
       if (isPhoto) {
-        setImages((prevImages) => [...prevImages, ...imageFiles]);
+        setImages((prevImages) => {
+          const totalImages = prevImages.length + imageFiles.length;
+          if (totalImages > 4) {
+            alert(
+              "You can upload a maximum of 4 images. Please upgrade your plan to upload more images."
+            );
+            imageFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+            return prevImages;
+          }
+          return [...prevImages, ...imageFiles];
+        });
+        // setImages((prevImages) => [...prevImages, ...imageFiles]);
       } else {
         if (!video && videoFiles.length > 0) {
           setVideo(videoFiles[0]);
@@ -470,7 +503,7 @@ const AddProduct = () => {
       </div>
       <div className="container" style={{ padding: "10px 40px" }}>
         <div className="d-flex justify-content-between">
-          <h4 onClick={handleUpdateProduct}>Complete your listing</h4>
+          <h4>Complete your listing</h4>
         </div>
         <section className="photos-video mt-2">
           <h6 style={{ fontWeight: "bold" }}>PHOTOS OR VIDEO</h6>
@@ -491,25 +524,60 @@ const AddProduct = () => {
             </div>
           </div>
           <div>
+            {isUpdateMode && (
+              <div
+                style={{ display: "flex", flexWrap: "wrap", marginTop: "20px" }}
+              >
+                {updateImage?.map((file, index) => (
+                  <>
+                    <img
+                      key={index}
+                      src={file.product_image}
+                      alt={`img-${index}`}
+                      style={mediaPreviewStyle}
+                    />
+                    <i
+                      className="fa fa-times"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        URL.revokeObjectURL(file.preview);
+                        setUpdateImage(
+                          updateImage.filter((_, i) => i !== index)
+                        );
+                      }}
+                    ></i>
+                  </>
+                ))}
+              </div>
+            )}
             {images?.length > 0 && <h6 className="mt-3">Uploaded Images</h6>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {images?.map((file, index) => (
-                <>
+                <div key={file.id} style={{ display: "flex" }}>
                   <img
-                    key={index}
                     src={file.preview}
-                    alt={`img-${index}`}
+                    alt={`img-${file.id}`}
                     style={mediaPreviewStyle}
                   />
                   <i
                     className="fa fa-times"
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: "pointer",
+                    }}
                     onClick={() => {
-                      URL.revokeObjectURL(file.preview);
-                      setImages(images.filter((_, i) => i !== index));
+                      // Update the state first
+                      setImages((prevImages) => {
+                        const updatedImages = prevImages.filter(
+                          (img) => img.id !== file.id
+                        );
+                        // Revoke the URL after state update
+                        URL.revokeObjectURL(file.preview);
+                        return updatedImages;
+                      });
                     }}
                   ></i>
-                </>
+                  {/* <p>de</p> */}
+                </div>
               ))}
             </div>
             {video && <h6>Uploaded Video</h6>}
@@ -637,6 +705,38 @@ const AddProduct = () => {
                 </div>
               </div>
             ))}
+            {/* {attributesList.length > 0 ? (
+              attributesList.map((attribute) => (
+                <div className="form-group row" key={attribute.id}>
+                  <label
+                    htmlFor={`attribute-${attribute.id}`}
+                    className="col-sm-2 col-form-label"
+                  >
+                    {attribute.attribute_name}
+                  </label>
+                  <div className="col-sm-10">
+                    <select
+                      className="form-control"
+                      id={`attribute-${attribute.id}`}
+                      value={selectedAttributes[attribute.id] || ""}
+                      onChange={(e) => handleAttributeChange(e, attribute.id)}
+                    >
+                      <option value="" hidden>
+                        Select {attribute.attribute_name}
+                      </option>
+                      {Array.isArray(attributesValueList[attribute.id]) &&
+                        attributesValueList[attribute.id].map((value) => (
+                          <option key={value.id} value={value.id}>
+                            {value.attr_val_name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div>No attributes available.</div>
+            )} */}
             {/* {attributesList?.map((item, index) => (
               <div className="form-group row" key={index}>
                 <label
@@ -1042,10 +1142,19 @@ const AddProduct = () => {
               <p>
                 A <a href="#">final value fee</a> applies when your item sells.
               </p>
-              <button className="btn btn-customs" onClick={handleAddProduct}>
-                List it
-              </button>
-              {/* <button className="btn btn-customs">Update it</button> */}
+              {isUpdateMode ? (
+                <button
+                  className="btn btn-customs"
+                  onClick={handleUpdateProduct}
+                >
+                  Update it
+                </button>
+              ) : (
+                <button className="btn btn-customs" onClick={handleAddProduct}>
+                  List it
+                </button>
+              )}
+
               <button className="btn btn-customss">Save for later</button>
               <button className="btn btn-customss">Preview</button>
             </div>

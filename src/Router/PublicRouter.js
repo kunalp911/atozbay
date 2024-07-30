@@ -59,7 +59,7 @@ const PublicRouter = () => {
         <Route path="/category/:id" element={<Category />} />
         <Route path="/product-list" element={<ProductList />} />
         <Route path="/watch-list" element={<WatchList />} />
-        <Route path="/checkout" element={<CheckOut />} />
+        <Route path="/checkout/:id" element={<CheckOut />} />
       </Routes>
     </BrowserRouter>
   );

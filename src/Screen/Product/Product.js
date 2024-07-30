@@ -13,20 +13,23 @@ import { CircularProgress } from "@mui/material";
 import logos from "../../Assets/image/bay.png";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 import { toast } from "react-toastify";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+
 const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [productDetails, setProductLists] = React.useState({});
+  // const [productDetailsToken, setProductListsToken] = React.useState({});
   const [load, setload] = useState(false);
   const [quantity, setQuantity] = useState(1);
-
-  console.log("productDetails", productDetails);
 
   useEffect(() => {
     if (id) {
       getProductDetails(id);
     }
   }, [id]);
+
   const getProductDetails = (id) => {
     try {
       setload(true);
@@ -43,6 +46,23 @@ const Product = () => {
       setload(false);
     }
   };
+
+  // const getProductDetailsToken = (id) => {
+  //   try {
+  //     setload(true);
+  //     apiCallNew("get", {}, ApiEndPoints.ProductShopDetailToken + id).then(
+  //       (response) => {
+  //         if (response.success) {
+  //           setProductListsToken(response.result);
+  //           setload(false);
+  //         }
+  //       }
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //     setload(false);
+  //   }
+  // };
 
   const handleAddToCart = () => {
     try {
@@ -70,8 +90,53 @@ const Product = () => {
     }
   };
 
+  const handleAddToWishList = () => {
+    try {
+      setload(true);
+      const payload = {
+        product_id: productDetails.id,
+      };
+      apiCallNew("post", payload, ApiEndPoints.AddToWishList).then(
+        (response) => {
+          if (response.success) {
+            console.log("res", response);
+            toast.success(response.msg);
+            navigate("/watch-list");
+            setload(false);
+          } else {
+            toast.error(response.msg);
+            setload(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
+  const removeCart = async (productDetails) => {
+    try {
+      const response = await apiCallNew(
+        "delete",
+        {},
+        ApiEndPoints.DeleteWishListProduct + productDetails?.wishlist_id
+      );
+      if (response.success === true) {
+        toast.success(response.msg);
+        getProductDetails(productDetails?.id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleCheckout = () => {
-    navigate("/checkout", { state: { product: productDetails, quantity } });
+    navigate(`/checkout/${productDetails?.id}`, { state: { quantity } });
+  };
+
+  const viewInCart = () => {
+    navigate("/add-to-cart");
   };
   return (
     <div>
@@ -230,16 +295,38 @@ const Product = () => {
               >
                 Buy It Now
               </button>
-
-              <button
-                className="btn btn-secondary addcarditnow-btn btn-block mb-2"
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </button>
-              <button className="btn btn-info additnow-btn btn-block mb-2">
-                Add to Watchlist
-              </button>
+              {productDetails?.cart_quantity ? (
+                <button
+                  className="btn addcarditnow-btn btn-block mb-2"
+                  onClick={viewInCart}
+                >
+                  View in Cart
+                </button>
+              ) : (
+                <button
+                  className="btn addcarditnow-btn btn-block mb-2"
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </button>
+              )}
+              {productDetails?.wishlist_id ? (
+                <button
+                  className="btn additnow-btn btn-block mb-2"
+                  onClick={() => removeCart(productDetails)}
+                >
+                  <FavoriteIcon />
+                  Unwatch
+                </button>
+              ) : (
+                <button
+                  className="btn  additnow-btn btn-block mb-2"
+                  onClick={handleAddToWishList}
+                >
+                  <FavoriteBorderIcon />
+                  Add to Watchlist
+                </button>
+              )}
             </div>
             <div className="watchinge">
               <span className="text-muted">

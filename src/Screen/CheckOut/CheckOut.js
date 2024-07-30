@@ -11,32 +11,161 @@ import {
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
 import "./checkout.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
-import { Typography } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
+import { useCart } from "../../Component/context/AuthContext";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+
 const CheckOut = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const location = useLocation();
-  const data = location?.state;
+  const data = location?.state || {};
+  const status = location?.state?.status || "";
+  const [productDetails, setProductLists] = React.useState({});
   const [quantity, setQuantity] = useState(data?.quantity || 1);
   const [totalPrice, setTotalPrice] = useState(
-    data?.product?.product_prices?.price
+    productDetails?.product_prices?.price
   );
   const [shipAddList, setShipAddList] = useState([]);
   const [primaryAddress, setPrimaryAddress] = useState(0);
+  const [cartList, setCartList] = useState([]);
+  const [totalPrices, setTotalPrices] = useState(0);
+  const [load, setload] = useState(false);
+  const { updateCartCount } = useCart();
 
+  console.log("status", productDetails);
   const handlePrimaryChange = (index) => {
     setPrimaryAddress(index);
   };
-  console.log("shipAddList", shipAddList, primaryAddress);
+
   useEffect(() => {
-    setTotalPrice(quantity * data?.product?.product_prices?.price);
-  }, [quantity, data?.product?.product_prices?.price]);
+    if (id) {
+      getProductDetails(id);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    setTotalPrice(quantity * productDetails?.product_prices?.price);
+  }, [quantity, productDetails?.product_prices?.price]);
 
   useEffect(() => {
     getShipAddressList();
   }, []);
+
+  useEffect(() => {
+    getCartList();
+  }, []);
+
+  const getCartList = async () => {
+    try {
+      setload(true);
+      const response = await apiCallNew(
+        "get",
+        {},
+        ApiEndPoints.CartProductsList
+      );
+      if (response.success) {
+        setCartList(response.result);
+        calculateTotals(response.result);
+        setload(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateCart = async (cart_id, cart_quantity) => {
+    console.log(cart_id, cart_quantity);
+    try {
+      setload(true);
+      const payload = {
+        cart_id: cart_id,
+        cart_quantity: cart_quantity,
+      };
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.CartUpdate
+      );
+      if (response.success) {
+        getCartList();
+        setload(false);
+      } else {
+        toast.error(response.msg);
+        setload(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
+  const handleQuantityChange = (index, newQuantity) => {
+    const updatedCartList = cartList.map((item, i) => {
+      if (i === index) {
+        handleUpdateCart(item.id, newQuantity);
+        return { ...item, cart_quantity: newQuantity };
+      }
+      return item;
+    });
+    setCartList(updatedCartList);
+    calculateTotals(updatedCartList);
+  };
+
+  const removeCart = async (id) => {
+    try {
+      const response = await apiCallNew(
+        "delete",
+        {},
+        `${ApiEndPoints.DeleteCartProduct}?cart_id=${id}`
+      );
+      if (response.success) {
+        toast.success(response.msg);
+        getCartList();
+        updateCartCount();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const confirmDeletion = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to remove the cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, remove it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeCart(id);
+      }
+    });
+  };
+
+  const calculateTotals = (cartList) => {
+    let total = 0;
+    cartList?.forEach((item) => {
+      total += item?.product_price * item?.cart_quantity;
+    });
+    setTotalPrices(total);
+  };
+
+  // const viewProduct = (id) => {
+  //   navigate(`/product/${id}`);
+  // };
+
+  // const handleCheckout = () => {
+  //   navigate("/checkout");
+  // };
+
   const getShipAddressList = () => {
     try {
       apiCallNew("post", {}, ApiEndPoints.ShipAddressList).then((response) => {
@@ -48,9 +177,32 @@ const CheckOut = () => {
       console.log(error);
     }
   };
+
+  const getProductDetails = (id) => {
+    try {
+      setload(true);
+      apiCallNew("get", {}, ApiEndPoints.ProductShopDetail + id).then(
+        (response) => {
+          if (response.success) {
+            setProductLists(response.result);
+            setload(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
   return (
     <div>
       <Header />
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <Container className="mt-3 mb-3">
         <Row>
           <Col md={8} style={{ height: "100vh", overflow: "auto" }}>
@@ -142,49 +294,106 @@ const CheckOut = () => {
 
             <Card className="mb-3">
               <Card.Body>
-                <h5 className="paywithname">Review item and shipping</h5>
-                <Row className="mt-3">
-                  <Col md={2}>
-                    <Image
-                      src={data?.product?.product_images[0]?.product_image}
-                      fluid
-                    />
-                  </Col>
-                  <Col md={10}>
-                    <Card.Title className="card-titlesss">
-                      {formatCapitalize(data?.product?.name)}
-                    </Card.Title>
-                    <b>US ${totalPrice?.toFixed(2)}</b>
-                    <Form.Group controlId="quantity">
-                      <Form.Label>Quantity</Form.Label>
-                      <Form.Control
-                        as="select"
-                        className="w-25"
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                      >
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                      </Form.Control>
-                    </Form.Group>
-                    <Card.Text>
-                      <strong>Delivery:</strong> Est. delivery: Aug 27 – Sep 12
-                      <br />
-                      atozbay International Shipping <b>US $0</b>
-                      <br />
-                      Authorities may apply duties, fees, and taxes upon
-                      delivery
-                    </Card.Text>
-                  </Col>
-                </Row>
+                <h5 className="paywithname border-bottom pb-3">
+                  Review item and shipping
+                </h5>
+                {status === 1 ? (
+                  cartList &&
+                  cartList?.map((data, index) => (
+                    <Row className="mt-3 border-bottom pb-3" key={index}>
+                      <Col md={2}>
+                        <Image src={data?.product_image_path} fluid />
+                      </Col>
+                      <Col md={10}>
+                        <Card.Title className="card-titlesss">
+                          {formatCapitalize(data?.product_name)}
+                        </Card.Title>
+                        <b>US ${data?.product_price * data?.cart_quantity}</b>
+                        <Row>
+                          <Col md={10}>
+                            <Form.Group controlId="quantity">
+                              <p className="m-0" style={{ fontSize: "14px" }}>
+                                Quantity
+                              </p>
+                              <Form.Control
+                                as="select"
+                                className="w-25"
+                                value={data?.cart_quantity}
+                                onChange={(e) =>
+                                  handleQuantityChange(
+                                    index,
+                                    Number(e.target.value)
+                                  )
+                                }
+                              >
+                                {[...Array(10).keys()].map((num) => (
+                                  <option key={num + 1} value={num + 1}>
+                                    {num + 1}
+                                  </option>
+                                ))}
+                              </Form.Control>
+                            </Form.Group>
+                          </Col>
+                          <Col md={2}>
+                            <p
+                              className="text-primary"
+                              style={{ cursor: "pointer", fontSize: "14px" }}
+                              onClick={() => confirmDeletion(data?.id)}
+                            >
+                              <u>Remove</u>
+                            </p>
+                          </Col>
+                        </Row>
+                        <p className="m-0" style={{ fontSize: "14px" }}>
+                          <strong>Delivery:</strong> .........!
+                        </p>
+                      </Col>
+                    </Row>
+                  ))
+                ) : (
+                  <Row className="mt-3 border-bottom pb-3">
+                    <Col md={2}>
+                      <Image
+                        src={
+                          productDetails?.product_images?.[0]?.product_image ||
+                          "path_to_default_image"
+                        }
+                        fluid
+                      />
+                    </Col>
+                    <Col md={10}>
+                      <Card.Title className="card-titlesss">
+                        {formatCapitalize(productDetails?.name)}
+                      </Card.Title>
+                      <b>US ${totalPrice?.toFixed(2)}</b>
+                      <Form.Group controlId="quantity">
+                        <p className="m-0" style={{ fontSize: "14px" }}>
+                          Quantity
+                        </p>
+                        <Form.Control
+                          as="select"
+                          className="w-25"
+                          value={quantity}
+                          onChange={(e) => setQuantity(e.target.value)}
+                        >
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                          <option value="9">9</option>
+                          <option value="10">10</option>
+                        </Form.Control>
+                      </Form.Group>
+                      <p className="m-0" style={{ fontSize: "14px" }}>
+                        <strong>Delivery:</strong> .........!
+                      </p>
+                    </Col>
+                  </Row>
+                )}
               </Card.Body>
             </Card>
             <Card className="mb-3">
@@ -200,25 +409,27 @@ const CheckOut = () => {
                       onChange={() => handlePrimaryChange(index)}
                       label={
                         <>
-                          <p className="mb-0">{item?.address_1}</p>
-                          <p className="mb-0">
+                          <p className="mb-0" style={{ fontSize: "14px" }}>
+                            {item?.address_1}
+                          </p>
+                          <p className="mb-0" style={{ fontSize: "14px" }}>
                             {item?.address_2}, {item?.city_name}, (
                             {item?.pincode})
                           </p>
                         </>
                       }
                     />
-                    <Typography color="primary" className="addchanges">
+                    <p className="addchanges">
                       <u>Changes</u>
-                    </Typography>
-                    <Typography color="primary" className="addchanges">
+                    </p>
+                    <p className="addchanges">
                       <u>Edit</u>
-                    </Typography>
+                    </p>
                   </Card.Text>
                 ))}
-                <Typography color="primary" className="addaddress">
+                <p className="addaddress">
                   <u>Add Address</u>
-                </Typography>
+                </p>
               </Card.Body>
               {/* <Card.Body>
                 <h5 className="paywithname">Ship to</h5>
@@ -303,25 +514,51 @@ const CheckOut = () => {
 
           <Col md={4} className="address-detailss">
             <Card>
-              <Card.Body>
-                <h5 className="paywithname">Order total</h5>
-                <Row>
-                  <Col>Item ({quantity})</Col>
-                  <Col className="text-right">${totalPrice?.toFixed(2)}</Col>
-                </Row>
-                <Row>
-                  <Col>Shipping</Col>
-                  <Col className="text-right">$0</Col>
-                </Row>
-                <hr />
-                <Row>
-                  <Col>Total</Col>
-                  <Col className="text-right">
-                    <b>${totalPrice?.toFixed(2)}</b>
-                  </Col>
-                </Row>
-                <button className="btn mt-4 buynowbtn">Confirm and Pay</button>
-              </Card.Body>
+              {status === 1 ? (
+                <Card.Body>
+                  <h5 className="paywithname">Order total</h5>
+                  <Row>
+                    <Col>Item ({cartList.length})</Col>
+                    <Col className="text-right">${totalPrices?.toFixed(2)}</Col>
+                  </Row>
+                  <Row>
+                    <Col>Shipping</Col>
+                    <Col className="text-right">$0</Col>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <Col>Total</Col>
+                    <Col className="text-right">
+                      <b>${totalPrices?.toFixed(2)}</b>
+                    </Col>
+                  </Row>
+                  <button className="btn mt-4 buynowbtn">
+                    Confirm and Pay
+                  </button>
+                </Card.Body>
+              ) : (
+                <Card.Body>
+                  <h5 className="paywithname">Order total</h5>
+                  <Row>
+                    <Col>Item ({quantity})</Col>
+                    <Col className="text-right">${totalPrice?.toFixed(2)}</Col>
+                  </Row>
+                  <Row>
+                    <Col>Shipping</Col>
+                    <Col className="text-right">$0</Col>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <Col>Total</Col>
+                    <Col className="text-right">
+                      <b>${totalPrice?.toFixed(2)}</b>
+                    </Col>
+                  </Row>
+                  <button className="btn mt-4 buynowbtn">
+                    Confirm and Pay
+                  </button>
+                </Card.Body>
+              )}
             </Card>
           </Col>
         </Row>
@@ -332,6 +569,24 @@ const CheckOut = () => {
       <Footer />
     </div>
   );
+};
+
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
 };
 
 export default CheckOut;

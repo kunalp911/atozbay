@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 
@@ -6,6 +6,9 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
+  const [wishListCount, setWishListCount] = useState(0);
+
+  console.log("wishListCount", wishListCount);
 
   const updateCartCount = () => {
     try {
@@ -19,11 +22,27 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const handleCartCount = () => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.WishListProductCount).then(
+        (response) => {
+          if (response.success) {
+            setWishListCount(response.result);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
         cartCount,
         updateCartCount,
+        wishListCount,
+        handleCartCount,
       }}
     >
       {children}
