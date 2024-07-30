@@ -68,11 +68,16 @@
 
 .addchanges {
   cursor: pointer;
+  font-size: 14px;
+  margin: 0px 0px 0px 19px;
+  color: #3665f3;
 }
 .addaddress {
   cursor: pointer;
   border-top: 1px solid #d4d1d1;
   margin-top: 15px;
+  font-size: 14px;
+  color: #3665f3;
 }
 .addsavebtn {
   background-color: #3665f3;

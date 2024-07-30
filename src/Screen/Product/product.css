@@ -48,9 +48,23 @@
 }
 .addcarditnow-btn {
   border-radius: 25px;
+  background-color: #fff;
+  color: #3665f3;
+  border: 1px solid #3665f3;
+}
+.addcarditnow-btn:hover {
+  color: #3665f3;
+  background-color: #ece8e8;
 }
 .additnow-btn {
   border-radius: 25px;
+  background-color: #fff;
+  color: #3665f3;
+  border: 1px solid #3665f3;
+}
+.additnow-btn:hover {
+  color: #3665f3;
+  background-color: #ece8e8;
 }
 .main-image-container {
   width: auto;

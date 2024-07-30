@@ -9,6 +9,7 @@ import "./addtocart.css";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import Swal from "sweetalert2";
+import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 
 const AddtoCart = () => {
   const navigate = useNavigate();
@@ -23,17 +24,23 @@ const AddtoCart = () => {
 
   const getCartList = async () => {
     try {
+      setload(true);
       const response = await apiCallNew(
         "get",
         {},
         ApiEndPoints.CartProductsList
       );
-      if (response.success) {
+      if (response.success === true) {
         setCartList(response.result);
         calculateTotals(response.result);
+        setload(false);
+      } else {
+        setload(false);
+        setCartList([]);
       }
     } catch (error) {
       console.log(error);
+      setload(false);
     }
   };
 
@@ -51,7 +58,6 @@ const AddtoCart = () => {
         ApiEndPoints.CartUpdate
       );
       if (response.success) {
-        toast.success(response.msg);
         getCartList();
         setload(false);
       } else {
@@ -83,9 +89,9 @@ const AddtoCart = () => {
         {},
         `${ApiEndPoints.DeleteCartProduct}?cart_id=${id}`
       );
-      if (response.success) {
+      if (response.success === true) {
         toast.success(response.msg);
-        getCartList();
+        await getCartList();
         updateCartCount();
       }
     } catch (error) {
@@ -121,6 +127,16 @@ const AddtoCart = () => {
     navigate(`/product/${id}`);
   };
 
+  const handleCheckout = () => {
+    navigate(`/checkout/${cartList[0]?.product_id}`, {
+      state: { status: 1 },
+    });
+  };
+
+  const handlesingleCheckout = (data) => {
+    const quantity = data?.cart_quantity;
+    navigate(`/checkout/${data?.product_id}`, { state: { quantity } });
+  };
   return (
     <main className="page">
       <Header />
@@ -138,18 +154,25 @@ const AddtoCart = () => {
             <div className="row">
               <div className="col-md-12 col-lg-8">
                 <div className="items">
-                  {cartList &&
-                    cartList?.map((data, index) => (
-                      <div className="product" key={data?.product_id}>
+                  {cartList.length > 0 ? (
+                    cartList.map((data, index) => (
+                      <div className="product pt-0" key={data.product_id}>
+                        <p
+                          className="m-0 pt-0 text-end text-primary"
+                          style={{ fontSize: "14px", cursor: "pointer" }}
+                          onClick={() => handlesingleCheckout(data)}
+                        >
+                          <u>Pay only this seller</u>
+                        </p>
                         <div className="row">
                           <div className="col-md-3 mt-3">
                             <img
                               className="img-fluid mx-auto d-block image"
-                              src={data?.product_image_path}
-                              alt={data?.product_name}
+                              src={data.product_image_path}
+                              alt={data.product_name}
                               style={{
-                                width: "100px",
-                                height: "100px",
+                                // width: "100px",
+                                // height: "100px",
                                 objectFit: "contain",
                               }}
                             />
@@ -160,13 +183,15 @@ const AddtoCart = () => {
                                 <div className="col-md-5 product-name">
                                   <div className="product-name">
                                     <a
-                                      href=""
+                                      href="#"
                                       className="pro-name"
                                       onClick={() =>
-                                        viewProduct(data?.product_id)
+                                        viewProduct(data.product_id)
                                       }
                                     >
-                                      {data?.product_name}
+                                      <u>
+                                        {formatCapitalize(data.product_name)}
+                                      </u>
                                     </a>
                                   </div>
                                 </div>
@@ -175,7 +200,7 @@ const AddtoCart = () => {
                                   <select
                                     id="quantity"
                                     className="form-control quantity-input"
-                                    value={data?.cart_quantity}
+                                    value={data.cart_quantity}
                                     onChange={(e) =>
                                       handleQuantityChange(
                                         index,
@@ -192,7 +217,7 @@ const AddtoCart = () => {
                                 </div>
                                 <div className="col-md-3 price">
                                   <span>
-                                    ${data?.product_price * data?.cart_quantity}
+                                    ${data.product_price * data.cart_quantity}
                                   </span>
                                 </div>
                               </div>
@@ -204,19 +229,29 @@ const AddtoCart = () => {
                           style={{
                             position: "absolute",
                             right: 25,
-                            cursor: "pointer",
                           }}
                         >
                           <p
-                            className="border-bottom"
-                            onClick={() => confirmDeletion(data?.id)}
+                            style={{ cursor: "pointer", fontSize: "14px" }}
+                            onClick={() => confirmDeletion(data.id)}
                           >
-                            Remove
+                            <u>Remove</u>
                           </p>
                         </div>
                         <hr className="mt-5" />
                       </div>
-                    ))}
+                    ))
+                  ) : (
+                    <div
+                      className="text-center text-muted"
+                      style={{ marginTop: "9rem" }}
+                    >
+                      <h4 className="text-center">
+                        You don't have any items in your cart. Let's get
+                        shopping!
+                      </h4>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-12 col-lg-4">
@@ -246,6 +281,7 @@ const AddtoCart = () => {
                   <button
                     type="button"
                     className="btn btn-lg btn-block checkout-btn"
+                    onClick={handleCheckout}
                   >
                     Go to checkout
                   </button>

@@ -19,7 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import "./accountsetting.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Col, Form, Row } from "react-bootstrap";
 import OTPInput from "react-otp-input";
 
@@ -66,6 +66,7 @@ const businesssidebarItems = [
 
 const PersonalInfo = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
   const userDatas = localStorage.getItem("@userData");
   const data = JSON.parse(userDatas);
   const [userData, setUserData] = useState({});
@@ -234,6 +235,9 @@ const PersonalInfo = () => {
     }
     if (text === "Address") {
       setType(text);
+    }
+    if (text === "Selling") {
+      navigate("/selling");
     }
   };
 
@@ -652,7 +656,7 @@ const PersonalInfo = () => {
         </div>
       )}
       <div className="container mt-2 mb-3">
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" className="p-0">
           <h4>My atozbay</h4>
           <Grid container spacing={3}>
             <Grid item xs={12} md={3}>
@@ -721,10 +725,14 @@ const PersonalInfo = () => {
                       >
                         <img
                           src={imageUrl || "default-image-path"}
-                          alt="profile"
+                          alt=""
                           width={"100%"}
                           height={"100%"}
-                          style={{ borderRadius: "50%", objectFit: "cover" }}
+                          style={{
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                            backgroundColor: "#fff",
+                          }}
                         />
                         <EditIcon
                           onClick={() => inputFile.current.click()}
@@ -783,8 +791,12 @@ const PersonalInfo = () => {
                         </Typography>
                       </Grid>
                       <Grid>
-                        <Link onClick={() => setVerifyShow(true)}>Verify</Link>
-                        <Link className="ms-4">Edit</Link>
+                        <Link onClick={() => setVerifyShow(true)}>
+                          <u>Verify</u>
+                        </Link>
+                        <Link className="ms-4">
+                          <u>Edit</u>
+                        </Link>
                       </Grid>
                     </Box>
                     {verifyShow && (
@@ -899,7 +911,7 @@ const PersonalInfo = () => {
                         </Typography>
                       </Grid>
                       <Link color="primary" onClick={() => setType("Edit")}>
-                        Edit
+                        <u>Edit</u>
                       </Link>
                     </Box>
                   </Box>

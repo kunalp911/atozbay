@@ -94,7 +94,7 @@ const Category = () => {
         <Topheader mainTitle={categoryName} />
         <div className="row my-4">
           <div className="col-md-2">
-            <h5>Shop by Brand</h5>
+            <h5 style={{ fontSize: "16px" }}>Shop by Brand</h5>
             <ul className="list-group">
               {subCategoriesList?.map((item, index) => (
                 <li
@@ -118,7 +118,7 @@ const Category = () => {
               className="custom-image"
             />
             <div className="mt-5">
-              <h3>{title}</h3>
+              <h3 style={{ fontSize: "24px" }}>{title}</h3>
             </div>
             <div className="mt-3">
               <div className="row mx-0 mt-0">

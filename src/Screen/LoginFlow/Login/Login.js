@@ -327,7 +327,7 @@ const Login = () => {
                 </div>
                 <div className="d-grid mb-2">
                   <FacebookLogin
-                    appId="1001017301349702"
+                    appId="3868054140074968"
                     autoLoad={false}
                     fields="name,email,picture"
                     callback={responseFacebook}
