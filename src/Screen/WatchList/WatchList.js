@@ -123,7 +123,7 @@ const WatchList = () => {
           <CircularProgress style={styles.loader} />
         </div>
       )}
-      <Container>
+      <Container xs={7} md={7} lg={7}>
         <Row className="mt-3">
           <Col xs={12} md={6}>
             <h2 className="helo">My atozbay - Watchlist</h2>
