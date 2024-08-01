@@ -19,6 +19,7 @@ import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { useCart } from "../../Component/context/AuthContext";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import PhoneInput from "react-phone-input-2";
 
 const CheckOut = () => {
   const navigate = useNavigate();
@@ -32,16 +33,36 @@ const CheckOut = () => {
     productDetails?.product_prices?.price
   );
   const [shipAddList, setShipAddList] = useState([]);
-  const [primaryAddress, setPrimaryAddress] = useState(0);
+  const [shipAdd, setShipAdd] = useState({});
+  const [primaryAddress, setPrimaryAddress] = useState(null);
   const [cartList, setCartList] = useState([]);
   const [totalPrices, setTotalPrices] = useState(0);
   const [load, setload] = useState(false);
   const { updateCartCount } = useCart();
+  const [addShow, setAddShow] = useState(1);
+  const [countryList, setCountriesList] = useState([]);
+  const [stateList, setStateList] = useState([]);
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("91");
+  const [isOpen, setIsOpen] = useState(false);
+  const [addId, setAddId] = useState(0);
+  const [addShipAddress, setAddShipAddress] = useState({
+    country_id: "",
+    city_name: "",
+    address_1: "",
+    address_2: "",
+    state_id: "",
+    pincode: "",
+    address_type: "Shipping",
+  });
 
-  console.log("status", productDetails);
-  const handlePrimaryChange = (index) => {
-    setPrimaryAddress(index);
-  };
+  console.log("status", addShipAddress, addId);
+
+  useEffect(() => {
+    if (shipAddList?.length > 0 && primaryAddress === null) {
+      setPrimaryAddress(shipAddList[0]?.id);
+    }
+  }, [shipAddList, primaryAddress]);
 
   useEffect(() => {
     if (id) {
@@ -55,11 +76,40 @@ const CheckOut = () => {
 
   useEffect(() => {
     getShipAddressList();
+    getCountries();
   }, []);
 
   useEffect(() => {
     getCartList();
   }, []);
+
+  useEffect(() => {
+    if (shipAddList?.length > 0 && !primaryAddress) {
+      const primary = shipAddList?.find((item) => item?.is_primary === 1);
+      if (primary) {
+        setPrimaryAddress(primary?.id);
+        getShipAddressById(primary);
+      }
+    }
+  }, [shipAddList]);
+
+  const handlePrimaryChange = (id) => {
+    setPrimaryAddress(id);
+    getPrimaryAddress(id);
+    getShipAddressById({ id });
+    setAddShow(1);
+  };
+
+  const handleAddAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddShipAddress({
+      ...addShipAddress,
+      [name]: value,
+    });
+    if (name === "country_id") {
+      getStates(value);
+    }
+  };
 
   const getCartList = async () => {
     try {
@@ -166,6 +216,39 @@ const CheckOut = () => {
   //   navigate("/checkout");
   // };
 
+  const handlePhoneChange = (value, country) => {
+    const countryCode = country.dialCode;
+    const phoneNumber = value.slice(countryCode.length);
+    setCountryCode(countryCode);
+    setPhone(phoneNumber);
+    setAddShipAddress({
+      ...addShipAddress,
+      mobile_number: phoneNumber,
+      country_code: countryCode,
+    });
+  };
+
+  const handleEdit = (item) => {
+    setAddShow(3);
+    setIsOpen(true);
+    setAddShipAddress({
+      country_id: item.country_id,
+      state_id: item.state_id,
+      city_name: item.city_name,
+      address_1: item.address_1,
+      address_2: item.address_2,
+      address_type: item.address_type,
+      pincode: item.pincode,
+      mobile_number: item.mobile_number,
+      country_code: item.country_code,
+      address_first_name: item.address_first_name,
+      address_last_name: item.address_last_name,
+    });
+    setPhone(item.mobile_number);
+    setCountryCode(item.country_code);
+    setAddId(item.id);
+  };
+
   const getShipAddressList = () => {
     try {
       apiCallNew("post", {}, ApiEndPoints.ShipAddressList).then((response) => {
@@ -175,6 +258,42 @@ const CheckOut = () => {
       });
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getShipAddressById = ({ id }) => {
+    try {
+      setload(true);
+      apiCallNew("get", {}, ApiEndPoints.GetAddressById + id).then(
+        (response) => {
+          if (response.success) {
+            setShipAdd(response.result);
+            setload(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
+  const getPrimaryAddress = (id) => {
+    try {
+      setload(true);
+      apiCallNew("get", {}, ApiEndPoints.AddressPrimary + id).then(
+        (response) => {
+          if (response.success) {
+            getShipAddressList();
+            toast.success(response.msg);
+            setload(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+      setload(false);
     }
   };
 
@@ -195,6 +314,72 @@ const CheckOut = () => {
     }
   };
 
+  const handleShipAddSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await apiCallNew(
+        "post",
+        addShipAddress,
+        ApiEndPoints.AddAddress
+      );
+      if (response.success) {
+        toast.success(response.msg);
+        getShipAddressList();
+        setAddShipAddress({});
+        setAddShow(2);
+      } else {
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleShipAddUpdate = async (addId) => {
+    try {
+      const response = await apiCallNew(
+        "post",
+        addShipAddress,
+        ApiEndPoints.UpdateAddress + addId
+      );
+      if (response.success) {
+        toast.success(response.msg);
+        getShipAddressList();
+        setAddShow(2);
+        setAddShipAddress({});
+      } else {
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getCountries = () => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.CountryList).then((response) => {
+        if (response.success) {
+          setCountriesList(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getStates = (id) => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.StateList + id).then((response) => {
+        if (response.success) {
+          setStateList(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log("shipAdd", shipAdd);
   return (
     <div>
       <Header />
@@ -397,88 +582,248 @@ const CheckOut = () => {
               </Card.Body>
             </Card>
             <Card className="mb-3">
-              <Card.Body>
-                <h5 className="paywithname">Ship to</h5>
-                {shipAddList?.map((item, index) => (
-                  <Card.Text key={index}>
-                    <Form.Check
-                      type="radio"
-                      id={`primary-address-${index}`}
-                      name="primaryAddress"
-                      checked={primaryAddress === index}
-                      onChange={() => handlePrimaryChange(index)}
-                      label={
-                        <>
-                          <p className="mb-0" style={{ fontSize: "14px" }}>
-                            {item?.address_1}
-                          </p>
-                          <p className="mb-0" style={{ fontSize: "14px" }}>
-                            {item?.address_2}, {item?.city_name}, (
-                            {item?.pincode})
-                          </p>
-                        </>
-                      }
-                    />
-                    <p className="addchanges">
+              {addShow === 1 && (
+                <Card.Body>
+                  <h5 className="paywithname">Ship to</h5>
+                  <Card.Text>
+                    <p className="mb-0" style={{ fontSize: "14px" }}>
+                      {shipAdd.address_first_name} {shipAdd.address_last_name}
+                    </p>
+                    <p className="mb-0" style={{ fontSize: "14px" }}>
+                      {shipAdd.address_1}, {shipAdd.address_2}
+                    </p>
+                    <p className="mb-0" style={{ fontSize: "14px" }}>
+                      {shipAdd.city_name}, {shipAdd.state_name} (
+                      {shipAdd.pincode})
+                    </p>
+                    <p className="mb-0" style={{ fontSize: "14px" }}>
+                      {shipAdd.country_name}
+                    </p>
+                    <p className="mb-0" style={{ fontSize: "14px" }}>
+                      {shipAdd.mobile_number}
+                    </p>
+                    <p
+                      className="mb-0 text-primary"
+                      style={{ fontSize: "14px", cursor: "pointer" }}
+                      onClick={() => setAddShow(2)}
+                    >
                       <u>Changes</u>
                     </p>
-                    <p className="addchanges">
-                      <u>Edit</u>
-                    </p>
                   </Card.Text>
-                ))}
-                <p className="addaddress">
-                  <u>Add Address</u>
-                </p>
-              </Card.Body>
-              {/* <Card.Body>
-                <h5 className="paywithname">Ship to</h5>
-                <Form action="javascript:void(0);">
-                  <Row className="mb-2">
-                    <Col md={6} className="mb-2">
-                      <Form.Select>
-                        <option value="">Select State</option>
-                        <option value="1">USA</option>
-                      </Form.Select>
-                    </Col>
-                    <Col md={6} className="mb-2">
-                      <Form.Group controlId="city">
-                        <Form.Select>
-                          <option value="">Select State</option>
-                          <option value="1">USA</option>
+                </Card.Body>
+              )}
+              {addShow === 2 && (
+                <Card.Body>
+                  <h5 className="paywithname">Ship to</h5>
+                  {shipAddList?.map((item, index) => (
+                    <Card.Text key={index}>
+                      <Form.Check
+                        type="radio"
+                        id={`primary-address-${item?.id}`}
+                        name="primaryAddress"
+                        checked={primaryAddress === item?.id}
+                        onChange={() => handlePrimaryChange(item?.id)}
+                        label={
+                          <>
+                            <p className="mb-0" style={{ fontSize: "14px" }}>
+                              {item.address_first_name} {item.address_last_name}
+                            </p>
+                            <p className="mb-0" style={{ fontSize: "14px" }}>
+                              {item?.address_1}, {item?.address_2}
+                            </p>
+                            <p className="mb-0" style={{ fontSize: "14px" }}>
+                              {item?.city_name}, {item?.country_name} (
+                              {item?.pincode})
+                            </p>
+                            <p className="mb-0" style={{ fontSize: "14px" }}>
+                              {item?.country_name}
+                            </p>
+                          </>
+                        }
+                      />
+                      <p
+                        className="addchanges"
+                        onClick={() => handleEdit(item)}
+                      >
+                        <u>Edit</u>
+                      </p>
+                    </Card.Text>
+                  ))}
+                  <p
+                    className="addaddress"
+                    onClick={() => {
+                      setAddShow(3);
+                      setIsOpen(false);
+                    }}
+                  >
+                    <u>Add Address</u>
+                  </p>
+                  <p className="addaddress" onClick={() => setAddShow(1)}>
+                    <u>Cancel</u>
+                  </p>
+                </Card.Body>
+              )}
+              {addShow === 3 && (
+                <Card.Body>
+                  <h5 className="paywithname">Ship to</h5>
+                  <Form action="javascript:void(0);">
+                    <Row className="mb-2">
+                      <Col md={6} className="mb-2">
+                        <Form.Select
+                          name="country_id"
+                          value={addShipAddress.country_id}
+                          onChange={handleAddAddressChange}
+                        >
+                          <option value="">Select Country</option>
+                          {countryList.map((item) => (
+                            <option value={item.id} key={item.id}>
+                              {item.name}
+                            </option>
+                          ))}
                         </Form.Select>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row className="mb-2">
-                    <Col md={6} className="mb-2">
-                      <Form.Group controlId="state">
-                        <Form.Control type="text" placeholder="Enter state" />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6} className="mb-2">
-                      <Form.Group controlId="zip">
-                        <Form.Control type="text" placeholder="Enter zip" />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row className="mb-2">
-                    <Col md={6} className="mb-2">
-                      <Form.Group controlId="country">
-                        <Form.Control type="text" placeholder="Enter country" />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row className="mb-2">
-                    <Col md={3}>
-                      <button className="btn mt-2 addsavebtn">Save</button>
-                    </Col>
-                    <Col md={3}>
-                      <button className="btn mt-2 addcancelbtn">Cancel</button>
-                    </Col>
-                  </Row>
-                </Form>
-              </Card.Body> */}
+                      </Col>
+                      <Col md={6} className="mb-2">
+                        <Form.Group controlId="city">
+                          <Form.Select
+                            name="state_id"
+                            value={addShipAddress.state_id}
+                            onChange={handleAddAddressChange}
+                          >
+                            <option value="">Select State</option>
+                            {stateList.map((item) => (
+                              <option value={item.id} key={item.id}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col md={6} className="mb-2">
+                        <Form.Group controlId="fname">
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter First Name"
+                            name="address_first_name"
+                            value={addShipAddress.address_first_name}
+                            onChange={handleAddAddressChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6} className="mb-2">
+                        <Form.Group controlId="lname">
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter Last Name"
+                            name="address_last_name"
+                            value={addShipAddress.address_last_name}
+                            onChange={handleAddAddressChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col md={6} className="mb-2">
+                        <Form.Group controlId="address">
+                          <Form.Control
+                            type="text"
+                            placeholder="Street address"
+                            name="address_1"
+                            value={addShipAddress.address_1}
+                            onChange={handleAddAddressChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6} className="mb-2">
+                        <Form.Group controlId="address">
+                          <Form.Control
+                            type="text"
+                            placeholder="Street address 2(optional)"
+                            name="address_2"
+                            value={addShipAddress.address_2}
+                            onChange={handleAddAddressChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col md={6} className="mb-2">
+                        <Form.Group controlId="city">
+                          <Form.Control
+                            type="text"
+                            placeholder="City"
+                            name="city_name"
+                            value={addShipAddress.city_name}
+                            onChange={handleAddAddressChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6} className="mb-2">
+                        <Form.Group controlId="zip">
+                          <Form.Control
+                            type="text"
+                            placeholder="Zip code"
+                            name="pincode"
+                            value={addShipAddress.pincode}
+                            onChange={handleAddAddressChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col md={12} className="mb-2">
+                        <PhoneInput
+                          country={"in"}
+                          value={`${countryCode}${phone}`}
+                          onChange={(value, country) =>
+                            handlePhoneChange(value, country)
+                          }
+                          inputProps={{
+                            name: "country_code",
+                            required: true,
+                            autoFocus: true,
+                          }}
+                          containerStyle={{ width: "100%" }}
+                          inputStyle={{
+                            width: "100%",
+                            paddingLeft: "50px",
+                            fontSize: "16px",
+                          }}
+                        />
+                      </Col>
+                    </Row>
+
+                    <Row className="mb-2">
+                      <Col md={3}>
+                        {isOpen ? (
+                          <button
+                            className="btn mt-2 addsavebtn"
+                            onClick={() => handleShipAddUpdate(addId)}
+                          >
+                            Update
+                          </button>
+                        ) : (
+                          <button
+                            className="btn mt-2 addsavebtn"
+                            onClick={handleShipAddSubmit}
+                          >
+                            Add
+                          </button>
+                        )}
+                      </Col>
+                      <Col md={3}>
+                        <button
+                          className="btn mt-2 addcancelbtn"
+                          onClick={() => setAddShow(2)}
+                        >
+                          Cancel
+                        </button>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Card.Body>
+              )}
             </Card>
             <Card className="mt-4">
               <Card.Body>

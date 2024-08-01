@@ -1,9 +1,8 @@
 .list-groupss .list-group-itemss {
   border: none;
   padding: 7px;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
-  font-weight: 600;
 }
 .list-groupss .list-group-itemss:hover {
   background-color: #f8f9fa;
@@ -13,10 +12,9 @@
 .list-group-itemsss {
   border: none;
   padding: 7px;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   color: #1f7df8;
-  font-weight: 600;
 }
 
 .save-btn {
@@ -42,6 +40,11 @@
 
 /* ***************shiping address********************** */
 .shipping-title {
+  /* font-weight: 600; */
+  font-size: 16px;
+  color: #383838;
+}
+.shipping-titlename {
   font-weight: 600;
   font-size: 16px;
   color: #383838;
@@ -52,7 +55,7 @@
   color: #383838;
 }
 .shipping-para {
-  font-weight: 600;
+  /* font-weight: 600; */
   font-size: 14px;
   color: #383838;
   margin-top: -12px;

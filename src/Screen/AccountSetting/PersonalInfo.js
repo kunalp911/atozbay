@@ -22,6 +22,7 @@ import "./accountsetting.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Col, Form, Row } from "react-bootstrap";
 import OTPInput from "react-otp-input";
+import PhoneInput from "react-phone-input-2";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   section: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(1),
     padding: theme.spacing(2),
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.background.paper,
@@ -96,9 +97,15 @@ const PersonalInfo = () => {
   const [addId, setAddId] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState("");
+  const [verifyMobile, setVerifyMobile] = useState("");
   const [verifyShow, setVerifyShow] = useState(false);
   const [otpShow, setOtpShow] = useState(false);
+  const [mobileShow, setMobileShow] = useState(false);
+  const [motpShow, setMotpShow] = useState(false);
   const [otp, setOtp] = useState("");
+  const [mOtp, setMOtp] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("91");
   const [contactUpdateData, setContactUpdateData] = useState({
     country_id: "",
     city_name: "",
@@ -124,9 +131,11 @@ const PersonalInfo = () => {
     address_2: "",
     state_id: "",
     pincode: "",
-    address_type: "",
+    address_type: "Shipping",
+    address_first_name: "",
+    address_last_name: "",
   });
-  // console.log("shipAddList", shipAddList,">>>>>>>>>>>>>>",addId);
+  console.log("contactData", contactData);
   useEffect(() => {
     if (file) {
       updateProfileImg();
@@ -136,6 +145,9 @@ const PersonalInfo = () => {
   useEffect(() => {
     if (userData?.email) {
       setVerifyEmail(userData.email);
+    }
+    if (userData?.mobile_number) {
+      setVerifyMobile(userData.mobile_number);
     }
   }, [userData]);
 
@@ -192,6 +204,18 @@ const PersonalInfo = () => {
     getShipAddress();
     getShipAddressList();
   }, []);
+
+  const handlePhoneChange = (value, country) => {
+    const countryCode = country.dialCode;
+    const phoneNumber = value.slice(countryCode.length);
+    setCountryCode(countryCode);
+    setPhone(phoneNumber);
+    setAddShipAddress({
+      ...addShipAddress,
+      mobile_number: phoneNumber,
+      country_code: countryCode,
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -457,6 +481,7 @@ const PersonalInfo = () => {
         handleUpdateCustomer(e);
         getContactInfo();
         getUserInfo();
+        setType("Personal information");
         toast.success(response.msg);
       } else {
         toast.error(response.msg);
@@ -563,6 +588,8 @@ const PersonalInfo = () => {
         toast.success(response.msg);
         getShipAddressList();
         setAddShipAddress({});
+        setPhone("");
+        setCountryCode("");
         if (data?.user_type === "Customer") {
           setType("Address");
         } else {
@@ -586,7 +613,11 @@ const PersonalInfo = () => {
       address_2: item.address_2,
       address_type: item.address_type,
       pincode: item.pincode,
+      address_first_name: item.address_first_name,
+      address_last_name: item.address_last_name,
     });
+    setPhone(item.mobile_number);
+    setCountryCode(item.country_code);
     setAddId(item.id);
     if (data?.user_type === "Customer") {
       setType("addressEdit");
@@ -647,6 +678,60 @@ const PersonalInfo = () => {
       setload(false);
     }
   };
+
+  const handleVerifyMobile = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        mobile: verifyMobile,
+      };
+      setload(true);
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.VerifyMobile
+      );
+      if (response.success === true) {
+        setMotpShow(true);
+        setMobileShow(false);
+        toast.success(response.msg);
+        setload(false);
+      } else {
+        setload(false);
+        toast.error(response.result.mobile[0]);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
+  const handleMobileOtp = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        mobile: verifyMobile,
+        otp: mOtp,
+      };
+      setload(true);
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.VerifyMobileOTP
+      );
+      if (response.success === true) {
+        setMotpShow(false);
+        toast.success(response.msg);
+        setload(false);
+      } else {
+        setload(false);
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
   return (
     <div>
       <Header />
@@ -660,37 +745,37 @@ const PersonalInfo = () => {
           <h4>My atozbay</h4>
           <Grid container spacing={3}>
             <Grid item xs={12} md={3}>
-              <Paper>
-                <List className="list-groupss">
-                  {data.user_type === "Customer"
-                    ? customersidebarItems.map((item, index) => (
-                        <li
-                          className={
-                            type === item.text
-                              ? "list-group-itemsss"
-                              : "list-group-itemss"
-                          }
-                          key={index}
-                          onClick={() => handlesideClick(item.text)}
-                        >
-                          {item.text}
-                        </li>
-                      ))
-                    : businesssidebarItems.map((item, index) => (
-                        <li
-                          className={
-                            busiType === item.text
-                              ? "list-group-itemsss"
-                              : "list-group-itemss"
-                          }
-                          key={index}
-                          onClick={() => handleBusiClick(item.text)}
-                        >
-                          {item.text}
-                        </li>
-                      ))}
-                </List>
-              </Paper>
+              {/* <Paper> */}
+              <List className="list-groupss">
+                {data.user_type === "Customer"
+                  ? customersidebarItems.map((item, index) => (
+                      <li
+                        className={
+                          type === item.text
+                            ? "list-group-itemsss"
+                            : "list-group-itemss"
+                        }
+                        key={index}
+                        onClick={() => handlesideClick(item.text)}
+                      >
+                        {item.text}
+                      </li>
+                    ))
+                  : businesssidebarItems.map((item, index) => (
+                      <li
+                        className={
+                          busiType === item.text
+                            ? "list-group-itemsss"
+                            : "list-group-itemss"
+                        }
+                        key={index}
+                        onClick={() => handleBusiClick(item.text)}
+                      >
+                        {item.text}
+                      </li>
+                    ))}
+              </List>
+              {/* </Paper> */}
             </Grid>
             {type == "Personal information" && (
               <Grid item xs={12} md={9} className={classes.content}>
@@ -794,9 +879,9 @@ const PersonalInfo = () => {
                         <Link onClick={() => setVerifyShow(true)}>
                           <u>Verify</u>
                         </Link>
-                        <Link className="ms-4">
+                        {/* <Link className="ms-4">
                           <u>Edit</u>
-                        </Link>
+                        </Link> */}
                       </Grid>
                     </Box>
                     {verifyShow && (
@@ -881,7 +966,78 @@ const PersonalInfo = () => {
                           {userData?.mobile_number}
                         </Typography>
                       </Grid>
+                      <Grid>
+                        <Link onClick={() => setMobileShow(true)}>
+                          <u>Verify</u>
+                        </Link>
+                        {/* <Link className="ms-4">
+                          <u>Edit</u>
+                        </Link> */}
+                      </Grid>
                     </Box>
+                    {mobileShow && (
+                      <Box className="ms-2">
+                        <Row className="mb-2">
+                          <p className="m-0">
+                            To verify your phone number, we will text a security
+                            code
+                          </p>
+                          <Col md={3}>
+                            <button
+                              className="btn mt-2 addcancelbtn"
+                              onClick={() => setMobileShow(false)}
+                            >
+                              Cancel
+                            </button>
+                          </Col>
+                          <Col md={3}>
+                            <button
+                              className="btn mt-2 addsavebtn"
+                              onClick={handleVerifyMobile}
+                            >
+                              Send code
+                            </button>
+                          </Col>
+                        </Row>
+                      </Box>
+                    )}
+                    {motpShow && (
+                      <Box className="ms-2">
+                        <Form
+                          action="javascript:void(0);"
+                          onSubmit={handleMobileOtp}
+                        >
+                          <Col md={6} className="mb-2">
+                            <OTPInput
+                              value={mOtp}
+                              onChange={setMOtp}
+                              numInputs={6}
+                              renderSeparator={
+                                <span className="otp-separator">-</span>
+                              }
+                              renderInput={(props) => (
+                                <input {...props} className="otp-input" />
+                              )}
+                            />
+                          </Col>
+                          <Row className="mb-2">
+                            <Col md={3}>
+                              <button
+                                className="btn mt-2 addcancelbtn"
+                                onClick={() => setMotpShow(false)}
+                              >
+                                Cancel
+                              </button>
+                            </Col>
+                            <Col md={3}>
+                              <button className="btn mt-2 addsavebtn">
+                                Save
+                              </button>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Box>
+                    )}
                     <Box className={classes.section}>
                       <Grid>
                         <Typography variant="body1">
@@ -892,22 +1048,28 @@ const PersonalInfo = () => {
                           className="usernamess"
                           style={{ fontWeight: "bold" }}
                         >
-                          {contactUpdateData?.name}
+                          {contactData?.name}
                         </Typography>
                         <Typography
                           variant="body2"
                           className="usernamess"
                           style={{ fontWeight: "bold" }}
                         >
-                          {contactUpdateData?.address_1},
+                          {contactData?.address_1},
                         </Typography>
                         <Typography
                           variant="body2"
                           className="usernamess"
                           style={{ fontWeight: "bold" }}
                         >
-                          {contactUpdateData?.city_name} (
-                          {contactUpdateData?.pincode})
+                          {contactData?.city_name}, ({contactData?.pincode})
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          className="usernamess"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {contactData?.address_country_name}
                         </Typography>
                       </Grid>
                       <Link color="primary" onClick={() => setType("Edit")}>
@@ -1504,12 +1666,20 @@ const PersonalInfo = () => {
                             key={item.id}
                           >
                             <div className="form-floating mb-3">
-                              <p className="shipping-title">{item.address_1}</p>
+                              <p className="shipping-titlename mb-0">
+                                {item.address_first_name}{" "}
+                                {item.address_last_name}
+                              </p>
+                              <p className="shipping-title">
+                                {item.address_1}, {item.address_2}
+                              </p>
                               <p className="shipping-para">
-                                {item.address_2}, {item.city_name}, (
+                                {item.city_name}, {item.state_name} (
                                 {item.pincode})
                               </p>
-                              <p className="shipping-para">{item.country_id}</p>
+                              <p className="shipping-para">
+                                {item.country_name}
+                              </p>
                             </div>
                             <div className="form-floating mb-3">
                               <button
@@ -1581,6 +1751,30 @@ const PersonalInfo = () => {
                                 type="text"
                                 className="form-control"
                                 id="floatingCity"
+                                placeholder="firstname"
+                                name="address_first_name"
+                                value={addShipAddress.address_first_name}
+                                onChange={handleAddAddressChange}
+                              />
+                              <label htmlFor="floatingCity">First Name</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingCity"
+                                placeholder="lastname"
+                                name="address_last_name"
+                                value={addShipAddress.address_last_name}
+                                onChange={handleAddAddressChange}
+                              />
+                              <label htmlFor="floatingCity">Last Name</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="floatingCity"
                                 placeholder="City"
                                 name="city_name"
                                 value={addShipAddress.city_name}
@@ -1588,6 +1782,8 @@ const PersonalInfo = () => {
                               />
                               <label htmlFor="floatingCity">City</label>
                             </div>
+                          </Grid>
+                          <Grid item xs={12} md={6} sm={12}>
                             <div className="form-floating mb-3">
                               <input
                                 type="text"
@@ -1602,8 +1798,6 @@ const PersonalInfo = () => {
                                 Street Address
                               </label>
                             </div>
-                          </Grid>
-                          <Grid item xs={12} md={6} sm={12}>
                             <div className="form-floating mb-3">
                               <input
                                 type="text"
@@ -1619,7 +1813,7 @@ const PersonalInfo = () => {
                               </label>
                             </div>
 
-                            <div className="form-floating mb-3">
+                            {/* <div className="form-floating mb-3">
                               <input
                                 type="text"
                                 className="form-control"
@@ -1630,7 +1824,7 @@ const PersonalInfo = () => {
                                 onChange={handleAddAddressChange}
                               />
                               <label htmlFor="floatingCity">Address Type</label>
-                            </div>
+                            </div> */}
                             <div className="form-floating mb-3">
                               <input
                                 type="number"
@@ -1642,6 +1836,27 @@ const PersonalInfo = () => {
                                 onChange={handleAddAddressChange}
                               />
                               <label htmlFor="floatingPincode">Pincode</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <PhoneInput
+                                country={"in"}
+                                value={`${countryCode}${phone}`}
+                                onChange={(value, country) =>
+                                  handlePhoneChange(value, country)
+                                }
+                                inputProps={{
+                                  name: "country_code",
+                                  required: true,
+                                  autoFocus: true,
+                                }}
+                                containerStyle={{ width: "100%" }}
+                                inputStyle={{
+                                  width: "100%",
+                                  paddingLeft: "50px",
+                                  fontSize: "16px",
+                                  height: "55px",
+                                }}
+                              />
                             </div>
                             <div className="d-grid mt-4">
                               <Grid
