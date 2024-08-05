@@ -143,7 +143,6 @@ const Dashboard = () => {
   const [subCategoriesList, setSubCategoriesList] = React.useState([]);
   const [load, setload] = useState(false);
 
-  console.log("subCategoriesList", subCategoriesList);
   const ReverseOrder = [...subCategoriesList].reverse();
   useEffect(() => {
     getSubCategories();
@@ -155,6 +154,8 @@ const Dashboard = () => {
         (response) => {
           if (response.success) {
             setSubCategoriesList(response.result);
+            setload(false);
+          } else {
             setload(false);
           }
         }

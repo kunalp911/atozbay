@@ -8,8 +8,6 @@ export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
   const [wishListCount, setWishListCount] = useState(0);
 
-  console.log("wishListCount", wishListCount);
-
   const updateCartCount = () => {
     try {
       apiCallNew("get", {}, ApiEndPoints.CartProductCount).then((response) => {

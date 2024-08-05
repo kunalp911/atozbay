@@ -13,7 +13,6 @@ const ListItem = () => {
   const [productLists, setProductLists] = React.useState([]);
   const [keyword, setKeyword] = React.useState("");
   const [cateId, setCateId] = React.useState(0);
-  console.log("first", token);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
