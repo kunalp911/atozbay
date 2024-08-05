@@ -27,6 +27,14 @@ import Category from "../Screen/ShopbyCategory/Category/Category";
 import ProductList from "../Screen/Selling/ProductList/ProductList";
 import WatchList from "../Screen/WatchList/WatchList";
 import CheckOut from "../Screen/CheckOut/CheckOut";
+import Sidebar from "../Screen/Myatozbay/Sidebar/Sidebar";
+import Purchase from "../Screen/Myatozbay/Purchase/Purchase";
+import Overview from "../Screen/Selling/Overview/Overview";
+import Summary from "../Screen/Myatozbay/Summary/Summary";
+import PaymentSuccess from "../Screen/Payment/PaymentSuccess/PaymentSuccess";
+import PaymentCancel from "../Screen/Payment/PaymentCancel/PaymentCancel";
+import PaymentDeclined from "../Screen/Payment/PaymentDecliend/PaymentDeclined";
+import BidandOffer from "../Screen/Myatozbay/Bid&Offer/BidandOffer";
 
 const PublicRouter = () => {
   return (
@@ -60,6 +68,14 @@ const PublicRouter = () => {
         <Route path="/product-list" element={<ProductList />} />
         <Route path="/watch-list" element={<WatchList />} />
         <Route path="/checkout/:id" element={<CheckOut />} />
+        <Route path="/sidebar" element={<Sidebar />} />
+        <Route path="/purchase" element={<Purchase />} />
+        <Route path="/selling/overview" element={<Overview />} />
+        <Route path="/summary" element={<Summary />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
+        <Route path="/payment-declined" element={<PaymentDeclined />} />
+        <Route path="/bids-offers" element={<BidandOffer />} />
       </Routes>
     </BrowserRouter>
   );

@@ -23,6 +23,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Col, Form, Row } from "react-bootstrap";
 import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -623,6 +624,24 @@ const PersonalInfo = () => {
       setType("addressEdit");
     } else {
       setBusiType("addressEdit");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await apiCallNew(
+        "delete",
+        addShipAddress,
+        ApiEndPoints.DeleteAddress + id
+      );
+      if (response.success) {
+        toast.success(response.msg);
+        getShipAddressList();
+      } else {
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -1682,12 +1701,14 @@ const PersonalInfo = () => {
                               </p>
                             </div>
                             <div className="form-floating mb-3">
-                              <button
-                                className="btn ship-btn"
+                              <EditIcon
+                                className="ship-del-btn"
                                 onClick={() => handleEdit(item)}
-                              >
-                                Edit
-                              </button>
+                              />
+                              <DeleteIcon
+                                className="ms-3 ship-del-btn"
+                                onClick={() => handleDelete(item?.id)}
+                              />
                             </div>
                           </Grid>
                         ))}

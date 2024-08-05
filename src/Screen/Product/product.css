@@ -1,6 +1,7 @@
 .product-titlee {
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .seller-infoe {
@@ -106,4 +107,129 @@
 }
 .scrollable-containeras::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+.shareicon {
+  font-size: 14px;
+  cursor: pointer;
+  color: #636161;
+}
+.shareicon:hover {
+  color: #3665f3;
+  font-weight: 600;
+}
+
+/* *******************sharepopup******************** */
+
+.popup .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.popup .icons {
+  display: flex;
+  gap: 60px;
+  margin: 10px 0;
+}
+
+.popup .icons .fbstyle {
+  color: #fff;
+  font-size: 20px;
+  transition: color 0.3s;
+  padding: 10px;
+  background-color: #0056b3;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.popup .icons .fbstyle:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+.popup .icons .twitterstyle {
+  color: #fff;
+  font-size: 20px;
+  transition: color 0.3s;
+  padding: 10px;
+  background-color: #1da1f2;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.popup .icons .twitterstyle:hover {
+  background-color: #1da1f2;
+  border-color: #1da1f2;
+}
+.popup .icons .linkedinstyle {
+  color: #fff;
+  font-size: 20px;
+  transition: color 0.3s;
+  padding: 10px;
+  background-color: #0077b5;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.popup .icons .linkedinstyle:hover {
+  background-color: #0077b5;
+  border-color: #0077b5;
+}
+
+.popup .field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.popup .field .url-icon {
+  margin-right: 10px;
+  color: #333;
+}
+
+.popup .field input {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.popup .field .copy-btns {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background: #3665f3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.popup .field .copy-btns:hover {
+  background: #0056b3;
+}
+
+.custom-modal .modal-content {
+  border-radius: 20px;
+  border: none;
+}
+
+.dd {
+  color: #1e1e1e;
 }

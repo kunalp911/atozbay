@@ -55,6 +55,10 @@ const ApiEndPoints = {
   WishList: `${APPConfig.API_URL}/wishlist-products`,
   DeleteWishListProduct: `${APPConfig.API_URL}/delete-wishlist/`,
   WishListProductCount: `${APPConfig.API_URL}/wishlist-product-count`,
+  DeleteAddress: `${APPConfig.API_URL}/address-delete/`,
+  ProductImage: `${APPConfig.API_URL}/product-image/`,
+  ProductBids: `${APPConfig.API_URL}/product-bids-list/1`,
+  Bidgive: `${APPConfig.API_URL}/bid-give`,
 };
 
 export default ApiEndPoints;

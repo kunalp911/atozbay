@@ -112,8 +112,6 @@ const AddProduct = () => {
     }
   }, []);
 
-  // console.log("updateProduct", updateProduct, ">>>>>>", updateImage);
-  // console.log("addProductFormData", addProductFormData);
   console.log("images", images);
 
   const handleUpdateProduct = async (e) => {
@@ -273,6 +271,20 @@ const AddProduct = () => {
           {/* <i className="fa fa-angle-right"></i> */}
         </ListItem>
       ));
+    }
+  };
+
+  const handleImageDelete = (id) => {
+    try {
+      apiCallNew("delete", {}, ApiEndPoints.ProductImage + id).then(
+        (response) => {
+          if (response.success) {
+            // toast.success(response.msg);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -484,7 +496,6 @@ const AddProduct = () => {
       console.log(error);
     }
   };
-
   return (
     <div>
       {load && (
@@ -540,9 +551,9 @@ const AddProduct = () => {
                       className="fa fa-times"
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                        URL.revokeObjectURL(file.preview);
-                        setUpdateImage(
-                          updateImage.filter((_, i) => i !== index)
+                        handleImageDelete(file.id);
+                        setUpdateImage((prevImages) =>
+                          prevImages.filter((img) => img.id !== file.id)
                         );
                       }}
                     ></i>
@@ -1154,7 +1165,6 @@ const AddProduct = () => {
                   List it
                 </button>
               )}
-
               <button className="btn btn-customss">Save for later</button>
               <button className="btn btn-customss">Preview</button>
             </div>

@@ -7,15 +7,17 @@ import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../context/AuthContext";
+import { ListGroup } from "react-bootstrap";
+import { getToken } from "../../Helper/Storage";
 
 const Header = () => {
   const navigate = useNavigate();
+  const token = getToken();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorE2, setAnchorE2] = React.useState(null);
   const open = Boolean(anchorEl);
   const opens = Boolean(anchorE2);
   const [categoriesList, setCategoriesList] = useState([]);
-
   const userData = localStorage.getItem("@userData");
   const data = JSON.parse(userData);
   const firstChars = data?.email?.substring(0, 6);
@@ -173,15 +175,17 @@ const Header = () => {
                 </Grid>
               </Menu>
             </li>
-            <li className="nav-item">
-              <Link
-                to="/login"
-                className="nav-link first-title"
-                style={{ paddingRight: "0px", color: "#0064d2" }}
-              >
-                Sign in
-              </Link>
-            </li>
+            {!token && (
+              <li className="nav-item">
+                <Link
+                  to="/login"
+                  className="nav-link first-title"
+                  style={{ paddingRight: "0px", color: "#0064d2" }}
+                >
+                  Sign in
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
               <a
                 className="nav-link first-title"
@@ -238,15 +242,32 @@ const Header = () => {
                 My atozbay
               </a>
               <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
-                <a className="dropdown-item" href="#">
-                  Action 4
-                </a>
-                <a className="dropdown-item" href="#">
-                  Action 5
-                </a>
-                <a className="dropdown-item" href="#">
-                  Action 6
-                </a>
+                <ListGroup variant="flush" className="pt-0 pb-2 ms-3">
+                  <Link to="/summary">
+                    <ListGroup.Item className="fw-bold">Summary</ListGroup.Item>
+                  </Link>
+                  <ListGroup.Item className="fw-bold">
+                    Recently viewed
+                  </ListGroup.Item>
+                  <Link to="/bids-offers">
+                    <ListGroup.Item className="fw-bold">
+                      Bids & offers
+                    </ListGroup.Item>
+                  </Link>
+                  <Link to="/watch-list">
+                    <ListGroup.Item className="fw-bold">
+                      Watchlist
+                    </ListGroup.Item>
+                  </Link>
+                  <Link to="/purchase">
+                    <ListGroup.Item className="fw-bold">
+                      Purchases
+                    </ListGroup.Item>
+                  </Link>
+                  <Link to="/selling/overview">
+                    <ListGroup.Item className="fw-bold">Selling</ListGroup.Item>
+                  </Link>
+                </ListGroup>
               </div>
             </li>
             <li className="nav-item">
@@ -254,7 +275,7 @@ const Header = () => {
                 <i className="fas fa-bell"></i>
               </a>
             </li>
-            <li className="nav-item">
+            <li className="nav-item nav-icon-cart">
               <Link to={"/add-to-cart"} className="text-dark">
                 <IconButton
                   className="mt-2"
@@ -320,7 +341,7 @@ const Header = () => {
             <div className="col-8 second-header ">
               <div className="input-group">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control"
                   placeholder="Search for anything"
                   aria-label="Search"

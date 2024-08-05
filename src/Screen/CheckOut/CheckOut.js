@@ -327,6 +327,8 @@ const CheckOut = () => {
         getShipAddressList();
         setAddShipAddress({});
         setAddShow(2);
+        setPhone("");
+        setCountryCode("");
       } else {
         toast.error(response.msg);
       }
@@ -347,6 +349,8 @@ const CheckOut = () => {
         getShipAddressList();
         setAddShow(2);
         setAddShipAddress({});
+        setPhone("");
+        setCountryCode("");
       } else {
         toast.error(response.msg);
       }
@@ -379,7 +383,13 @@ const CheckOut = () => {
     }
   };
 
-  console.log("shipAdd", shipAdd);
+  const clearStateData = () => {
+    setAddShipAddress({});
+    setAddShow(2);
+    setPhone("");
+    setCountryCode("");
+  };
+
   return (
     <div>
       <Header />
@@ -815,7 +825,7 @@ const CheckOut = () => {
                       <Col md={3}>
                         <button
                           className="btn mt-2 addcancelbtn"
-                          onClick={() => setAddShow(2)}
+                          onClick={() => clearStateData()}
                         >
                           Cancel
                         </button>
@@ -846,12 +856,6 @@ const CheckOut = () => {
                     <option>Plan International</option>
                     <option>Other charity</option>
                   </Form.Control>
-                  <Form.Text className="text-muted">
-                    Make a gift to Plan International USA, a girl's rights
-                    organization that partners with girls and their communities
-                    to overcome gender inequality. Donations are non-refundable
-                    and typically tax deductible.
-                  </Form.Text>
                 </Form.Group>
               </Card.Body>
             </Card>
