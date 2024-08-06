@@ -37,11 +37,18 @@ const useStyles = makeStyles((theme) => ({
 
 const AddProduct = () => {
   const classes = useStyles();
-  const navigate = useNavigate();
   const location = useLocation();
   const conditionName = location.state?.condition;
   const updateProduct = location.state?.product || null;
   const isUpdateMode = !!updateProduct;
+  const initialSelectedAttributes = updateProduct?.product_attributes?.reduce(
+    (acc, item) => {
+      acc[item?.product_attr_id] = item?.product_attr_value_id;
+      return acc;
+    },
+    {}
+  );
+  const navigate = useNavigate();
   const [colorList, setColorList] = React.useState([]);
   const [brandList, setBrandList] = React.useState([]);
   const [isPhoto, setIsPhoto] = useState(true);
@@ -52,7 +59,9 @@ const AddProduct = () => {
   const [subCategoriesList, setSubCategoriesList] = React.useState([]);
   const [attributesList, setAttributesList] = useState([]);
   const [attributesValueList, setAttributesValueList] = useState({});
-  const [selectedAttributes, setSelectedAttributes] = useState({});
+  const [selectedAttributes, setSelectedAttributes] = useState(
+    initialSelectedAttributes || {}
+  );
   const [open, setOpen] = useState(false);
   const [openss, setOpenss] = useState(false);
   const [opensss, setOpensss] = useState(false);
@@ -98,21 +107,13 @@ const AddProduct = () => {
       });
 
       // Initialize attributes
-      const initialSelectedAttributes =
-        updateProduct?.product_attributes?.reduce((acc, item) => {
-          acc[item?.product_attr_id] = item?.product_attr_value_id;
-          return acc;
-        }, {});
-      console.log("initialSelectedAttributes", initialSelectedAttributes);
-      setSelectedAttributes(initialSelectedAttributes);
+
       setUpdateImage(updateProduct?.product_images);
       getAttributesList(updateProduct?.category_id);
       setCategoryName(updateProduct?.category_name);
       setSelectedValue(updateProduct?.item_condition);
     }
   }, []);
-
-  console.log("images", images);
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
@@ -137,10 +138,7 @@ const AddProduct = () => {
       images: allImages,
       ...addProductFormData,
     };
-
-    console.log("payloadupdate", payload);
     setload(true);
-
     try {
       const response = await apiCallNew(
         "post",
@@ -165,19 +163,13 @@ const AddProduct = () => {
     setAddProductFormData((prevState) => ({
       ...prevState,
       available_quantity:
-        addProductFormData?.price_format == 2
+        addProductFormData?.price_format == 1
           ? addProductFormData?.available_quantity
-          : addProductFormData?.price_format == 1
+          : addProductFormData?.price_format == 0
           ? 1
           : "",
     }));
   }, [addProductFormData.price_format]);
-
-  // useEffect(() => {
-  //   attributesList?.forEach((item) => {
-  //     getAttributesValueList(item.product_attr_id);
-  //   });
-  // }, [attributesList]);
 
   useEffect(() => {
     if (updateProduct) {
@@ -316,7 +308,6 @@ const AddProduct = () => {
           }
           return [...prevImages, ...imageFiles];
         });
-        // setImages((prevImages) => [...prevImages, ...imageFiles]);
       } else {
         if (!video && videoFiles.length > 0) {
           setVideo(videoFiles[0]);
@@ -352,10 +343,6 @@ const AddProduct = () => {
     getAttributesValueList(attributeId);
   };
 
-  // const handleAttributeFocus = (attributeId) => {
-  //   getAttributesValueList(attributeId);
-  // };
-
   const getAttributesList = (id) => {
     apiCallNew("get", {}, ApiEndPoints.AttributesByCategory + id)
       .then((response) => {
@@ -364,14 +351,6 @@ const AddProduct = () => {
           response.result.forEach((attribute) => {
             getAttributesValueList(attribute.id);
           });
-          const initialSelectedAttributes = response.result.reduce(
-            (acc, item) => {
-              acc[item.id] = "";
-              return acc;
-            },
-            {}
-          );
-          setSelectedAttributes(initialSelectedAttributes);
         }
       })
       .catch((error) => {
@@ -474,7 +453,6 @@ const AddProduct = () => {
       images: images,
       ...addProductFormData,
     };
-    console.log("payload", payload);
     setload(true);
 
     try {
@@ -576,18 +554,15 @@ const AddProduct = () => {
                       cursor: "pointer",
                     }}
                     onClick={() => {
-                      // Update the state first
                       setImages((prevImages) => {
                         const updatedImages = prevImages.filter(
                           (img) => img.id !== file.id
                         );
-                        // Revoke the URL after state update
                         URL.revokeObjectURL(file.preview);
                         return updatedImages;
                       });
                     }}
                   ></i>
-                  {/* <p>de</p> */}
                 </div>
               ))}
             </div>
@@ -716,72 +691,6 @@ const AddProduct = () => {
                 </div>
               </div>
             ))}
-            {/* {attributesList.length > 0 ? (
-              attributesList.map((attribute) => (
-                <div className="form-group row" key={attribute.id}>
-                  <label
-                    htmlFor={`attribute-${attribute.id}`}
-                    className="col-sm-2 col-form-label"
-                  >
-                    {attribute.attribute_name}
-                  </label>
-                  <div className="col-sm-10">
-                    <select
-                      className="form-control"
-                      id={`attribute-${attribute.id}`}
-                      value={selectedAttributes[attribute.id] || ""}
-                      onChange={(e) => handleAttributeChange(e, attribute.id)}
-                    >
-                      <option value="" hidden>
-                        Select {attribute.attribute_name}
-                      </option>
-                      {Array.isArray(attributesValueList[attribute.id]) &&
-                        attributesValueList[attribute.id].map((value) => (
-                          <option key={value.id} value={value.id}>
-                            {value.attr_val_name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div>No attributes available.</div>
-            )} */}
-            {/* {attributesList?.map((item, index) => (
-              <div className="form-group row" key={index}>
-                <label
-                  htmlFor={`attribute-${item.id}`}
-                  className="col-sm-2 col-form-label"
-                >
-                  {item.attribute_name}
-                </label>
-                <div className="col-sm-10">
-                  <select
-                    className="form-control"
-                    name={item.attribute_name}
-                    id={`attribute-${item.id}`}
-                    value={selectedAttributes[item.id] || ""}
-                    onChange={(e) => handleAttributeChange(e, item.id)}
-                  >
-                    <option value="" hidden>
-                      Select {item?.attribute_name}
-                    </option>
-                    {Array.isArray(attributesValueList[item.id]) &&
-                      attributesValueList[item.id].map((attrValue, idx) => (
-                        <option key={idx} value={attrValue.id}>
-                          {attrValue.attr_val_name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-            ))} */}
-            {/*  {attributesValueList[item.id]?.map((attrValue, idx) => (
-                      <option key={idx} value={attrValue.id}>
-                        {attrValue.attr_val_name}
-                      </option>
-                    ))}*/}
             <Dialog
               open={open}
               onClose={handleClose}
@@ -1004,11 +913,11 @@ const AddProduct = () => {
             <div className="section-header">PRICING</div>
             <div className="form-group">
               <div className="col-sm-4 p-0">
-                <label for="brand">Format</label>
+                <label for="brandsa">Format</label>
                 <div className="">
                   <select
                     className="form-control"
-                    id="brand"
+                    id="brandsa"
                     name="price_format"
                     value={addProductFormData.price_format}
                     onChange={handleaddProductChange}
@@ -1016,20 +925,20 @@ const AddProduct = () => {
                     <option value="" hidden>
                       select format
                     </option>
-                    <option value="1">Auction</option>
-                    <option value="2">Buy it now</option>
+                    <option value={0}>Auction</option>
+                    <option value={1}>Buy it now</option>
                   </select>
                 </div>
               </div>
-              {addProductFormData.price_format == 2 ? (
+              {addProductFormData.price_format == 1 ? (
                 <>
                   <div className="col-sm-4 p-0 mt-2">
-                    <label for="brand">Price</label>
+                    <label for="brandss">Price</label>
                     <div className="">
                       <input
                         type="text"
                         className="form-control"
-                        id="brand"
+                        id="brandss"
                         name="price"
                         value={addProductFormData.price}
                         onChange={handleaddProductChange}
@@ -1037,12 +946,12 @@ const AddProduct = () => {
                     </div>
                   </div>
                   <div className="col-sm-4 p-0 mt-2">
-                    <label for="brand">Quantity</label>
+                    <label for="brandd">Quantity</label>
                     <div className="">
                       <input
                         type="text"
                         className="form-control"
-                        id="brand"
+                        id="brandd"
                         name="available_quantity"
                         value={addProductFormData.available_quantity}
                         onChange={handleaddProductChange}
@@ -1050,14 +959,14 @@ const AddProduct = () => {
                     </div>
                   </div>
                 </>
-              ) : addProductFormData.price_format == 1 ? (
+              ) : addProductFormData.price_format == 0 ? (
                 <>
                   <div className="col-sm-4 p-0 mt-2">
-                    <label for="brand">Action duration</label>
+                    <label for="Action">Action duration</label>
                     <div className="">
                       <select
                         className="form-control"
-                        id="brand"
+                        id="Action"
                         name="auction_duration"
                         value={addProductFormData.auction_duration}
                         onChange={handleaddProductChange}
@@ -1071,12 +980,12 @@ const AddProduct = () => {
                     </div>
                   </div>
                   <div className="col-sm-4 p-0 mt-2">
-                    <label for="brand">Starting bid</label>
+                    <label for="Starting">Starting bid</label>
                     <div className="">
                       <input
                         type="text"
                         className="form-control"
-                        id="brand"
+                        id="Starting"
                         name="starting_bid"
                         value={addProductFormData.starting_bid}
                         onChange={handleaddProductChange}
@@ -1084,25 +993,25 @@ const AddProduct = () => {
                     </div>
                   </div>
                   <div className="col-sm-4 p-0 mt-2">
-                    <label for="brand">Buy It Now(optional)</label>
+                    <label for="Now">Buy It Now(optional)</label>
                     <div className="">
                       <input
                         type="text"
                         className="form-control"
-                        id="brand"
-                        name="buy_it_now"
-                        value={addProductFormData.buy_it_now}
+                        id="Now"
+                        name="price"
+                        value={addProductFormData.price}
                         onChange={handleaddProductChange}
                       />
                     </div>
                   </div>
                   <div className="col-sm-4 p-0 mt-2">
-                    <label for="brand">Reserve price(optional)</label>
+                    <label for="Reserve">Reserve price(optional)</label>
                     <div className="">
                       <input
                         type="text"
                         className="form-control"
-                        id="brand"
+                        id="Reserve"
                         name="reserve_price"
                         value={addProductFormData.reserve_price}
                         onChange={handleaddProductChange}
@@ -1110,16 +1019,16 @@ const AddProduct = () => {
                     </div>
                   </div>
                   <div className="col-sm-4 p-0 mt-2">
-                    <label for="brand">Quantity</label>
+                    <label for="Quantity">Quantity</label>
                     <div className="">
                       <input
                         type="text"
                         className="form-control"
-                        id="brand"
+                        id="Quantity"
                         name="available_quantity"
                         disabled
                         defaultValue={1}
-                        value={addProductFormData.price_format == 1 ? 1 : ""}
+                        value={addProductFormData.price_format == 0 ? 1 : ""}
                         onChange={handleaddProductChange}
                       />
                     </div>
@@ -1129,11 +1038,11 @@ const AddProduct = () => {
             </div>
           </div>
           <div className="col-sm-4 p-0 mt-2">
-            <label for="brand">Shipping in days</label>
+            <label for="ship">Shipping in days</label>
             <div className="">
               <select
                 className="form-control"
-                id="brand"
+                id="ship"
                 name="shipping_in_days"
                 value={addProductFormData.shipping_in_days}
                 onChange={handleaddProductChange}

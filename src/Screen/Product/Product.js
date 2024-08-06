@@ -18,25 +18,38 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShortcutIcon from "@mui/icons-material/Shortcut";
 import SharePopup from "./SharePopup";
 import { Col, Row } from "react-bootstrap";
+import { AuctionTimer } from "../../Component/AuctionTimer/AuctionTimer";
+import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { Api, Task } from "@mui/icons-material";
 
 const Product = () => {
   const { id } = useParams();
   const location = useLocation();
   const bidstatus = location?.state?.bidStatus || 0;
-  console.log("ssasasasas", bidstatus);
   const navigate = useNavigate();
   const [productDetails, setProductLists] = React.useState({});
   const [load, setload] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [bidAmount, setBidAmount] = useState("");
+  const averageRating =
+    Number(productDetails?.avg_rating?.rating_all?.avg_rating) || 0;
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
-  console.log("bidAmount", bidAmount);
+  const displayedReviews = showAllReviews
+    ? productDetails?.product_reviews
+    : productDetails?.product_reviews?.slice(0, 2);
+  const [isAuctionEnded, setIsAuctionEnded] = useState(false);
+
   useEffect(() => {
     if (id) {
       getProductDetails(id);
     }
   }, [id]);
+
+  const handleTimeEnd = () => {
+    setIsAuctionEnded(true);
+  };
 
   const toggleShareModal = () => {
     setIsShareModalOpen(!isShareModalOpen);
@@ -185,9 +198,6 @@ const Product = () => {
               backgroundColor: "#f8f9fa",
             }}
           >
-            {/* <div className="viewed-info badge badge-danger mb-2">
-              6 VIEWED IN THE LAST 24 HOURS
-            </div> */}
             <div
               id="productCarousel"
               className="carousel slide main-image-container"
@@ -279,7 +289,14 @@ const Product = () => {
                   Condition: <b>{productDetails?.item_condition}</b>
                 </p>
                 <p>
-                  Time Left: <b>12</b>
+                  Time Left:{" "}
+                  <AuctionTimer
+                    createdAt={productDetails?.created_at}
+                    auctionDuration={
+                      productDetails?.product_prices?.auction_duration
+                    }
+                    onTimeEnd={handleTimeEnd}
+                  />
                 </p>
               </div>
               <div className="price mb-3 border-top mt-2">
@@ -300,57 +317,63 @@ const Product = () => {
                   Enter <b>${productDetails?.product_prices?.price}</b> or more
                 </p>
               </div>
-              <div className="buttonse mb-3">
-                <button
-                  className="btn buyitnow-btn btn-block mb-2"
-                  onClick={handleBid}
-                >
-                  Submit bid
-                </button>
-                <button
-                  className="btn addcarditnow-btn btn-block mb-2"
-                  onClick={handleCheckout}
-                >
-                  Buy It Now
-                </button>
-                {productDetails?.cart_quantity ? (
+              {isAuctionEnded ? (
+                <div className="buttonse mb-3 mt-5">
+                  <button
+                    className="btn buyitnow-btn btn-block mb-2"
+                    onClick={handleCheckout}
+                  >
+                    Pay Now
+                  </button>
+                </div>
+              ) : (
+                <div className="buttonse mb-3">
+                  <button
+                    className="btn buyitnow-btn btn-block mb-2"
+                    onClick={handleBid}
+                  >
+                    Submit bid
+                  </button>
                   <button
                     className="btn addcarditnow-btn btn-block mb-2"
-                    onClick={viewInCart}
+                    onClick={handleCheckout}
                   >
-                    View in Cart
+                    Buy It Now
                   </button>
-                ) : (
-                  <button
-                    className="btn addcarditnow-btn btn-block mb-2"
-                    onClick={handleAddToCart}
-                  >
-                    Add to Cart
-                  </button>
-                )}
-                {productDetails?.wishlist_id ? (
-                  <button
-                    className="btn additnow-btn btn-block mb-2"
-                    onClick={() => removeCart(productDetails)}
-                  >
-                    <FavoriteIcon />
-                    Unwatch
-                  </button>
-                ) : (
-                  <button
-                    className="btn  additnow-btn btn-block mb-2"
-                    onClick={handleAddToWishList}
-                  >
-                    <FavoriteBorderIcon />
-                    Add to Watchlist
-                  </button>
-                )}
-              </div>
-              <div className="watchinge">
-                <span className="text-muted">
-                  People want this. 24 people are watching this.
-                </span>
-              </div>
+                  {productDetails?.cart_quantity ? (
+                    <button
+                      className="btn addcarditnow-btn btn-block mb-2"
+                      onClick={viewInCart}
+                    >
+                      View in Cart
+                    </button>
+                  ) : (
+                    <button
+                      className="btn addcarditnow-btn btn-block mb-2"
+                      onClick={handleAddToCart}
+                    >
+                      Add to Cart
+                    </button>
+                  )}
+                  {productDetails?.wishlist_id ? (
+                    <button
+                      className="btn additnow-btn btn-block mb-2"
+                      onClick={() => removeCart(productDetails)}
+                    >
+                      <FavoriteIcon />
+                      Unwatch
+                    </button>
+                  ) : (
+                    <button
+                      className="btn  additnow-btn btn-block mb-2"
+                      onClick={handleAddToWishList}
+                    >
+                      <FavoriteBorderIcon />
+                      Add to Watchlist
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <div className="col-lg-6 col-md-12">
@@ -455,60 +478,98 @@ const Product = () => {
               </div>
             </div>
           )}
-
-          {/* <div className="col-lg-6 col-md-12">
-            <Row>
-              <Col>
-                {" "}
-                <h1 className="product-titlee">
-                  {formatCapitalize(productDetails?.name)}
-                </h1>
-              </Col>
-            </Row>
-            <Col className="border-top">
-              <p className="mt-3">
-                Condition: <b>{productDetails?.item_condition}</b>
+          <div className="col-lg-12 col-md-12 bg-light mt-5">
+            <div className="d-flex justify-content-between mt-3">
+              <h4> Product ratings and reviews</h4>
+              <button
+                className="btn additnow-btn"
+                onClick={() => navigate(`/review/${productDetails?.id}`)}
+              >
+                Write a review
+              </button>
+            </div>
+            <div className="mt-4 d-flex border-bottom">
+              {Array(5)
+                .fill(0)
+                .map((_, i) => {
+                  const fullStar = i < Math.floor(averageRating);
+                  const halfStar =
+                    i === Math.floor(averageRating) && averageRating % 1 !== 0;
+                  return (
+                    <label key={i}>
+                      <input type="radio" style={{ display: "none" }} />
+                      {fullStar ? (
+                        <FaStar
+                          size={20}
+                          color="#ffc107"
+                          style={{ margin: "2px" }}
+                        />
+                      ) : halfStar ? (
+                        <FaStarHalfAlt
+                          size={20}
+                          color="#ffc107"
+                          style={{ margin: "2px" }}
+                        />
+                      ) : (
+                        <FaStar
+                          size={20}
+                          color="#ccc"
+                          style={{ margin: "2px" }}
+                        />
+                      )}
+                    </label>
+                  );
+                })}
+              <p className="ratingtext">
+                Rating:
+                <span className="ms-1 mt-1">
+                  {averageRating > 0 ? averageRating?.toFixed(1) : "No rating"}
+                </span>
               </p>
-              <p className="">Time left: 5mi 20s</p>
-            </Col>
-            <Row className="mt-3 border-top">
-              <Col md={3} className="mt-3">
-                <p className="">Current Bid:</p>
-              </Col>
-              <Col md={4} className="mt-3">
-                <p className="m-0">
-                  <b>${productDetails?.product_prices?.price}</b>
-                </p>
-                <input
-                  type="number"
-                  className="form-control mt-3"
-                  placeholder="bid amount"
-                  value={bidAmount}
-                  onChange={(e) => setBidAmount(e.target.value)}
-                />
-                <p className="mt-0 text-muted">
-                  Enter <b>${productDetails?.product_prices?.price + 1}</b> or
-                  more
-                </p>
-              </Col>
-              <Col md={5} className="mt-3">
-                <p className="">(6 bid so far)</p>
-                <button
-                  className="btn buyitnow-btn btn-block mb-2"
-                  onClick={handleBid}
+            </div>
+            <div className="mt-3">
+              <h4 className="ratingtextsss">Reviews</h4>
+              {productDetails?.product_reviews?.length > 0 ? (
+                displayedReviews?.map((item) => (
+                  <div className="border p-2">
+                    <p>
+                      <span className="userrating">
+                        {item?.rating}{" "}
+                        <FaStar
+                          size={10}
+                          color="#fff"
+                          style={{ marginTop: "-4px" }}
+                        />
+                      </span>
+                    </p>
+                    <p className="ratingfeed">{item?.review} </p>
+                    <p className="ratingfeedname">
+                      {item?.name} {item?.surname}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-muted">No reviews yet</p>
+              )}
+              {productDetails?.product_reviews?.length > 2 &&
+                !showAllReviews && (
+                  <p
+                    className="viewallre"
+                    onClick={() => setShowAllReviews(true)}
+                  >
+                    View All Reviews
+                  </p>
+                )}
+              {showAllReviews && (
+                <p
+                  className="viewallre"
+                  onClick={() => setShowAllReviews(false)}
                 >
-                  Submit bid
-                </button>
-                <button
-                  className="btn  additnow-btn btn-block mb-2"
-                  onClick={handleAddToWishList}
-                >
-                  <FavoriteBorderIcon />
-                  Add to Watchlist
-                </button>
-              </Col>
-            </Row>
-          </div> */}
+                  Show Less
+                </p>
+              )}
+            </div>
+          </div>
         </div>
         <SharePopup
           show={isShareModalOpen}

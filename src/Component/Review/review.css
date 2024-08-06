@@ -1,0 +1,13 @@
+.reviewbtn {
+  background-color: #3665f3;
+  color: #fff;
+  border-radius: 25px;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+.reviewclsbtn {
+  color: #3665f3;
+  border-radius: 25px;
+  border: 1px solid #3665f3;
+  margin-top: 10px;
+}

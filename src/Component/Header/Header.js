@@ -267,6 +267,11 @@ const Header = () => {
                   <Link to="/selling/overview">
                     <ListGroup.Item className="fw-bold">Selling</ListGroup.Item>
                   </Link>
+                  <Link to="/all-product">
+                    <ListGroup.Item className="fw-bold">
+                      Bidding History
+                    </ListGroup.Item>
+                  </Link>
                 </ListGroup>
               </div>
             </li>

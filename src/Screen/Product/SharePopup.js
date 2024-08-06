@@ -21,6 +21,7 @@ const SharePopup = ({ product, show, onHide }) => {
     navigator.clipboard.writeText(url);
     setCopied(true);
   };
+
   setTimeout(() => {
     setCopied(false);
   }, 3000);
@@ -66,4 +67,3 @@ const SharePopup = ({ product, show, onHide }) => {
 };
 
 export default SharePopup;
-

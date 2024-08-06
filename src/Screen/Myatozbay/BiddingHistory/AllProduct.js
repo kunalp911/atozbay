@@ -10,100 +10,121 @@ import { Box, CircularProgress, Pagination } from "@mui/material";
 import Sidebar from "../Sidebar/Sidebar";
 import { formatCapitalize } from "../../../Component/ReuseFormat/ReuseFormat";
 import Footer from "../../../Component/Footer/Footer";
-import "./bidding.css";
-import Review from "../../../Component/Review/Review";
+import "./biddinghis.css";
 
-const BidandOffer = () => {
+const AllProduct = () => {
   const navigate = useNavigate();
-  const [bidProductList, setBidProductList] = useState([]);
+  const [shopProductLists, setShopProductLists] = useState([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [load, setload] = useState(false);
 
   const itemsPerPage = 20;
 
   useEffect(() => {
-    getShopProductList();
-  }, []);
+    getShopProductList(page);
+  }, [page]);
 
   const viewProduct = (id) => {
     navigate(`/product/${id}`, { state: { bidStatus: 1 } });
   };
 
   const getShopProductList = async (page) => {
-    const payload = { page: page - 1, auction_product: 1 };
+    const payload = { page: page - 1 };
     try {
+      setload(true);
       const response = await apiCallNew(
         "post",
         payload,
-        ApiEndPoints.UserBidList
+        ApiEndPoints.ShopProductList
       );
       if (response.success) {
-        setBidProductList(response.result);
-        // setCount(response.product_count);
+        setShopProductLists(response.result);
+        setCount(response.product_count);
+        setload(false);
+      } else {
+        setload(false);
       }
     } catch (error) {
       console.error("Error fetching shop products:", error);
+      setload(false);
     }
   };
-
-  // const handleChange = (event, value) => {
-  //   setPage(value);
-  // };
-
-  // const currentItems = shopProductLists;
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+  const currentItems = shopProductLists;
 
   return (
     <div>
       <Header />
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <Container className="mt-3">
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
-            <Sidebar status="bidding" />
+            <Sidebar status="biddinghis" />
           </Col>
           <Col md={10}>
-            <Row className="mt-3">
+            <Row className="mt-3 mb-3">
               <Col xs={12} md={6}>
-                <h2 className="helo">Bidding</h2>
+                <h2 className="helo"> All Products</h2>
+              </Col>
+              <Col xs={12} md={6} className="d-flex justify-content-end">
+                <Form.Control
+                  type="search"
+                  placeholder="Search"
+                  className="me-2"
+                  aria-label="Search"
+                />
               </Col>
             </Row>
-            {bidProductList?.length == 0 && (
-              <p className="text-center mt-5 text-muted">No Bidding</p>
-            )}
-            {bidProductList?.map((item, index) => (
+            {/* <Row className="mt-3 mb-3 d-flex align-items-end">
+              <Col className="d-flex align-items-center justify-content-lg-end">
+                <span>Status: All ({wishListCount})</span>
+              </Col>
+            </Row> */}
+            {currentItems?.map((item, index) => (
               <>
                 <Card className="mb-3" key={index}>
                   <Row className="justify-content-around">
                     <Col className="text-center" xs={12} lg={2} md={2}>
                       <Card.Img
-                        className="img-fluid  mt-lg-4 ms-lg-3 mb-3"
-                        src={item?.product_image_path}
+                        className="img-fluid  mt-lg-4 ms-lg-3"
+                        src={item?.product_images[0]?.product_image}
                         style={{
                           objectFit: "contain",
                         }}
-                        onClick={() => viewProduct(item?.product_id)}
+                        onClick={() => viewProduct(item?.id)}
                       />
                     </Col>
                     <Col xs={12} lg={10} md={10}>
                       <Card.Body>
                         <Card.Title
                           className="watch-title m-0"
-                          onClick={() => viewProduct(item?.product_id)}
+                          onClick={() => viewProduct(item?.id)}
                         >
-                          {formatCapitalize(item?.product_name)}
+                          {formatCapitalize(item?.name)}
                         </Card.Title>
                         <p className="m-0 text-muted">
                           {item?.condition_description}
                         </p>
-                        <Row className="mt-3">
+                        <Card.Text>
+                          Condition: <b>{item?.item_condition}</b>
+                        </Card.Text>
+                        <Row>
                           <Col xs={6} md={4}>
                             <Card.Text
                               style={{ fontSize: "14px", marginBottom: "0" }}
                             >
-                              Bidding Price:
+                              ITEM PRICE:
                             </Card.Text>
                             <Card.Text className="font-weight-bold">
-                              US ${item?.bid_price}
+                              US ${item?.product_prices?.price}
                             </Card.Text>
                           </Col>
                         </Row>
@@ -115,7 +136,7 @@ const BidandOffer = () => {
             ))}
           </Col>
         </Row>
-        {/* {count > itemsPerPage && (
+        {count > itemsPerPage && (
           <Box display="flex" justifyContent="center" mt={4}>
             <Pagination
               count={Math.ceil(count / itemsPerPage)}
@@ -125,7 +146,7 @@ const BidandOffer = () => {
               showLastButton
             />
           </Box>
-        )} */}
+        )}
       </Container>
       <Footer />
     </div>
@@ -150,4 +171,4 @@ const styles = {
   },
 };
 
-export default BidandOffer;
+export default AllProduct;
