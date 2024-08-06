@@ -149,14 +149,13 @@
 
 .popup .icons .fbstyle:hover {
   background-color: #0056b3;
-  border-color: #0056b3;
 }
 .popup .icons .twitterstyle {
   color: #fff;
   font-size: 20px;
   transition: color 0.3s;
   padding: 10px;
-  background-color: #1da1f2;
+  background-color: #000;
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -167,8 +166,7 @@
 }
 
 .popup .icons .twitterstyle:hover {
-  background-color: #1da1f2;
-  border-color: #1da1f2;
+  background-color: #000;
 }
 .popup .icons .linkedinstyle {
   color: #fff;
@@ -187,7 +185,6 @@
 
 .popup .icons .linkedinstyle:hover {
   background-color: #0077b5;
-  border-color: #0077b5;
 }
 
 .popup .field {
@@ -232,4 +229,45 @@
 
 .dd {
   color: #1e1e1e;
+}
+.ratingtext {
+  /* color: #636161; */
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 3px;
+  font-weight: 600;
+}
+.ratingtextsss {
+  font-size: 20px;
+  margin-left: 10px;
+  margin-top: 3px;
+}
+.userrating {
+  background-color: green;
+  color: white;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 3px;
+  font-weight: 600;
+  border-radius: 5px;
+  padding: 5px;
+}
+.ratingfeed {
+  font-size: 14px;
+  margin-left: 10px;
+}
+.ratingfeedname {
+  font-size: 15px;
+  margin-left: 10px;
+  color: #636161;
+  font-weight: 600;
+  margin-bottom: 0px;
+}
+.viewallre {
+  color: #3665f3;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 3px;
+  font-weight: 600;
+  cursor: pointer;
 }

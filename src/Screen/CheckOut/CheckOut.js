@@ -390,6 +390,38 @@ const CheckOut = () => {
     setCountryCode("");
   };
 
+  const makePayment = async () => {
+    setload(true);
+
+    try {
+      const payload = {
+        shipping_id: shipAdd?.id,
+        sub_total: totalPrices,
+        total: totalPrices,
+      };
+      console.log(payload);
+
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.MakePayment
+      );
+      if (response?.success == true) {
+        toast.success(response?.msg);
+        setload(false);
+        if (response?.result?.url) {
+          window.location.href = response?.result?.url;
+        }
+      } else {
+        setload(false);
+        toast.error(response?.msg);
+      }
+    } catch (error) {
+      setload(false);
+      toast.error(error);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -881,7 +913,7 @@ const CheckOut = () => {
                       <b>${totalPrices?.toFixed(2)}</b>
                     </Col>
                   </Row>
-                  <button className="btn mt-4 buynowbtn">
+                  <button className="btn mt-4 buynowbtn" onClick={makePayment}>
                     Confirm and Pay
                   </button>
                 </Card.Body>

@@ -45,7 +45,7 @@ const ApiEndPoints = {
   ProductSellerDetail: `${APPConfig.API_URL}/product/`,
   ProductSellDelete: `${APPConfig.API_URL}/product/`,
   ProductShopDetail: `${APPConfig.API_URL}/shop-product/`,
-  // ProductShopDetail: `${APPConfig.API_URL}/shop-product-detail/`,
+  ProductShopDetailSlug: `${APPConfig.API_URL}/shop-product-slug/`,
   AddToCart: `${APPConfig.API_URL}/add-to-cart`,
   CartProductsList: `${APPConfig.API_URL}/cart-products`,
   CartUpdate: `${APPConfig.API_URL}/update-cart`,
@@ -59,6 +59,10 @@ const ApiEndPoints = {
   ProductImage: `${APPConfig.API_URL}/product-image/`,
   ProductBids: `${APPConfig.API_URL}/product-bids-list/1`,
   Bidgive: `${APPConfig.API_URL}/bid-give`,
+  GiveReview: `${APPConfig.API_URL}/give-review`,
+  UserBidList: `${APPConfig.API_URL}/user-bids-list`,
+  MakePayment: `${APPConfig.API_URL}/order-create`,
+  PaymentResponse: `${APPConfig.API_URL}/telr-payment-response`,
 };
 
 export default ApiEndPoints;

@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 const Sidebar = ({ status }) => {
   const [open, setOpen] = useState({ selling: false, saved: false });
 
-  console.log("?????????", status);
   const toggleOpen = (key) => {
     setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -80,6 +79,33 @@ const Sidebar = ({ status }) => {
                 <ListGroup.Item className="fs-6">Overview</ListGroup.Item>
               </Link>
               <ListGroup.Item className="fs-6">Sell an item</ListGroup.Item>
+            </ListGroup>
+          </div>
+        </Collapse>
+        <ListGroup.Item
+          className={`fw-bold fs-6 ${
+            isActive("biddinghis") ? "listitemname" : "listitemnamess"
+          }`}
+          onClick={() => toggleOpen("biddinghis")}
+          aria-controls="selling-collapse"
+          aria-expanded={open.biddinghis}
+        >
+          Bidding History{" "}
+          {open.biddinghis ? (
+            <i className="fa fa-angle-up" style={{ float: "right" }}></i>
+          ) : (
+            <i className="fa fa-angle-down" style={{ float: "right" }}></i>
+          )}
+        </ListGroup.Item>
+        <Collapse in={open.biddinghis}>
+          <div id="selling-collapse" className="ms-3">
+            <ListGroup variant="flush">
+              <Link to="/all-product" className="text-decoration-none">
+                <ListGroup.Item className="fs-6">All</ListGroup.Item>
+              </Link>
+              <Link to="/auction-product" className="text-decoration-none">
+                <ListGroup.Item className="fs-6">Auction</ListGroup.Item>
+              </Link>
             </ListGroup>
           </div>
         </Collapse>

@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "../Screen/LoginFlow/Login/Login";
 import Register from "../Screen/LoginFlow/Register/Register";
 import Dashboard from "../Screen/Dashboard/Dashboard";
@@ -35,10 +35,108 @@ import PaymentSuccess from "../Screen/Payment/PaymentSuccess/PaymentSuccess";
 import PaymentCancel from "../Screen/Payment/PaymentCancel/PaymentCancel";
 import PaymentDeclined from "../Screen/Payment/PaymentDecliend/PaymentDeclined";
 import BidandOffer from "../Screen/Myatozbay/Bid&Offer/BidandOffer";
+import AllProduct from "../Screen/Myatozbay/BiddingHistory/AllProduct";
+import AuctionProduct from "../Screen/Myatozbay/BiddingHistory/AuctionProduct";
+import Review from "../Component/Review/Review";
+import { getToken } from "../Helper/Storage";
+import axios from "axios";
+import ApiEndPoints from "../Network_Call/ApiEndPoint";
 
 const PublicRouter = () => {
+  const PaymentSuccessListener = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+      console.log("location", location);
+    }, []);
+
+    useEffect(() => {
+      if (location.pathname === "/payment-success") {
+        const query = new URLSearchParams(location.search);
+        const id = query.get("id");
+        console.log(" Success  id>>>>>>>", id);
+        console.log("query", query);
+
+        if (id) {
+          const token = getToken(); // Get the token from storage
+          const postData = {
+            transaction_id: id,
+            payment_status: "success",
+          };
+
+          axios
+            .post(ApiEndPoints.PaymentResponse, postData, {
+              headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the headers
+              },
+            })
+            .then((response) => {
+              console.log("API Success Response:", response.data);
+            })
+            .catch((error) => {
+              console.error("API Error:", error);
+            });
+        }
+      } else if (location.pathname === "/payment-cancel") {
+        const query = new URLSearchParams(location.search);
+        const id = query.get("id");
+        console.log("cancel id", id);
+        console.log("cancel query", query);
+
+        if (id) {
+          const token = getToken(); // Get the token from storage
+          const postData = {
+            transaction_id: id,
+            payment_status: "cancel",
+          };
+
+          axios
+            .post(ApiEndPoints.PaymentResponse, postData, {
+              headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the headers
+              },
+            })
+            .then((response) => {
+              console.log("API Cancel Response:", response.data);
+            })
+            .catch((error) => {
+              console.error("API Error:", error);
+            });
+        }
+      } else if (location.pathname === "/payment-declined") {
+        const query = new URLSearchParams(location.search);
+        const id = query.get("id");
+        console.log("declinedid", id);
+        console.log("declinedquery", query);
+
+        if (id) {
+          const token = getToken(); // Get the token from storage
+          const postData = {
+            transaction_id: id,
+            payment_status: "declined",
+          };
+
+          axios
+            .post(ApiEndPoints.PaymentResponse, postData, {
+              headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the headers
+              },
+            })
+            .then((response) => {
+              console.log("API Declined Response:", response.data);
+            })
+            .catch((error) => {
+              console.error("API Error:", error);
+            });
+        }
+      }
+    }, [location]);
+
+    return null; // This component doesn't render anything
+  };
   return (
     <BrowserRouter basename="/web">
+      <PaymentSuccessListener />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
@@ -76,6 +174,9 @@ const PublicRouter = () => {
         <Route path="/payment-cancel" element={<PaymentCancel />} />
         <Route path="/payment-declined" element={<PaymentDeclined />} />
         <Route path="/bids-offers" element={<BidandOffer />} />
+        <Route path="/all-product" element={<AllProduct />} />
+        <Route path="/auction-product" element={<AuctionProduct />} />
+        <Route path="/review/:id" element={<Review />} />
       </Routes>
     </BrowserRouter>
   );
