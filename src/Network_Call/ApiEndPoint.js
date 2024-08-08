@@ -63,6 +63,10 @@ const ApiEndPoints = {
   UserBidList: `${APPConfig.API_URL}/user-bids-list`,
   MakePayment: `${APPConfig.API_URL}/order-create`,
   PaymentResponse: `${APPConfig.API_URL}/telr-payment-response`,
+  OrderList: `${APPConfig.API_URL}/orders-list`,
+  SellerOrderList: `${APPConfig.API_URL}/seller-orders-list`,
+  OrderDetail: `${APPConfig.API_URL}/order/`,
+  SellerOrderDetail: `${APPConfig.API_URL}/seller-order/`,
 };
 
 export default ApiEndPoints;

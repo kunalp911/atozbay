@@ -57,6 +57,15 @@ const Sidebar = ({ status }) => {
             Purchases
           </ListGroup.Item>
         </Link>
+        <Link to="/orders-list" className="text-decoration-none">
+          <ListGroup.Item
+            className={`fw-bold fs-6 ${
+              isActive("orderlist") ? "listitemname" : "listitemnamess"
+            }`}
+          >
+            Order List
+          </ListGroup.Item>
+        </Link>
         <ListGroup.Item
           className={`fw-bold fs-6 ${
             isActive("selling") ? "listitemname" : "listitemnamess"
