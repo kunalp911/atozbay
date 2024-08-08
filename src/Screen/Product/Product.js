@@ -21,6 +21,7 @@ import { Col, Row } from "react-bootstrap";
 import { AuctionTimer } from "../../Component/AuctionTimer/AuctionTimer";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { Api, Task } from "@mui/icons-material";
+import { getUserdata } from "../../Helper/Storage";
 
 const Product = () => {
   const { id } = useParams();
@@ -32,6 +33,8 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [bidAmount, setBidAmount] = useState("");
+  const [winningBid, setWiningBid] = useState({});
+  const [userData, setUserData] = useState({});
   const averageRating =
     Number(productDetails?.avg_rating?.rating_all?.avg_rating) || 0;
   const [showAllReviews, setShowAllReviews] = useState(false);
@@ -41,11 +44,26 @@ const Product = () => {
     : productDetails?.product_reviews?.slice(0, 2);
   const [isAuctionEnded, setIsAuctionEnded] = useState(false);
 
+  console.log("match", winningBid?.user_id == userData?.id);
+  console.log("winningBid", winningBid?.user_id, userData?.id);
   useEffect(() => {
     if (id) {
       getProductDetails(id);
+      winnigBid(id);
     }
   }, [id]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const data = await getUserdata();
+        setUserData(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleTimeEnd = () => {
     setIsAuctionEnded(true);
@@ -169,6 +187,21 @@ const Product = () => {
       });
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const winnigBid = (id) => {
+    try {
+      setload(true);
+      apiCallNew("get", {}, ApiEndPoints.WinningBid + id).then((response) => {
+        if (response.success) {
+          setWiningBid(response.result);
+          setload(false);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      setload(false);
     }
   };
   return (
@@ -319,12 +352,16 @@ const Product = () => {
               </div>
               {isAuctionEnded ? (
                 <div className="buttonse mb-3 mt-5">
-                  <button
-                    className="btn buyitnow-btn btn-block mb-2"
-                    onClick={handleCheckout}
-                  >
-                    Pay Now
-                  </button>
+                  {winningBid?.user_id == userData?.id ? (
+                    <button
+                      className="btn buyitnow-btn btn-block mb-2"
+                      onClick={handleCheckout}
+                    >
+                      Pay Now
+                    </button>
+                  ) : (
+                    <p className="text-danger text-center">Offer expired</p>
+                  )}
                 </div>
               ) : (
                 <div className="buttonse mb-3">

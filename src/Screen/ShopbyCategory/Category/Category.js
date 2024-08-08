@@ -65,7 +65,11 @@ const Category = () => {
   };
 
   const getShopProductList = async (page) => {
-    const payload = { page: page - 1, category_id: cateId };
+    const payload = {
+      page: page - 1,
+      category_id: cateId,
+      main_category_id: cateId,
+    };
     try {
       const response = await apiCallNew(
         "post",

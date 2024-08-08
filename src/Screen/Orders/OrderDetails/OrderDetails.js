@@ -1,16 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row, Card, ListGroup, Image } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import {
+  Col,
+  Container,
+  Row,
+  Card,
+  ListGroup,
+  Image,
+  ProgressBar,
+  Button,
+} from "react-bootstrap";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../Myatozbay/Sidebar/Sidebar";
 import Header from "../../../Component/Header/Header";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import "./OrderDetails.css";
 
 const OrderDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [order, setOrder] = useState({});
   const [load, setLoad] = useState(false);
+  const [currentStep, setCurrentStep] = useState(2);
+  const steps = [
+    "Processing",
+    "Dispatched",
+    "In transit",
+    "Out for delivery",
+    "Delivered",
+    "Cancelled",
+  ];
+
+  const handleStepClick = (index) => {
+    if (index <= currentStep) {
+      setCurrentStep(index + 1);
+    }
+  };
   useEffect(() => {
     getProduct();
   }, [id]);
@@ -44,6 +71,7 @@ const OrderDetails = () => {
       setLoad(false);
     }
   };
+
   return (
     <div>
       {load && (
@@ -52,18 +80,67 @@ const OrderDetails = () => {
         </div>
       )}
       <Header />
-      <Container className="mt-3">
+      <Container className="mt-3 mb-5">
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
-            <Sidebar status="orderlist" />
+            <Sidebar status="purchase" />
           </Col>
           <Col md={10}>
             <Row className="mt-3">
               <Col xs={12} md={6}>
-                <h2 className="helo">Order Details</h2>
+                <h2 className="helo">
+                  {" "}
+                  <ArrowBackIcon
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/purchase")}
+                  />{" "}
+                  Order Details
+                </h2>
               </Col>
             </Row>
+            <div className="main_container p-0">
+              <div className="container p-0 padding-bottom-3x mb-1">
+                <div className="card mb-3">
+                  <div className="p-4 text-center text-white text-lg bg-dark rounded-top">
+                    <span className="text-uppercase">Tracking Order Id - </span>
+                    <span className="text-medium">{id}</span>
+                  </div>
+                  <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary">
+                    <div className="w-100 text-center py-1 px-2">
+                      <span className="text-medium">Status:</span>{" "}
+                      <b>{steps[currentStep - 1]}</b>
+                    </div>
+                    <div className="w-100 text-center py-1 px-2">
+                      <span className="text-medium">Expected Date:</span>{" "}
+                      <b>Aug 12, 2024</b>
+                    </div>
+                  </div>
+                  <div className="card-body">
+                    <div className="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                      {steps.map((step, index) => (
+                        <div
+                          key={index}
+                          className={`step ${
+                            index < currentStep ? "completed" : ""
+                          }`}
+                          onClick={() => handleStepClick(index)}
+                        >
+                          <div className="step-icon-wrap">
+                            <div className="step-icon">
+                              {index < currentStep && (
+                                <i className="fa fa-check"></i>
+                              )}
+                            </div>
+                          </div>
+                          <h4 className="step-title">{step}</h4>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <Card className="mt-3">
               <Card.Header>Order Information</Card.Header>
               <Card.Body>

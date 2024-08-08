@@ -22,6 +22,7 @@ const Header = () => {
   const data = JSON.parse(userData);
   const firstChars = data?.email?.substring(0, 6);
   const { cartCount, updateCartCount } = useCart();
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
 
   useEffect(() => {
     updateCartCount();
@@ -51,10 +52,36 @@ const Header = () => {
     getCategories();
   }, []);
 
-  const handleCategorySelect = (category) => {
-    navigate(`/category/${category?.id}`, { state: { category: category } });
-    setAnchorEl(null);
+  const handleMenuItemClick = (category) => {
+    navigate(`/category/${category.id}`, {
+      state: {
+        category: category,
+      },
+    });
+    handleClose();
+    setSelectedCategoryId(category.id);
   };
+
+  const handleCategorySelect = (event) => {
+    const selectedId = event.target.value;
+    setSelectedCategoryId(selectedId);
+  };
+
+  const handleSearchClick = () => {
+    if (selectedCategoryId) {
+      const selectedCategory = categoriesList.find(
+        (cat) => cat.id == selectedCategoryId
+      );
+      navigate(`/category/${selectedCategoryId}`, {
+        state: {
+          category: selectedCategory,
+        },
+      });
+    } else {
+      navigate("/category/all");
+    }
+  };
+
   const getCategories = () => {
     try {
       apiCallNew("get", {}, ApiEndPoints.CategoriesList).then((response) => {
@@ -72,17 +99,6 @@ const Header = () => {
     window.location.reload();
   };
 
-  // const handleCartCount = () => {
-  //   try {
-  //     apiCallNew("get", {}, ApiEndPoints.CartProductCount).then((response) => {
-  //       if (response.success) {
-  //         setCartCount(response.result);
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   return (
     <div>
       <nav className="navbar navbar-expand-lg main-navbar">
@@ -243,31 +259,31 @@ const Header = () => {
               </a>
               <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
                 <ListGroup variant="flush" className="pt-0 pb-2 ms-3">
-                  <Link to="/summary">
+                  <Link to="/summary" className="text-decoration-none">
                     <ListGroup.Item className="fw-bold">Summary</ListGroup.Item>
                   </Link>
                   <ListGroup.Item className="fw-bold">
                     Recently viewed
                   </ListGroup.Item>
-                  <Link to="/bids-offers">
+                  <Link to="/bids-offers" className="text-decoration-none">
                     <ListGroup.Item className="fw-bold">
                       Bids & offers
                     </ListGroup.Item>
                   </Link>
-                  <Link to="/watch-list">
+                  <Link to="/watch-list" className="text-decoration-none">
                     <ListGroup.Item className="fw-bold">
                       Watchlist
                     </ListGroup.Item>
                   </Link>
-                  <Link to="/purchase">
+                  <Link to="/purchase" className="text-decoration-none">
                     <ListGroup.Item className="fw-bold">
                       Purchases
                     </ListGroup.Item>
                   </Link>
-                  <Link to="/selling/overview">
+                  <Link to="/selling/overview" className="text-decoration-none">
                     <ListGroup.Item className="fw-bold">Selling</ListGroup.Item>
                   </Link>
-                  <Link to="/all-product">
+                  <Link to="/all-product" className="text-decoration-none">
                     <ListGroup.Item className="fw-bold">
                       Bidding History
                     </ListGroup.Item>
@@ -332,7 +348,7 @@ const Header = () => {
                   <Grid sx={{ padding: "10px 20px" }}>
                     {categoriesList?.map((category, index) => (
                       <MenuItem
-                        onClick={() => handleCategorySelect(category)}
+                        onClick={() => handleMenuItemClick(category)}
                         sx={{ fontSize: "14px", fontWeight: "bold" }}
                         key={index}
                       >
@@ -352,15 +368,25 @@ const Header = () => {
                   aria-label="Search"
                 />
                 <div className="input-group-append search-drop">
-                  <select className="form-control category-select">
+                  <select
+                    className="form-control category-select"
+                    value={selectedCategoryId}
+                    onChange={handleCategorySelect}
+                  >
                     <option>All Categories</option>
-                    <option>Books</option>
-                    <option>Electronics</option>
-                    <option>Fashion</option>
+                    {categoriesList?.map((category, index) => (
+                      <option key={index} value={category.id}>
+                        {category.category_name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="input-group-append">
-                  <button className="btn" type="button">
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={handleSearchClick}
+                  >
                     <i className="fa fa-search"></i>
                   </button>
                 </div>

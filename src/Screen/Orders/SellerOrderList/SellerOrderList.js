@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
+import "../OrderList/OrderList.css";
 
 const SellerOrderList = () => {
   const [orders, setOrders] = useState([]);
@@ -13,7 +14,6 @@ const SellerOrderList = () => {
   useEffect(() => {
     getProductList();
   }, []);
-
   const getProductList = async () => {
     setLoad(true);
     try {
@@ -46,7 +46,7 @@ const SellerOrderList = () => {
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
-            <Sidebar status="orderlist" />
+            <Sidebar status="selling" bidchild="ordersell" />
           </Col>
           <Col md={10}>
             <Row className="mt-3">
@@ -73,7 +73,7 @@ const SellerOrderList = () => {
                         {new Date(order?.created_at).toLocaleDateString()}
                       </Card.Text>
                       <Link to={`/seller-order-details/${order.id}`}>
-                        <Button variant="primary">Details</Button>
+                        <button className="btn orderdetailbtn">Details</button>
                       </Link>
                     </Card.Body>
                   </Card>

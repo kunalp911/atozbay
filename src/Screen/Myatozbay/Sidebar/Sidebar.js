@@ -3,7 +3,7 @@ import { ListGroup, Collapse } from "react-bootstrap";
 import "./sidebar.css";
 import { Link } from "react-router-dom";
 
-const Sidebar = ({ status }) => {
+const Sidebar = ({ status, bidchild }) => {
   const [open, setOpen] = useState({ selling: false, saved: false });
 
   const toggleOpen = (key) => {
@@ -57,7 +57,7 @@ const Sidebar = ({ status }) => {
             Purchases
           </ListGroup.Item>
         </Link>
-        <Link to="/orders-list" className="text-decoration-none">
+        {/* <Link to="/orders-list" className="text-decoration-none">
           <ListGroup.Item
             className={`fw-bold fs-6 ${
               isActive("orderlist") ? "listitemname" : "listitemnamess"
@@ -65,7 +65,7 @@ const Sidebar = ({ status }) => {
           >
             Order List
           </ListGroup.Item>
-        </Link>
+        </Link> */}
         <ListGroup.Item
           className={`fw-bold fs-6 ${
             isActive("selling") ? "listitemname" : "listitemnamess"
@@ -85,9 +85,26 @@ const Sidebar = ({ status }) => {
           <div id="selling-collapse" className="ms-3">
             <ListGroup variant="flush">
               <Link to="/selling/overview" className="text-decoration-none">
-                <ListGroup.Item className="fs-6">Overview</ListGroup.Item>
+                <ListGroup.Item
+                  className={`fs-6 ${
+                    bidchild == "overview" ? "text-primary" : "text-muted"
+                  }`}
+                >
+                  Overview
+                </ListGroup.Item>
               </Link>
-              <ListGroup.Item className="fs-6">Sell an item</ListGroup.Item>
+              <ListGroup.Item className="fs-6 text-muted">
+                Sell an item
+              </ListGroup.Item>
+              <Link to="/seller-orders-list" className="text-decoration-none">
+                <ListGroup.Item
+                  className={`fs-6 ${
+                    bidchild == "ordersell" ? "text-primary" : "text-muted"
+                  }`}
+                >
+                  Orders
+                </ListGroup.Item>
+              </Link>
             </ListGroup>
           </div>
         </Collapse>
@@ -110,10 +127,22 @@ const Sidebar = ({ status }) => {
           <div id="selling-collapse" className="ms-3">
             <ListGroup variant="flush">
               <Link to="/all-product" className="text-decoration-none">
-                <ListGroup.Item className="fs-6">All</ListGroup.Item>
+                <ListGroup.Item
+                  className={`fs-6 ${
+                    bidchild == "all" ? "text-primary" : "text-muted"
+                  }`}
+                >
+                  All
+                </ListGroup.Item>
               </Link>
               <Link to="/auction-product" className="text-decoration-none">
-                <ListGroup.Item className="fs-6">Auction</ListGroup.Item>
+                <ListGroup.Item
+                  className={`fs-6 ${
+                    bidchild == "auctionp" ? "text-primary" : "text-muted"
+                  }`}
+                >
+                  Auction
+                </ListGroup.Item>
               </Link>
             </ListGroup>
           </div>
