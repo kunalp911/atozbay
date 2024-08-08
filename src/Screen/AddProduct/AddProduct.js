@@ -27,6 +27,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
 import { makeStyles } from "@material-ui/core";
 import { toast } from "react-toastify";
+import moment from "moment/moment";
 
 const useStyles = makeStyles((theme) => ({
   dialogPaper: {
@@ -70,6 +71,10 @@ const AddProduct = () => {
   const [selectedValue, setSelectedValue] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [load, setload] = useState(false);
+  const [date, setDate] = useState("");
+  const [hour, setHour] = useState("");
+  const [minute, setMinute] = useState("");
+  const [period, setPeriod] = useState("");
   const [addProductFormData, setAddProductFormData] = useState({
     name: "",
     sku: "",
@@ -85,7 +90,21 @@ const AddProduct = () => {
     category_id: "",
     short_desc: "short description",
     shipping_in_days: "",
+    shipping_charge: "",
   });
+
+  let formattedHour = parseInt(hour, 10);
+  if (period === "PM" && formattedHour !== 12) {
+    formattedHour += 12;
+  } else if (period === "AM" && formattedHour === 12) {
+    formattedHour = 0;
+  }
+  const formattedDateTime = moment(
+    `${date} ${formattedHour}:${minute}`,
+    "YYYY-MM-DD H:mm"
+  ).format("YYYY-MM-DD HH:mm");
+
+  console.log(formattedDateTime);
 
   useEffect(() => {
     if (updateProduct) {
@@ -104,6 +123,7 @@ const AddProduct = () => {
         category_id: updateProduct?.category_id,
         short_desc: updateProduct?.short_desc,
         shipping_in_days: updateProduct?.product_shipping?.shipping_in_days,
+        shipping_charge: updateProduct?.product_shipping?.shipping_charge,
       });
 
       // Initialize attributes
@@ -136,6 +156,7 @@ const AddProduct = () => {
       item_condition: selectedValue ? selectedValue : conditionName,
       video: video || null,
       images: allImages,
+      auction_date_time: formattedDateTime,
       ...addProductFormData,
     };
     setload(true);
@@ -451,6 +472,8 @@ const AddProduct = () => {
       item_condition: selectedValue ? selectedValue : conditionName,
       video: video ? video : null,
       images: images,
+      auction_date_time: formattedDateTime,
+
       ...addProductFormData,
     };
     setload(true);
@@ -1033,6 +1056,77 @@ const AddProduct = () => {
                       />
                     </div>
                   </div>
+                  <div className="col-sm-12 col-md-12 row mt-2">
+                    <div className="col-sm-4 p-0 mt-2">
+                      <label for="days">Schedule your listing</label>
+                      <div className="">
+                        <input
+                          type="date"
+                          className="form-control"
+                          id="daysss"
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-sm-6 row mt-2 ms-3">
+                      <div className="col-sm-2 p-0">
+                        <label for="days">Time</label>
+                        <div className="">
+                          <select
+                            className="form-control"
+                            value={hour}
+                            onChange={(e) => setHour(e.target.value)}
+                          >
+                            <option value="" hidden></option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-sm-2 p-0">
+                        <label for="days"></label>
+                        <div className="">
+                          <select
+                            className="form-control mt-2"
+                            value={minute}
+                            onChange={(e) => setMinute(e.target.value)}
+                          >
+                            <option value="" hidden></option>
+                            {Array.from({ length: 60 }, (_, i) => i + 0).map(
+                              (num) => (
+                                <option value={num}>{num}</option>
+                              )
+                            )}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-sm-2 p-0">
+                        <label for="days"></label>
+                        <div className="mt-2">
+                          <select
+                            className="form-control"
+                            value={period}
+                            onChange={(e) => setPeriod(e.target.value)}
+                          >
+                            <option value="" hidden></option>
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </>
               ) : null}
             </div>
@@ -1056,7 +1150,21 @@ const AddProduct = () => {
               </select>
             </div>
           </div>
-          <div className="listing-section mt-4">
+          <div className="col-sm-4 p-0 mt-2">
+            <label for="charges">Shipping charges</label>
+            <div className="">
+              <input
+                type="number"
+                className="form-control"
+                id="charges"
+                name="shipping_charge"
+                value={addProductFormData.shipping_charge}
+                onChange={handleaddProductChange}
+              />
+            </div>
+          </div>
+
+          <div className="listing-section mt-4 border-top">
             <div className="container-custom">
               <h3>List it for free.</h3>
               <p>

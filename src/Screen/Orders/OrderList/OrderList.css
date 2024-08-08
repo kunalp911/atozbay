@@ -1,0 +1,9 @@
+.orderdetailbtn {
+  background-color: #3665f3;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.orderdetailbtn:hover {
+  color: #fff;
+}

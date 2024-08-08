@@ -20,6 +20,7 @@ import { useCart } from "../../Component/context/AuthContext";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import PhoneInput from "react-phone-input-2";
+import { getToken } from "../../Helper/Storage";
 
 const CheckOut = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const CheckOut = () => {
   const location = useLocation();
   const data = location?.state || {};
   const status = location?.state?.status || "";
+  const token = getToken();
   const [productDetails, setProductLists] = React.useState({});
   const [quantity, setQuantity] = useState(data?.quantity || 1);
   const [totalPrice, setTotalPrice] = useState(
@@ -55,8 +57,7 @@ const CheckOut = () => {
     pincode: "",
     address_type: "Shipping",
   });
-
-  console.log("status", addShipAddress, addId);
+  const isEmpty = (obj) => !Object.keys(obj).length;
 
   useEffect(() => {
     if (shipAddList?.length > 0 && primaryAddress === null) {
@@ -130,7 +131,6 @@ const CheckOut = () => {
   };
 
   const handleUpdateCart = async (cart_id, cart_quantity) => {
-    console.log(cart_id, cart_quantity);
     try {
       setload(true);
       const payload = {
@@ -207,14 +207,6 @@ const CheckOut = () => {
     });
     setTotalPrices(total);
   };
-
-  // const viewProduct = (id) => {
-  //   navigate(`/product/${id}`);
-  // };
-
-  // const handleCheckout = () => {
-  //   navigate("/checkout");
-  // };
 
   const handlePhoneChange = (value, country) => {
     const countryCode = country.dialCode;
@@ -392,15 +384,12 @@ const CheckOut = () => {
 
   const makePayment = async () => {
     setload(true);
-
     try {
       const payload = {
         shipping_id: shipAdd?.id,
         sub_total: totalPrices,
         total: totalPrices,
       };
-      console.log(payload);
-
       const response = await apiCallNew(
         "post",
         payload,
@@ -422,6 +411,14 @@ const CheckOut = () => {
     }
   };
 
+  const handleContinue = () => {
+    if (token) {
+      makePayment();
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -434,91 +431,6 @@ const CheckOut = () => {
         <Row>
           <Col md={8} style={{ height: "100vh", overflow: "auto" }}>
             <h4>Checkout</h4>
-            {/* <Card className="mb-3">
-              <Card.Body>
-                <h5 className="paywithname">Pay with</h5>
-                <Form>
-                  <Form.Check
-                    className="payment-checks"
-                    type="radio"
-                    defaultChecked
-                    label={
-                      <span>
-                        <img
-                          src={
-                            "https://e7.pngegg.com/pngimages/711/9/png-clipart-paypal-logo-brand-font-payment-paypal-text-logo-thumbnail.png"
-                          }
-                          alt="PayPal"
-                          width="50"
-                          className="mr-2"
-                        />
-                        PayPal
-                      </span>
-                    }
-                    name="paymentMethod"
-                    id="paypal"
-                  />
-                  <Form.Check
-                    className="payment-checks"
-                    type="radio"
-                    label={
-                      <span>
-                        <img
-                          src={
-                            "https://e7.pngegg.com/pngimages/711/9/png-clipart-paypal-logo-brand-font-payment-paypal-text-logo-thumbnail.png"
-                          }
-                          alt="Venmo"
-                          width="50"
-                          className="mr-2"
-                        />
-                        Venmo
-                      </span>
-                    }
-                    name="paymentMethod"
-                    id="venmo"
-                  />
-                  <Form.Check
-                    className="payment-checks"
-                    type="radio"
-                    label={
-                      <span>
-                        <img
-                          src={
-                            "https://e7.pngegg.com/pngimages/711/9/png-clipart-paypal-logo-brand-font-payment-paypal-text-logo-thumbnail.png"
-                          }
-                          alt="Card"
-                          width="50"
-                          className="mr-2"
-                        />
-                        Add new card
-                      </span>
-                    }
-                    name="paymentMethod"
-                    id="newCard"
-                  />
-                  <Form.Check
-                    className="payment-checks"
-                    type="radio"
-                    label={
-                      <span>
-                        <img
-                          src={
-                            "https://e7.pngegg.com/pngimages/711/9/png-clipart-paypal-logo-brand-font-payment-paypal-text-logo-thumbnail.png"
-                          }
-                          alt="Google Pay"
-                          width="50"
-                          className="mr-2"
-                        />
-                        Google Pay
-                      </span>
-                    }
-                    name="paymentMethod"
-                    id="googlePay"
-                  />
-                </Form>
-              </Card.Body>
-            </Card> */}
-
             <Card className="mb-3">
               <Card.Body>
                 <h5 className="paywithname border-bottom pb-3">
@@ -624,7 +536,29 @@ const CheckOut = () => {
               </Card.Body>
             </Card>
             <Card className="mb-3">
-              {addShow === 1 && (
+              {isEmpty(shipAdd) &&
+                (token ? (
+                  <p
+                    className="addaddress ms-3"
+                    onClick={() => {
+                      setAddShow(3);
+                      setIsOpen(false);
+                    }}
+                  >
+                    <u>Add Address</u>
+                  </p>
+                ) : (
+                  <p
+                    className="addaddress ms-3"
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                  >
+                    <u>Add Address</u>
+                  </p>
+                ))}
+
+              {token && addShow === 1 && (
                 <Card.Body>
                   <h5 className="paywithname">Ship to</h5>
                   <Card.Text>
@@ -654,6 +588,7 @@ const CheckOut = () => {
                   </Card.Text>
                 </Card.Body>
               )}
+
               {addShow === 2 && (
                 <Card.Body>
                   <h5 className="paywithname">Ship to</h5>
@@ -913,7 +848,10 @@ const CheckOut = () => {
                       <b>${totalPrices?.toFixed(2)}</b>
                     </Col>
                   </Row>
-                  <button className="btn mt-4 buynowbtn" onClick={makePayment}>
+                  <button
+                    className="btn mt-4 buynowbtn"
+                    onClick={handleContinue}
+                  >
                     Confirm and Pay
                   </button>
                 </Card.Body>
@@ -935,7 +873,10 @@ const CheckOut = () => {
                       <b>${totalPrice?.toFixed(2)}</b>
                     </Col>
                   </Row>
-                  <button className="btn mt-4 buynowbtn">
+                  <button
+                    className="btn mt-4 buynowbtn"
+                    onClick={handleContinue}
+                  >
                     Confirm and Pay
                   </button>
                 </Card.Body>

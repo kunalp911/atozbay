@@ -60,7 +60,7 @@ const AuctionProduct = () => {
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
-            <Sidebar status="biddinghis" />
+            <Sidebar status="biddinghis" bidchild="auctionp" />
           </Col>
           <Col md={10}>
             <Row className="mt-3">

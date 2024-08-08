@@ -67,6 +67,8 @@ const ApiEndPoints = {
   SellerOrderList: `${APPConfig.API_URL}/seller-orders-list`,
   OrderDetail: `${APPConfig.API_URL}/order/`,
   SellerOrderDetail: `${APPConfig.API_URL}/seller-order/`,
+  WinningBid: `${APPConfig.API_URL}/winning-bid/`,
+  UpdateOrderProductStatus: `${APPConfig.API_URL}/update-order-product-status/`,
 };
 
 export default ApiEndPoints;

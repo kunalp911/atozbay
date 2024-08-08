@@ -13,17 +13,15 @@ const PaymentCancel = () => {
         contact support if the issue persists.
       </p>
       <div className="mt-4 d-flex">
-        <Link to="/subscription">
+        <Link to="/">
           {" "}
-          <Button href="/retry-payment" variant="danger" className="mr-3">
+          <Button variant="danger" className="mr-3">
             Retry
           </Button>
         </Link>
         <Link to="/">
           {" "}
-          <Button href="/" variant="outline-danger">
-            Go to Dashboard
-          </Button>
+          <Button variant="outline-danger">Go to Dashboard</Button>
         </Link>
       </div>
     </div>

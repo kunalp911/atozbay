@@ -13,9 +13,9 @@ const PaymentDeclined = () => {
         details and try again.
       </p>
       <div className="mt-4 d-flex">
-        <Link to="/subscription">
+        <Link to="/">
           {" "}
-          <Button href="/retry-payment" variant="danger" className="mr-3">
+          <Button variant="danger" className="mr-3">
             Retry
           </Button>
         </Link>
