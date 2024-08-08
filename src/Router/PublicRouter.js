@@ -41,6 +41,10 @@ import Review from "../Component/Review/Review";
 import { getToken } from "../Helper/Storage";
 import axios from "axios";
 import ApiEndPoints from "../Network_Call/ApiEndPoint";
+import OrderList from "../Screen/Orders/OrderList/OrderList";
+import OrderDetails from "../Screen/Orders/OrderDetails/OrderDetails";
+import SellerOrderList from "../Screen/Orders/SellerOrderList/SellerOrderList";
+import SellerOrderDetail from "../Screen/Orders/SellerOrderDetail/SellerOrderDetail";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -177,6 +181,13 @@ const PublicRouter = () => {
         <Route path="/all-product" element={<AllProduct />} />
         <Route path="/auction-product" element={<AuctionProduct />} />
         <Route path="/review/:id" element={<Review />} />
+        <Route path="/orders-list" element={<OrderList />} />
+        <Route path="/seller-orders-list" element={<SellerOrderList />} />
+        <Route path="/order-details/:id" element={<OrderDetails />} />
+        <Route
+          path="/seller-order-details/:id"
+          element={<SellerOrderDetail />}
+        />
       </Routes>
     </BrowserRouter>
   );
