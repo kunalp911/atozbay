@@ -1,11 +1,11 @@
-.steps .step {
+.stepss .stepsss {
   display: block;
   width: 100%;
   margin-bottom: 35px;
   text-align: center;
 }
 
-.steps .step .step-icon-wrap {
+.stepss .stepsss .step-icon-wrap {
   display: block;
   position: relative;
   width: 100%;
@@ -13,8 +13,8 @@
   text-align: center;
 }
 
-.steps .step .step-icon-wrap::before,
-.steps .step .step-icon-wrap::after {
+.stepss .stepsss .step-icon-wrap::before,
+.stepss .stepsss .step-icon-wrap::after {
   display: block;
   position: absolute;
   top: 50%;
@@ -26,15 +26,15 @@
   z-index: 1;
 }
 
-.steps .step .step-icon-wrap::before {
+.stepss .stepsss .step-icon-wrap::before {
   left: 0;
 }
 
-.steps .step .step-icon-wrap::after {
+.stepss .stepsss .step-icon-wrap::after {
   right: 0;
 }
 
-.steps .step .step-icon {
+.stepss .stepsss .step-icon {
   display: inline-block;
   position: relative;
   width: 50px;
@@ -46,58 +46,64 @@
   font-size: 38px;
   line-height: 51px;
   z-index: 5;
+  cursor: pointer;
 }
 
-.steps .step .step-title {
+.stepss .stepsss .step-title {
   margin-bottom: 0;
   color: #606975;
   font-size: 14px;
   font-weight: 500;
 }
 
-.steps .step:first-child .step-icon-wrap::before {
+.stepss .stepsss:first-child .step-icon-wrap::before {
   display: none;
+  cursor: pointer;
 }
 
-.steps .step:last-child .step-icon-wrap::after {
+.stepss .stepsss:last-child .step-icon-wrap::after {
   display: none;
+  cursor: pointer;
 }
 
-.steps .step.completed .step-icon-wrap::before,
-.steps .step.completed .step-icon-wrap::after {
+.stepss .stepsss.completed .step-icon-wrap::before,
+.stepss .stepsss.completed .step-icon-wrap::after {
   background-color: #078133;
 }
 
-.steps .step.completed .step-icon {
+.stepss .stepsss.completed .step-icon {
   border-color: #078133;
   background-color: #078133;
   color: #fff;
+  cursor: pointer;
 }
-
+.step .cancelled {
+  border-color: red;
+}
 @media (max-width: 576px) {
-  .flex-sm-nowrap .step .step-icon-wrap::before,
-  .flex-sm-nowrap .step .step-icon-wrap::after {
+  .flex-sm-nowrap .stepsss .step-icon-wrap::before,
+  .flex-sm-nowrap .stepsss .step-icon-wrap::after {
     display: none;
   }
 }
 
 @media (max-width: 768px) {
-  .flex-md-nowrap .step .step-icon-wrap::before,
-  .flex-md-nowrap .step .step-icon-wrap::after {
+  .flex-md-nowrap .stepsss .step-icon-wrap::before,
+  .flex-md-nowrap .stepsss .step-icon-wrap::after {
     display: none;
   }
 }
 
 @media (max-width: 991px) {
-  .flex-lg-nowrap .step .step-icon-wrap::before,
-  .flex-lg-nowrap .step .step-icon-wrap::after {
+  .flex-lg-nowrap .stepsss .step-icon-wrap::before,
+  .flex-lg-nowrap .stepsss .step-icon-wrap::after {
     display: none;
   }
 }
 
 @media (max-width: 1200px) {
-  .flex-xl-nowrap .step .step-icon-wrap::before,
-  .flex-xl-nowrap .step .step-icon-wrap::after {
+  .flex-xl-nowrap .stepsss .step-icon-wrap::before,
+  .flex-xl-nowrap .stepsss .step-icon-wrap::after {
     display: none;
   }
 }

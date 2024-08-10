@@ -802,7 +802,7 @@ const PersonalInfo = () => {
                   <Box>
                     <Grid className={classes.section}>
                       <Typography variant="h6">Personal info</Typography>
-                      <Grid>
+                      {/* <Grid>
                         {!contactData?.country_id && (
                           <Link to={"/contact-info"}>
                             <button className="btn btn-sm save-btn">
@@ -810,7 +810,7 @@ const PersonalInfo = () => {
                             </button>
                           </Link>
                         )}
-                      </Grid>
+                      </Grid> */}
                     </Grid>
                     <Box
                       className={classes.section}
@@ -1057,7 +1057,7 @@ const PersonalInfo = () => {
                         </Form>
                       </Box>
                     )}
-                    <Box className={classes.section}>
+                    {/* <Box className={classes.section}>
                       <Grid>
                         <Typography variant="body1">
                           Personal info (Owner name, address)
@@ -1094,7 +1094,7 @@ const PersonalInfo = () => {
                       <Link color="primary" onClick={() => setType("Edit")}>
                         <u>Edit</u>
                       </Link>
-                    </Box>
+                    </Box> */}
                   </Box>
                 </Paper>
               </Grid>

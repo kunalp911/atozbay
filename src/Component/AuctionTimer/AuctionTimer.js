@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-export const AuctionTimer = ({ createdAt, auctionDuration, onTimeEnd }) => {
+export const AuctionTimer = ({
+  createdAt,
+  auctionDuration,
+  onTimeEnd = () => {},
+}) => {
   const [remainingTime, setRemainingTime] = useState("");
 
   useEffect(() => {
@@ -32,6 +36,7 @@ export const AuctionTimer = ({ createdAt, auctionDuration, onTimeEnd }) => {
       style={{
         color: "#f00",
         fontSize: "14px",
+        fontWeight: "bold",
       }}
     >
       {remainingTime}

@@ -75,7 +75,9 @@
   background-color: #078133;
   color: #fff;
 }
-
+.step .cancelled {
+  border-color: red;
+}
 @media (max-width: 576px) {
   .flex-sm-nowrap .step .step-icon-wrap::before,
   .flex-sm-nowrap .step .step-icon-wrap::after {

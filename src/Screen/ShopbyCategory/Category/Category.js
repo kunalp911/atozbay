@@ -102,7 +102,11 @@ const Category = () => {
             <ul className="list-group">
               {subCategoriesList?.map((item, index) => (
                 <li
-                  className="list-group-item"
+                  className={
+                    item.id == cateId
+                      ? "list-group-item bg-dark text-white"
+                      : "list-group-item"
+                  }
                   key={index}
                   onClick={() => {
                     setTitle(item.category_name || "");
@@ -126,8 +130,8 @@ const Category = () => {
             </div>
             <div className="mt-3">
               <div className="row mx-0 mt-0">
-                {currentItems.length > 0 ? (
-                  currentItems.map((card, index) => (
+                {currentItems?.length > 0 ? (
+                  currentItems?.map((card, index) => (
                     <div className="col-md-3 mb-4" key={index}>
                       <Card sx={{ maxWidth: 345 }}>
                         <CardActionArea
@@ -163,7 +167,7 @@ const Category = () => {
                   ))
                 ) : (
                   <div className="text-center mt-5 text-muted">
-                    No products available.
+                    {/* No products available. */}
                   </div>
                 )}
               </div>
