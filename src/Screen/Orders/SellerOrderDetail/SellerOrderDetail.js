@@ -14,7 +14,10 @@ const SellerOrderDetail = () => {
   const navigate = useNavigate();
   const [order, setOrder] = useState({});
   const [load, setLoad] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [canselReason, setCanselReason] = useState("");
+  const [productId, setProductId] = useState(0);
+  const [currentStep, setCurrentStep] = useState("");
   const steps = [
     "Processing",
     "Dispatched",
@@ -24,6 +27,7 @@ const SellerOrderDetail = () => {
     "Cancelled",
   ];
 
+  console.log("canselReason././.", canselReason);
   const handleStepClick = (index) => {
     if (index <= currentStep) {
       setCurrentStep(index + 1);
@@ -34,6 +38,16 @@ const SellerOrderDetail = () => {
   useEffect(() => {
     getProduct();
   }, [id]);
+
+  useEffect(() => {
+    order?.order_product?.forEach((product) => {
+      const statusIndex = steps.indexOf(product?.order_product_status);
+      if (statusIndex !== -1) {
+        setCurrentStep(statusIndex);
+      }
+      setProductId(product?.product_id);
+    });
+  }, [order.order_product, steps]);
 
   const {
     order_no,
@@ -64,6 +78,38 @@ const SellerOrderDetail = () => {
       setLoad(false);
     }
   };
+  const productStatus = async (newStatus) => {
+    setLoad(true);
+    const payload = {
+      product_id: productId,
+      status: newStatus,
+      reason: canselReason,
+    };
+    try {
+      const response = await apiCallNew(
+        "post",
+        payload,
+        `${ApiEndPoints.UpdateOrderProductStatus}${id}`
+      );
+      if (response?.success == true) {
+        setLoad(false);
+        getProduct();
+      }
+    } catch (error) {
+      console.log("ERROR", error);
+      setLoad(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle the submission, e.g., save the cancelReason value
+    console.log("Cancel Reason:", canselReason);
+
+    // You can also reset the input field after submission if needed
+    // setCanselReason("");
+  };
+
   return (
     <div>
       {load && (
@@ -91,48 +137,6 @@ const SellerOrderDetail = () => {
                 </h2>
               </Col>
             </Row>
-            <div className="main_container p-0">
-              <div className="container p-0 padding-bottom-3x mb-1">
-                <div className="card mb-3">
-                  <div className="p-4 text-center text-white text-lg bg-dark rounded-top">
-                    <span className="text-uppercase">Tracking Order Id - </span>
-                    <span className="text-medium">{id}</span>
-                  </div>
-                  <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary">
-                    <div className="w-100 text-center py-1 px-2">
-                      <span className="text-medium">Status:</span>{" "}
-                      <b>{steps[currentStep - 1]}</b>
-                    </div>
-                    <div className="w-100 text-center py-1 px-2">
-                      <span className="text-medium">Expected Date:</span>{" "}
-                      <b>Aug 12, 2024</b>
-                    </div>
-                  </div>
-                  <div className="card-body">
-                    <div className="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
-                      {steps.map((step, index) => (
-                        <div
-                          key={index}
-                          className={`step ${
-                            index < currentStep ? "completed" : ""
-                          }`}
-                          onClick={() => handleStepClick(index)}
-                        >
-                          <div className="step-icon-wrap">
-                            <div className="step-icon">
-                              {index < currentStep && (
-                                <i className="fa fa-check"></i>
-                              )}
-                            </div>
-                          </div>
-                          <h4 className="step-title">{step}</h4>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             <Card className="mt-3">
               <Card.Header>Order Information</Card.Header>
               <Card.Body>
@@ -194,35 +198,118 @@ const SellerOrderDetail = () => {
               <Card.Header>Product Details</Card.Header>
               <Card.Body>
                 {order_product?.map((product, index) => (
-                  <Link to={`/product/${product?.product_id}`}>
-                    {" "}
-                    <Card key={index} className="mb-3">
-                      <Row noGutters>
-                        <Col md={4}>
-                          <Image
-                            src={product?.product_image_path}
-                            alt={product?.product_name}
-                            fluid
-                          />
-                        </Col>
-                        <Col md={8}>
-                          <Card.Body>
-                            <Card.Title>{product?.product_name}</Card.Title>
-                            <Card.Text>
-                              <strong>Price:</strong> ${product?.product_price}
-                              <br />
-                              <strong>Quantity:</strong> {product?.quantity}
-                              <br />
-                              <strong>Description:</strong>{" "}
-                              {product?.description}
-                              <br />
-                              <strong>SKU:</strong> {product?.product_sku}
-                            </Card.Text>
-                          </Card.Body>
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Link>
+                  <>
+                    <Link to={`/product/${product?.product_id}`}>
+                      {" "}
+                      <Card key={index} className="mb-3">
+                        <Row noGutters>
+                          <Col md={4}>
+                            <Image
+                              src={product?.product_image_path}
+                              alt={product?.product_name}
+                              fluid
+                            />
+                          </Col>
+                          <Col md={8}>
+                            <Card.Body>
+                              <Card.Title>{product?.product_name}</Card.Title>
+                              <Card.Text>
+                                <strong>Price:</strong> $
+                                {product?.product_price}
+                                <br />
+                                <strong>Quantity:</strong> {product?.quantity}
+                                <br />
+                                <strong>Description:</strong>{" "}
+                                {product?.description}
+                                <br />
+                                <strong>SKU:</strong> {product?.product_sku}
+                              </Card.Text>
+                            </Card.Body>
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Link>
+                    <div className="main_container p-0">
+                      <div className="container p-0 padding-bottom-3x mb-1">
+                        <div className="card mb-3">
+                          <div className="p-2 text-center text-white text-lg bg-dark rounded-top">
+                            <span className="text-uppercase">
+                              Tracking Order Id -{" "}
+                            </span>
+                            <span className="text-medium">{id}</span>
+                          </div>
+                          <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between py-2 px-2 bg-secondary">
+                            <div className="w-100 text-center py-1 px-2">
+                              <span className="text-medium">Status:</span>{" "}
+                              <b>{product?.order_product_status}</b>
+                            </div>
+                          </div>
+                          <div className="card-body">
+                            <div className="stepss d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                              {steps.map((step, stepIndex) => (
+                                <div
+                                  key={stepIndex}
+                                  className={`stepsss ${
+                                    step === "Cancelled"
+                                      ? "cancelled"
+                                      : stepIndex <= currentStep
+                                      ? "completed"
+                                      : ""
+                                  }`}
+                                  onClick={() => {
+                                    if (step !== "Cancelled") {
+                                      productStatus(step);
+                                    } else {
+                                      setOpen(true);
+                                    }
+                                  }}
+                                >
+                                  <div className="step-icon-wrap">
+                                    <div className="step-icon">
+                                      {stepIndex <= currentStep && (
+                                        <i className="fa fa-check"></i>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <h4 className="step-title">{step}</h4>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          {open && (
+                            <div className="card-footer">
+                              <div className=" ">
+                                <div className=" ">
+                                  <form onSubmit={handleSubmit}>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      name="order_status"
+                                      id="order_status"
+                                      placeholder="Enter cancel reason"
+                                      value={canselReason}
+                                      onChange={(e) =>
+                                        setCanselReason(e.target.value)
+                                      }
+                                    />
+                                    <button
+                                      type="submit"
+                                      className="btn btn-primary mt-3 btn-sm"
+                                      onClick={(e) =>
+                                        productStatus("Cancelled")
+                                      }
+                                    >
+                                      Submit
+                                    </button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 ))}
               </Card.Body>
             </Card>

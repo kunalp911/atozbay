@@ -26,7 +26,7 @@ const AllProduct = () => {
   }, [page]);
 
   const viewProduct = (id) => {
-    navigate(`/product/${id}`, { state: { bidStatus: 1 } });
+    navigate(`/product/${id}`);
   };
 
   const getShopProductList = async (page) => {

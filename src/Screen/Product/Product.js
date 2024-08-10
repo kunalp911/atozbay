@@ -21,12 +21,13 @@ import { Col, Row } from "react-bootstrap";
 import { AuctionTimer } from "../../Component/AuctionTimer/AuctionTimer";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { Api, Task } from "@mui/icons-material";
-import { getUserdata } from "../../Helper/Storage";
+import { getToken, getUserdata } from "../../Helper/Storage";
 
 const Product = () => {
   const { id } = useParams();
   const location = useLocation();
   const bidstatus = location?.state?.bidStatus || 0;
+  const token = getToken();
   const navigate = useNavigate();
   const [productDetails, setProductLists] = React.useState({});
   const [load, setload] = useState(false);
@@ -360,7 +361,7 @@ const Product = () => {
                       Pay Now
                     </button>
                   ) : (
-                    <p className="text-danger text-center">Offer expired</p>
+                    <p className="text-center offersexpire">Offer expired</p>
                   )}
                 </div>
               ) : (
@@ -426,12 +427,6 @@ const Product = () => {
                 <span className="seller-name d-block font-weight-bold">
                   {productDetails?.description}
                 </span>
-                <a href="" className="d-block">
-                  Seller's other items
-                </a>
-                <a href="" className="d-block">
-                  Contact seller
-                </a>
               </div>
               <div className="price mb-3">
                 <span className="price-valuee h4">
@@ -468,10 +463,10 @@ const Product = () => {
                   <option value="10">10</option>
                 </select>
               </div>
-              <div className="buttonse mb-3">
+              <div className="buttonse mb-3 mt-5">
                 <button
                   className="btn buyitnow-btn btn-block mb-2"
-                  onClick={handleCheckout}
+                  onClick={handleAddToCart}
                 >
                   Buy It Now
                 </button>
@@ -520,7 +515,11 @@ const Product = () => {
               <h4> Product ratings and reviews</h4>
               <button
                 className="btn additnow-btn"
-                onClick={() => navigate(`/review/${productDetails?.id}`)}
+                onClick={() => {
+                  token
+                    ? navigate(`/review/${productDetails?.id}`)
+                    : toast.error("Please login first");
+                }}
               >
                 Write a review
               </button>
@@ -565,7 +564,12 @@ const Product = () => {
               </p>
             </div>
             <div className="mt-3">
-              <h4 className="ratingtextsss">Reviews</h4>
+              <h4 className="ratingtextsss">
+                Reviews{" "}
+                <span className="ratingtext">
+                  ({productDetails?.product_reviews?.length})
+                </span>
+              </h4>
               {productDetails?.product_reviews?.length > 0 ? (
                 displayedReviews?.map((item) => (
                   <div className="border p-2">

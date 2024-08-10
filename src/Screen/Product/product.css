@@ -271,3 +271,11 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+.offersexpire {
+  color: #9b9a9a;
+  font-size: 25px;
+  margin-left: 10px;
+  margin-top: 3px;
+  font-weight: 600;
+}

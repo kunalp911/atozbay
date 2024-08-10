@@ -66,12 +66,14 @@ const AddProduct = () => {
   const [open, setOpen] = useState(false);
   const [openss, setOpenss] = useState(false);
   const [opensss, setOpensss] = useState(false);
+  const [stokeOpen, setStokeOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [load, setload] = useState(false);
   const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
   const [period, setPeriod] = useState("");
@@ -93,18 +95,11 @@ const AddProduct = () => {
     shipping_charge: "",
   });
 
-  let formattedHour = parseInt(hour, 10);
-  if (period === "PM" && formattedHour !== 12) {
-    formattedHour += 12;
-  } else if (period === "AM" && formattedHour === 12) {
-    formattedHour = 0;
-  }
-  const formattedDateTime = moment(
-    `${date} ${formattedHour}:${minute}`,
-    "YYYY-MM-DD H:mm"
-  ).format("YYYY-MM-DD HH:mm");
+  const formattedDateTime = moment(`${date} ${time}`, "YYYY-MM-DD H:mm").format(
+    "YYYY-MM-DD HH:mm"
+  );
 
-  console.log(formattedDateTime);
+  console.log("././././", formattedDateTime);
 
   useEffect(() => {
     if (updateProduct) {
@@ -215,9 +210,17 @@ const AddProduct = () => {
     setOpensss(true);
   };
 
+  const handleStokeOpne = () => {
+    setStokeOpen(true);
+  };
+
   const handleClosesss = () => {
     setOpensss(false);
   };
+  const handlestokClose = () => {
+    setStokeOpen(false);
+  };
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -915,6 +918,60 @@ const AddProduct = () => {
                   </form>
                 </DialogContent>
               </Dialog>
+              {/* *******stoke modal*************** */}
+              <Dialog
+                open={stokeOpen}
+                onClose={handlestokClose}
+                fullWidth
+                maxWidth="sm"
+              >
+                <Grid container className="d-flex justify-content-between p-2">
+                  <DialogTitle className="text-center">
+                    {/* Add custom item specific */}
+                  </DialogTitle>
+                  <Button onClick={handlestokClose} color="primary">
+                    <i className="fa fa-times"></i>
+                  </Button>
+                </Grid>
+                <DialogContent dividers>
+                  <form action="javascript:void(0)">
+                    <div className="form-group">
+                      <label>Note</label>
+                      <input type="text" className="form-control" />
+                    </div>
+                    <div className="form-group">
+                      <label>Type</label>
+                      <select className="form-control">
+                        <option value=""></option>
+                        <option value="Add">Add</option>
+                        <option value="Remove">Remove</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Stock Quantity</label>
+                      <select className="form-control">
+                        <option value=""></option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                    </div>
+                    <div className="d-flex justify-content-end">
+                      <button
+                        className="btn btn-closess"
+                        onClick={handlestokClose}
+                      >
+                        Close
+                      </button>
+                      <button type="submit" className="btn btn-savss ms-3">
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           <div className="listing-section">
@@ -1069,61 +1126,16 @@ const AddProduct = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-sm-6 row mt-2 ms-3">
-                      <div className="col-sm-2 p-0">
-                        <label for="days">Time</label>
-                        <div className="">
-                          <select
-                            className="form-control"
-                            value={hour}
-                            onChange={(e) => setHour(e.target.value)}
-                          >
-                            <option value="" hidden></option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-sm-2 p-0">
-                        <label for="days"></label>
-                        <div className="">
-                          <select
-                            className="form-control mt-2"
-                            value={minute}
-                            onChange={(e) => setMinute(e.target.value)}
-                          >
-                            <option value="" hidden></option>
-                            {Array.from({ length: 60 }, (_, i) => i + 0).map(
-                              (num) => (
-                                <option value={num}>{num}</option>
-                              )
-                            )}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-sm-2 p-0">
-                        <label for="days"></label>
-                        <div className="mt-2">
-                          <select
-                            className="form-control"
-                            value={period}
-                            onChange={(e) => setPeriod(e.target.value)}
-                          >
-                            <option value="" hidden></option>
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                          </select>
-                        </div>
+                    <div className="col-sm-4 p-0 mt-2 ms-3">
+                      <label for="time">Time</label>
+                      <div className="">
+                        <input
+                          type="time"
+                          className="form-control"
+                          id="time"
+                          value={time}
+                          onChange={(e) => setTime(e.target.value)}
+                        />
                       </div>
                     </div>
                   </div>
@@ -1131,7 +1143,13 @@ const AddProduct = () => {
               ) : null}
             </div>
           </div>
+          <div className="col-sm-12 p-0 mt-2 border-bottom">
+            <div className="stoketitle section-header mb-2">
+              <u onClick={handleStokeOpne}>STOCK </u>
+            </div>
+          </div>
           <div className="col-sm-4 p-0 mt-2">
+            <div className="section-header mb-2">SHIPPING</div>
             <label for="ship">Shipping in days</label>
             <div className="">
               <select
@@ -1163,7 +1181,6 @@ const AddProduct = () => {
               />
             </div>
           </div>
-
           <div className="listing-section mt-4 border-top">
             <div className="container-custom">
               <h3>List it for free.</h3>

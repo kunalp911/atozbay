@@ -37,6 +37,7 @@ const AddtoCart = () => {
       } else {
         setload(false);
         setCartList([]);
+        calculateTotals([]);
       }
     } catch (error) {
       console.log(error);
@@ -162,7 +163,7 @@ const AddtoCart = () => {
                           style={{ fontSize: "14px", cursor: "pointer" }}
                           onClick={() => handlesingleCheckout(data)}
                         >
-                          <u>Pay only this seller</u>
+                          <u>Pay only this product</u>
                         </p>
                         <div className="row">
                           <div className="col-md-3 mt-3">

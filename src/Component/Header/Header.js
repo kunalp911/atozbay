@@ -99,6 +99,13 @@ const Header = () => {
     window.location.reload();
   };
 
+  // const isToken = () => {
+  //   if (token) {
+  //     return "";
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // };
   return (
     <div>
       <nav className="navbar navbar-expand-lg main-navbar">
@@ -122,7 +129,7 @@ const Header = () => {
           id="navbarSupportedContent"
           style={{ padding: "0px 40px" }}
         >
-          <ul className="navbar-nav mr-auto border-top">
+          <ul className="navbar-nav mr-auto">
             <li className="nav-item">
               <p
                 className="navbar-toggler"
@@ -230,7 +237,7 @@ const Header = () => {
               </a>
             </li>
           </ul>
-          <ul className="navbar-nav border-bottom">
+          <ul className="navbar-nav">
             <li className="nav-item">
               <Link to="/selling">
                 <a className="nav-link first-titless" href="#">
@@ -245,52 +252,74 @@ const Header = () => {
                 </a>
               </Link>
             </li>
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link first-titless dropdown-toggle"
-                href="#"
-                id="dropdownMenu2"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                My atozbay
-              </a>
-              <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
-                <ListGroup variant="flush" className="pt-0 pb-2 ms-3">
-                  <Link to="/summary" className="text-decoration-none">
-                    <ListGroup.Item className="fw-bold">Summary</ListGroup.Item>
-                  </Link>
-                  <ListGroup.Item className="fw-bold">
-                    Recently viewed
-                  </ListGroup.Item>
-                  <Link to="/bids-offers" className="text-decoration-none">
+            {token ? (
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link first-titless dropdown-toggle"
+                  href="#"
+                  id="dropdownMenu2"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  My atozbay
+                </a>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+                  <ListGroup variant="flush" className="pt-0 pb-2 ms-3">
+                    <Link to="/summary" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Summary
+                      </ListGroup.Item>
+                    </Link>
                     <ListGroup.Item className="fw-bold">
-                      Bids & offers
+                      Recently viewed
                     </ListGroup.Item>
-                  </Link>
-                  <Link to="/watch-list" className="text-decoration-none">
-                    <ListGroup.Item className="fw-bold">
-                      Watchlist
-                    </ListGroup.Item>
-                  </Link>
-                  <Link to="/purchase" className="text-decoration-none">
-                    <ListGroup.Item className="fw-bold">
-                      Purchases
-                    </ListGroup.Item>
-                  </Link>
-                  <Link to="/selling/overview" className="text-decoration-none">
-                    <ListGroup.Item className="fw-bold">Selling</ListGroup.Item>
-                  </Link>
-                  <Link to="/all-product" className="text-decoration-none">
-                    <ListGroup.Item className="fw-bold">
-                      Bidding History
-                    </ListGroup.Item>
-                  </Link>
-                </ListGroup>
-              </div>
-            </li>
+                    <Link to="/bids-offers" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Bids & offers
+                      </ListGroup.Item>
+                    </Link>
+                    <Link to="/watch-list" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Watchlist
+                      </ListGroup.Item>
+                    </Link>
+                    <Link to="/purchase" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Purchases
+                      </ListGroup.Item>
+                    </Link>
+                    <Link
+                      to="/selling/overview"
+                      className="text-decoration-none"
+                    >
+                      <ListGroup.Item className="fw-bold">
+                        Selling
+                      </ListGroup.Item>
+                    </Link>
+                    <Link to="/all-product" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Bidding History
+                      </ListGroup.Item>
+                    </Link>
+                  </ListGroup>
+                </div>
+              </li>
+            ) : (
+              <li className="nav-item">
+                <a
+                  className="nav-link first-titless dropdown-toggle"
+                  href="#"
+                  role="button"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  onClick={() => navigate("/login")}
+                >
+                  My atozbay
+                </a>
+              </li>
+            )}
             <li className="nav-item">
               <a className="nav-link first-iconss" href="#">
                 <i className="fas fa-bell"></i>
