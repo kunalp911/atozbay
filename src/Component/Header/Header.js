@@ -402,7 +402,9 @@ const Header = () => {
                     value={selectedCategoryId}
                     onChange={handleCategorySelect}
                   >
-                    <option>All Categories</option>
+                    <option value="" hidden>
+                      All Categories
+                    </option>
                     {categoriesList?.map((category, index) => (
                       <option key={index} value={category.id}>
                         {category.category_name}
