@@ -3,7 +3,6 @@ import "./product.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
 import Zoom from "react-medium-image-zoom";
-import ReactImageMagnify from "react-image-magnify";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import "react-medium-image-zoom/dist/styles.css";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -15,12 +14,9 @@ import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 import { toast } from "react-toastify";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShortcutIcon from "@mui/icons-material/Shortcut";
 import SharePopup from "./SharePopup";
-import { Col, Row } from "react-bootstrap";
 import { AuctionTimer } from "../../Component/AuctionTimer/AuctionTimer";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
-import { Api, Task } from "@mui/icons-material";
 import { getToken, getUserdata } from "../../Helper/Storage";
 
 const Product = () => {
@@ -45,8 +41,14 @@ const Product = () => {
     : productDetails?.product_reviews?.slice(0, 2);
   const [isAuctionEnded, setIsAuctionEnded] = useState(false);
 
-  console.log("match", winningBid?.user_id == userData?.id);
-  console.log("winningBid", winningBid?.user_id, userData?.id);
+  console.log(
+    "winningBid",
+    winningBid?.user_id,
+    "user id",
+    userData?.id,
+    "pro user",
+    productDetails?.user_id
+  );
   useEffect(() => {
     if (id) {
       getProductDetails(id);
@@ -317,7 +319,6 @@ const Product = () => {
                   {productDetails?.description}
                 </span>
               </div>
-
               <div className="conditione mb-3 border-top">
                 <p className="mt-3 mb-0">
                   Condition: <b>{productDetails?.item_condition}</b>
@@ -351,67 +352,39 @@ const Product = () => {
                   Enter <b>${productDetails?.product_prices?.price}</b> or more
                 </p>
               </div>
-              {isAuctionEnded ? (
-                <div className="buttonse mb-3 mt-5">
-                  {winningBid?.user_id == userData?.id ? (
-                    <button
-                      className="btn buyitnow-btn btn-block mb-2"
-                      onClick={handleCheckout}
-                    >
-                      Pay Now
-                    </button>
+              <div className="buttonse mb-3 mt-5">
+                {productDetails?.user_id == userData?.id ? (
+                  <button
+                    className="btn addcarditnow-btn btn-block mb-2"
+                    onClick={() => navigate("/bids-offers")}
+                  >
+                    Bidding History
+                  </button>
+                ) : isAuctionEnded ? (
+                  winningBid?.user_id == userData?.id ? (
+                    <>
+                      <p className="text-center offersexpire text-success">
+                        You won this offer
+                      </p>
+                      <button
+                        className="btn buyitnow-btn btn-block mb-2"
+                        onClick={handleCheckout}
+                      >
+                        Pay Now
+                      </button>
+                    </>
                   ) : (
                     <p className="text-center offersexpire">Offer expired</p>
-                  )}
-                </div>
-              ) : (
-                <div className="buttonse mb-3">
+                  )
+                ) : (
                   <button
                     className="btn buyitnow-btn btn-block mb-2"
                     onClick={handleBid}
                   >
                     Submit bid
                   </button>
-                  <button
-                    className="btn addcarditnow-btn btn-block mb-2"
-                    onClick={handleCheckout}
-                  >
-                    Buy It Now
-                  </button>
-                  {productDetails?.cart_quantity ? (
-                    <button
-                      className="btn addcarditnow-btn btn-block mb-2"
-                      onClick={viewInCart}
-                    >
-                      View in Cart
-                    </button>
-                  ) : (
-                    <button
-                      className="btn addcarditnow-btn btn-block mb-2"
-                      onClick={handleAddToCart}
-                    >
-                      Add to Cart
-                    </button>
-                  )}
-                  {productDetails?.wishlist_id ? (
-                    <button
-                      className="btn additnow-btn btn-block mb-2"
-                      onClick={() => removeCart(productDetails)}
-                    >
-                      <FavoriteIcon />
-                      Unwatch
-                    </button>
-                  ) : (
-                    <button
-                      className="btn  additnow-btn btn-block mb-2"
-                      onClick={handleAddToWishList}
-                    >
-                      <FavoriteBorderIcon />
-                      Add to Watchlist
-                    </button>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
           ) : (
             <div className="col-lg-6 col-md-12">

@@ -58,17 +58,25 @@ const Category = () => {
       );
       if (response.success) {
         setSubCategoriesList(response.result);
+        getShopProductList(page, response?.result[0]?.id);
       }
     } catch (error) {
       console.error("Error fetching subcategories:", error);
     }
   };
 
-  const getShopProductList = async (page) => {
+  const getShopProductList = async (page, ids) => {
+    let categoryId;
+    if (cateId && ids) {
+      categoryId = ids;
+    } else if (cateId) {
+      categoryId = cateId;
+    } else if (ids) {
+      categoryId = ids;
+    }
     const payload = {
       page: page - 1,
-      category_id: cateId,
-      main_category_id: cateId,
+      category_id: categoryId,
     };
     try {
       const response = await apiCallNew(

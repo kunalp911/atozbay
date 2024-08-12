@@ -66,7 +66,6 @@ const AddProduct = () => {
   const [open, setOpen] = useState(false);
   const [openss, setOpenss] = useState(false);
   const [opensss, setOpensss] = useState(false);
-  const [stokeOpen, setStokeOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
@@ -210,15 +209,8 @@ const AddProduct = () => {
     setOpensss(true);
   };
 
-  const handleStokeOpne = () => {
-    setStokeOpen(true);
-  };
-
   const handleClosesss = () => {
     setOpensss(false);
-  };
-  const handlestokClose = () => {
-    setStokeOpen(false);
   };
 
   const handleOpen = () => setOpen(true);
@@ -918,60 +910,6 @@ const AddProduct = () => {
                   </form>
                 </DialogContent>
               </Dialog>
-              {/* *******stoke modal*************** */}
-              <Dialog
-                open={stokeOpen}
-                onClose={handlestokClose}
-                fullWidth
-                maxWidth="sm"
-              >
-                <Grid container className="d-flex justify-content-between p-2">
-                  <DialogTitle className="text-center">
-                    {/* Add custom item specific */}
-                  </DialogTitle>
-                  <Button onClick={handlestokClose} color="primary">
-                    <i className="fa fa-times"></i>
-                  </Button>
-                </Grid>
-                <DialogContent dividers>
-                  <form action="javascript:void(0)">
-                    <div className="form-group">
-                      <label>Note</label>
-                      <input type="text" className="form-control" />
-                    </div>
-                    <div className="form-group">
-                      <label>Type</label>
-                      <select className="form-control">
-                        <option value=""></option>
-                        <option value="Add">Add</option>
-                        <option value="Remove">Remove</option>
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label>Stock Quantity</label>
-                      <select className="form-control">
-                        <option value=""></option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                      </select>
-                    </div>
-                    <div className="d-flex justify-content-end">
-                      <button
-                        className="btn btn-closess"
-                        onClick={handlestokClose}
-                      >
-                        Close
-                      </button>
-                      <button type="submit" className="btn btn-savss ms-3">
-                        Save
-                      </button>
-                    </div>
-                  </form>
-                </DialogContent>
-              </Dialog>
             </div>
           </div>
           <div className="listing-section">
@@ -1029,7 +967,7 @@ const AddProduct = () => {
                     <label for="brandd">Quantity</label>
                     <div className="">
                       <input
-                        type="text"
+                        type="number"
                         className="form-control"
                         id="brandd"
                         name="available_quantity"
@@ -1141,11 +1079,6 @@ const AddProduct = () => {
                   </div>
                 </>
               ) : null}
-            </div>
-          </div>
-          <div className="col-sm-12 p-0 mt-2 border-bottom">
-            <div className="stoketitle section-header mb-2">
-              <u onClick={handleStokeOpne}>STOCK </u>
             </div>
           </div>
           <div className="col-sm-4 p-0 mt-2">

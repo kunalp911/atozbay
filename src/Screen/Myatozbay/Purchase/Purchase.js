@@ -63,6 +63,12 @@ const Purchase = () => {
               {orders?.map((order) => (
                 <Col xs={12} md={6} lg={4} key={order.id} className="mb-4">
                   <Card>
+                    <Card.Img
+                      variant="top"
+                      src={order?.order_product[0]?.product_image_path ?? ""}
+                      alt={`Product image for order #${order.id}`}
+                      style={{ height: "200px", objectFit: "cover" }}
+                    />
                     <Card.Body>
                       <Card.Title>Order #{order?.id}</Card.Title>
                       <Card.Text>
