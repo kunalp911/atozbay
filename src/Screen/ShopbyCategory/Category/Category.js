@@ -6,6 +6,7 @@ import Footer from "../../../Component/Footer/Footer";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import logos from "../../../Assets/image/bay.png";
+import catimg from "../../../Assets/image/flow.jpg";
 import {
   Box,
   Card,
@@ -16,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { formatCapitalize } from "../../../Component/ReuseFormat/ReuseFormat";
+import { doller } from "../../../Component/ReuseFormat/Doller";
 
 const Category = () => {
   const { id } = useParams();
@@ -129,7 +131,7 @@ const Category = () => {
           </div>
           <div className="col-md-10">
             <img
-              src="https://i.ebayimg.com/00/s/NTgxWDE2MDA=/z/su8AAOSwJFRmWI32/$_57.JPG"
+              src={catimg}
               alt="Luxury summer special"
               className="custom-image"
             />
@@ -156,17 +158,15 @@ const Category = () => {
                             alt={card?.title}
                           />
                           <CardContent>
-                            <p className="font-weight-bold mt-2">
+                            <p className="titledescrip font-weight-bold mt-2">
                               {formatCapitalize(card.name)}
                             </p>
-                            <p className="descriptionsa">
-                              {card?.condition_description}
-                            </p>
+                            <p className="descriptionsa">{card?.description}</p>
                             <Typography
                               variant="body1"
                               style={{ marginTop: "-10px" }}
                             >
-                              ${card?.product_prices?.price}
+                              {doller.Aud} {card?.product_prices?.price}
                             </Typography>
                           </CardContent>
                         </CardActionArea>

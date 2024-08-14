@@ -17,6 +17,7 @@ import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./OrderDetails.css";
+import { doller } from "../../../Component/ReuseFormat/Doller";
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -63,6 +64,7 @@ const OrderDetails = () => {
     created_at,
     order_address,
     order_product,
+    order_review,
   } = order;
 
   const getProduct = async () => {
@@ -91,7 +93,7 @@ const OrderDetails = () => {
         </div>
       )}
       <Header />
-      <Container className="mt-3 mb-5">
+      <div className="sideallspace mt-3">
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
@@ -122,13 +124,16 @@ const OrderDetails = () => {
                     <strong>Transaction ID:</strong> {transaction_id}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Subtotal:</strong> ${sub_total}
+                    <strong>Subtotal:</strong>
+                    {doller.Aud} {sub_total}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Shipping Charge:</strong> ${shipping_charge}
+                    <strong>Shipping Charge:</strong>
+                    {doller.Aud} {shipping_charge}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Total:</strong> ${total}
+                    <strong>Total:</strong>
+                    {doller.Aud} {total}
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <strong>Status:</strong> {order_status}
@@ -188,7 +193,7 @@ const OrderDetails = () => {
                             <Card.Body>
                               <Card.Title>{product?.product_name}</Card.Title>
                               <Card.Text>
-                                <strong>Price:</strong> $
+                                <strong>Price:</strong> {doller.Aud}
                                 {product?.product_price}
                                 <br />
                                 <strong>Quantity:</strong> {product?.quantity}
@@ -203,6 +208,34 @@ const OrderDetails = () => {
                         </Row>
                       </Card>
                     </Link>
+                    <div>
+                      <div className="d-flex justify-content-between mt-3">
+                        <b>Review</b>
+                        <p
+                          className="text-end text-primary"
+                          onClick={() => {
+                            navigate(`/review/${product?.product_id}`, {
+                              state: { orderId: product?.order_id },
+                            });
+                          }}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <b>Write a review</b>
+                        </p>
+                      </div>
+
+                      <div>
+                        {order_review?.map((item, index) => (
+                          <div className="  mt-3" key={item.id}>
+                            <div>
+                              <p className="text-muted">
+                                {index + 1}.{item.review}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                     <div className="main_container p-0">
                       <div className="container p-0 padding-bottom-3x mb-1">
                         <div className="card mb-3">
@@ -257,7 +290,7 @@ const OrderDetails = () => {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </div>
     </div>
   );
 };

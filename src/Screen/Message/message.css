@@ -1,0 +1,100 @@
+.chat-card {
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-grow: 1;
+  padding-right: 10px;
+  max-height: 400px;
+  word-wrap: break-word;
+}
+
+/* .chat-bubble {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: flex-start;
+  max-width: 100%;
+} */
+
+.message-box {
+  max-width: 80%;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+
+.sent-message {
+  background-color: #e7e4e4; /* Light green for sent messages */
+  text-align: right;
+}
+
+.received-message {
+  background-color: #e7e4e4; /* White for received messages */
+  text-align: left;
+  /* border: 1px solid #e5e5ea;  */
+}
+/* .sent {
+  justify-content: flex-end;
+  align-self: flex-end;
+  text-align: right;
+  background-color: #e9e7e7;
+  border-radius: 15px 15px 0px 15px;
+  padding: 10px;
+}
+
+.received {
+  justify-content: flex-start;
+  align-self: flex-start;
+  background-color: #e9e7e7;
+  border-radius: 15px 15px 15px 0px;
+  padding: 10px;
+} */
+
+.chat-bubble p {
+  margin: 0;
+}
+
+.file-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.upload-icon {
+  position: relative;
+  padding: 0.375rem 0.75rem;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.message-input {
+  border-radius: 20px;
+  padding-left: 15px;
+}
+
+.image-preview img {
+  max-height: 100px;
+  max-width: 100px;
+  border-radius: 10px;
+}
+.send-buttonchat {
+  background-color: #3665f3;
+  color: #fff;
+}
+
+.send-buttonchat:hover {
+  background-color: #3665f3;
+  color: #fff;
+}

@@ -7,13 +7,16 @@ import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
 import "../OrderList/OrderList.css";
+import { doller } from "../../../Component/ReuseFormat/Doller";
 
 const SellerOrderList = () => {
   const [orders, setOrders] = useState([]);
   const [load, setLoad] = useState(false);
+
   useEffect(() => {
     getProductList();
   }, []);
+
   const getProductList = async () => {
     setLoad(true);
     try {
@@ -22,7 +25,6 @@ const SellerOrderList = () => {
         null,
         ApiEndPoints.SellerOrderList
       );
-      console.log("ORDER LIST RESPONSE", response);
       if (response.success == true) {
         setOrders(response.result);
         setLoad(false);
@@ -34,6 +36,7 @@ const SellerOrderList = () => {
       setLoad(false);
     }
   };
+
   return (
     <div>
       {load && (
@@ -42,7 +45,7 @@ const SellerOrderList = () => {
         </div>
       )}
       <Header />
-      <Container className="mt-3">
+      <div className="sideallspace mt-3">
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
@@ -56,21 +59,29 @@ const SellerOrderList = () => {
             </Row>
             <Row>
               {orders?.map((order) => (
-                <Col xs={12} md={6} lg={4} key={order.id} className="mb-4">
+                <Col xs={12} md={6} lg={3} key={order.id} className="mb-4">
                   <Card>
                     <Card.Body>
                       <Card.Title>Order #{order?.id}</Card.Title>
-                      <Card.Text>
-                        Total: ${order.total}
+                      <Card.Text style={{ fontSize: "14px" }}>
+                        Total:{" "}
+                        <b>
+                          {doller.Aud} {order.total}
+                        </b>
                         <br />
-                        Shipping Charge: ${order?.shipping_charge}
+                        Shipping Charge:{" "}
+                        <b>
+                          {doller.Aud} {order?.shipping_charge}
+                        </b>
                         <br />
-                        Order Status: {order?.order_status}
+                        Order Status: <b>{order?.order_status}</b>
                         <br />
-                        Payment Status: {order?.payment_status ?? "Null"}
+                        Payment Status: <b>{order?.payment_status ?? "Null"}</b>
                         <br />
                         Created At:{" "}
-                        {new Date(order?.created_at).toLocaleDateString()}
+                        <b>
+                          {new Date(order?.created_at).toLocaleDateString()}
+                        </b>
                       </Card.Text>
                       <Link to={`/seller-order-details/${order.id}`}>
                         <button className="btn orderdetailbtn">Details</button>
@@ -82,7 +93,7 @@ const SellerOrderList = () => {
             </Row>
           </Col>
         </Row>
-      </Container>
+      </div>
     </div>
   );
 };

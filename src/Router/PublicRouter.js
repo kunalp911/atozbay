@@ -45,6 +45,8 @@ import OrderList from "../Screen/Orders/OrderList/OrderList";
 import OrderDetails from "../Screen/Orders/OrderDetails/OrderDetails";
 import SellerOrderList from "../Screen/Orders/SellerOrderList/SellerOrderList";
 import SellerOrderDetail from "../Screen/Orders/SellerOrderDetail/SellerOrderDetail";
+import RecentlyView from "../Screen/Myatozbay/RecentlyView/RecentlyView";
+import MessageScreen from "../Screen/Message/Message";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -58,8 +60,9 @@ const PublicRouter = () => {
       if (location.pathname === "/payment-success") {
         const query = new URLSearchParams(location.search);
         const id = query.get("id");
+        const device_type = query.get("device_type");
         console.log(" Success  id>>>>>>>", id);
-        console.log("query", query);
+        console.log("device_type", device_type);
 
         if (id) {
           const token = getToken(); // Get the token from storage
@@ -188,6 +191,8 @@ const PublicRouter = () => {
           path="/seller-order-details/:id"
           element={<SellerOrderDetail />}
         />
+        <Route path="/recently-view" element={<RecentlyView />} />
+        <Route path="/message" element={<MessageScreen />} />
       </Routes>
     </BrowserRouter>
   );

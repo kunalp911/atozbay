@@ -10,16 +10,22 @@ import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import Swal from "sweetalert2";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
+import { doller } from "../../Component/ReuseFormat/Doller";
 
 const AddtoCart = () => {
   const navigate = useNavigate();
   const [cartList, setCartList] = useState([]);
+  const [saveLateList, setSaveLateList] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [load, setload] = useState(false);
+  const [saveCount, setSaveCount] = useState(0);
   const { updateCartCount } = useCart();
 
+  console.log("saveLateList", saveLateList);
   useEffect(() => {
     getCartList();
+    getSaveLateList();
+    handleSaveCount();
   }, []);
 
   const getCartList = async () => {
@@ -38,6 +44,23 @@ const AddtoCart = () => {
         setload(false);
         setCartList([]);
         calculateTotals([]);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
+  const getSaveLateList = async () => {
+    try {
+      setload(true);
+      const response = await apiCallNew("get", {}, ApiEndPoints.SaveLaterList);
+      if (response.success === true) {
+        setSaveLateList(response.result);
+        setload(false);
+      } else {
+        setload(false);
+        setCartList([]);
       }
     } catch (error) {
       console.log(error);
@@ -71,6 +94,44 @@ const AddtoCart = () => {
     }
   };
 
+  const addSaveforLater = async (id) => {
+    try {
+      setload(true);
+      const payload = {
+        product_id: id,
+      };
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.AddToSaveLater
+      );
+      if (response.success) {
+        getCartList();
+        getSaveLateList();
+        handleSaveCount();
+        setload(false);
+      } else {
+        toast.error(response.msg);
+        setload(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
+
+  const handleSaveCount = () => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.SaveLaterCount).then((response) => {
+        if (response.success) {
+          setSaveCount(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleQuantityChange = (index, newQuantity) => {
     const updatedCartList = cartList.map((item, i) => {
       if (i === index) {
@@ -83,6 +144,22 @@ const AddtoCart = () => {
     calculateTotals(updatedCartList);
   };
 
+  const removeSave = async (id) => {
+    try {
+      const response = await apiCallNew(
+        "delete",
+        {},
+        `${ApiEndPoints.DeleteSaveLater}${id}`
+      );
+      if (response.success === true) {
+        toast.success(response.msg);
+        getSaveLateList();
+        handleSaveCount();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const removeCart = async (id) => {
     try {
       const response = await apiCallNew(
@@ -138,6 +215,7 @@ const AddtoCart = () => {
     const quantity = data?.cart_quantity;
     navigate(`/checkout/${data?.product_id}`, { state: { quantity } });
   };
+
   return (
     <main className="page">
       <Header />
@@ -156,7 +234,7 @@ const AddtoCart = () => {
               <div className="col-md-12 col-lg-8">
                 <div className="items">
                   {cartList.length > 0 ? (
-                    cartList.map((data, index) => (
+                    cartList?.map((data, index) => (
                       <div className="product pt-0" key={data.product_id}>
                         <p
                           className="m-0 pt-0 text-end text-primary"
@@ -167,17 +245,44 @@ const AddtoCart = () => {
                         </p>
                         <div className="row">
                           <div className="col-md-3 mt-3">
-                            <img
-                              className="img-fluid mx-auto d-block image"
-                              src={data.product_image_path}
-                              alt={data.product_name}
+                            <div
                               style={{
-                                // width: "100px",
-                                // height: "100px",
-                                objectFit: "contain",
+                                width: "100%",
+                                paddingTop: "100%",
+                                position: "relative",
+                                overflow: "hidden",
+                                borderRadius: "12px",
+                                backgroundColor: "#f8f9fa",
+                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                                cursor: "pointer",
+                                transition: "transform 0.2s ease-in-out",
                               }}
-                            />
+                              onClick={() => viewProduct(data.product_id)}
+                            >
+                              <img
+                                className="img-fluid mx-auto d-block"
+                                src={data.product_image_path}
+                                alt={data.product_name}
+                                style={{
+                                  objectFit: "contain",
+                                  position: "absolute",
+                                  top: 0,
+                                  left: 0,
+                                  width: "100%",
+                                  height: "100%",
+                                  transition: "transform 0.3s ease",
+                                }}
+                                onMouseEnter={(e) =>
+                                  (e.currentTarget.style.transform =
+                                    "scale(1.1)")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.currentTarget.style.transform = "scale(1)")
+                                }
+                              />
+                            </div>
                           </div>
+
                           <div className="col-md-8">
                             <div className="info">
                               <div className="row">
@@ -209,16 +314,19 @@ const AddtoCart = () => {
                                       )
                                     }
                                   >
-                                    {[...Array(10).keys()].map((num) => (
-                                      <option key={num + 1} value={num + 1}>
-                                        {num + 1}
-                                      </option>
-                                    ))}
+                                    {[...Array(data.quantity).keys()].map(
+                                      (x) => (
+                                        <option key={x + 1} value={x + 1}>
+                                          {x + 1}
+                                        </option>
+                                      )
+                                    )}
                                   </select>
                                 </div>
                                 <div className="col-md-3 price">
                                   <span>
-                                    ${data.product_price * data.cart_quantity}
+                                    {doller.Aud}{" "}
+                                    {data.product_price * data.cart_quantity}
                                   </span>
                                 </div>
                               </div>
@@ -230,9 +338,21 @@ const AddtoCart = () => {
                           style={{
                             position: "absolute",
                             right: 25,
+                            display: "flex",
                           }}
                         >
                           <p
+                            style={{
+                              cursor: "pointer",
+                              fontSize: "14px",
+                              marginTop: "7px",
+                            }}
+                            onClick={() => addSaveforLater(data?.product_id)}
+                          >
+                            <u>Save for later</u>
+                          </p>
+                          <p
+                            className="ms-3 mt-2"
                             style={{ cursor: "pointer", fontSize: "14px" }}
                             onClick={() => confirmDeletion(data.id)}
                           >
@@ -260,15 +380,17 @@ const AddtoCart = () => {
                   <h3>Summary</h3>
                   <div className="summary-item">
                     <span className="text">Items ({cartList.length})</span>
-                    <span className="price">${totalPrice}</span>
+                    <span className="price">
+                      {doller.Aud} {totalPrice}
+                    </span>
                   </div>
                   <div className="summary-item">
                     <span className="text">Discount</span>
-                    <span className="price">$0</span>
+                    <span className="price">{doller.Aud} 0</span>
                   </div>
                   <div className="summary-item">
                     <span className="text">Shipping</span>
-                    <span className="price">$0</span>
+                    <span className="price">{doller.Aud} 0</span>
                   </div>
                   <div className="summary-item">
                     <span className="text">Total</span>
@@ -276,7 +398,7 @@ const AddtoCart = () => {
                       className="price"
                       style={{ fontWeight: "bold", fontSize: "23px" }}
                     >
-                      ${totalPrice}
+                      {doller.Aud} {totalPrice}
                     </span>
                   </div>
                   <button
@@ -286,6 +408,114 @@ const AddtoCart = () => {
                   >
                     Go to checkout
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container mt-5">
+          <div className="block-heading">
+            <h2 className="shoptitle">Saved for later ({saveCount})</h2>
+          </div>
+          <div className="content">
+            <div className="row">
+              <div className="col-md-12 col-lg-12">
+                <div className="items">
+                  {saveLateList?.map((item, index) => (
+                    <div className="product pt-0" key={item.product_id}>
+                      <div className="row">
+                        <div className="col-md-3 mt-3">
+                          <div
+                            style={{
+                              width: "100%",
+                              paddingTop: "100%", // Ensures a square aspect ratio
+                              position: "relative",
+                              overflow: "hidden",
+                              borderRadius: "12px",
+                              backgroundColor: "#f8f9fa",
+                              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                              cursor: "pointer",
+                              transition: "transform 0.2s ease-in-out",
+                            }}
+                            onClick={() => viewProduct(item.product_id)}
+                          >
+                            <img
+                              className="img-fluid mx-auto d-block"
+                              src={item.product_image_path}
+                              alt={item.product_name}
+                              style={{
+                                objectFit: "contain",
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                transition: "transform 0.3s ease",
+                              }}
+                              onMouseEnter={(e) =>
+                                (e.currentTarget.style.transform = "scale(1.1)")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.currentTarget.style.transform = "scale(1)")
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        <div className="col-md-9">
+                          <div className="info">
+                            <div className="row">
+                              <div className="col-md-5 product-name">
+                                <div className="product-name">
+                                  <a
+                                    href="#"
+                                    className="pro-name"
+                                    onClick={() => viewProduct(item.product_id)}
+                                  >
+                                    <u>{formatCapitalize(item.product_name)}</u>
+                                  </a>
+                                </div>
+                              </div>
+                              <div className="col-md-7 justify-content-end text-end">
+                                <b>
+                                  {" "}
+                                  <span className="price mr-2">
+                                    {doller.Aud} {item.product_price}
+                                  </span>
+                                </b>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className=""
+                        style={{
+                          position: "absolute",
+                          right: 25,
+                          display: "flex",
+                        }}
+                      >
+                        <p
+                          style={{
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            marginTop: "7px",
+                          }}
+                        >
+                          <u>Add to cart</u>
+                        </p>
+                        <p
+                          className="ms-3 mt-2"
+                          style={{ cursor: "pointer", fontSize: "14px" }}
+                          onClick={() => removeSave(item.id)}
+                        >
+                          <u>Remove</u>
+                        </p>
+                      </div>
+                      <hr className="mt-5" />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

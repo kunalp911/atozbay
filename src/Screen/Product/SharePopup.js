@@ -36,13 +36,28 @@ const SharePopup = ({ product, show, onHide }) => {
           <div className="content">
             <p>Share this link via</p>
             <ul className="icons">
-              <a href={shareLinks.facebook} className="fbstyle">
+              <a
+                href={shareLinks.facebook}
+                className="fbstyle"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fab fa-facebook-f"></i>
               </a>
-              <a href={shareLinks.twitter} className="twitterstyle">
+              <a
+                href={shareLinks.twitter}
+                className="twitterstyle"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <img src={twitters} />
               </a>
-              <a href={shareLinks.linkedin} className="linkedinstyle">
+              <a
+                href={shareLinks.linkedin}
+                className="linkedinstyle"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fab fa-linkedin-in"></i>
               </a>
             </ul>

@@ -281,7 +281,7 @@ const ProductList = () => {
                                 <td>
                                   <strong>Price</strong>
                                 </td>
-                                <td>${product?.product_prices?.price}</td>
+                                <td>AUD {product?.product_prices?.price}</td>
                               </tr>
                               <tr>
                                 <td>
@@ -317,6 +317,14 @@ const ProductList = () => {
                                 <tr key={attr?.id}>
                                   <td>{attr?.attribute_name}</td>
                                   <td>{attr?.attr_val_name}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                            <tbody>
+                              {product?.custom_attributes?.map((attr) => (
+                                <tr key={attr?.id}>
+                                  <td>{attr?.custom_attribute_name}</td>
+                                  <td>{attr?.custom_attribute_value}</td>
                                 </tr>
                               ))}
                             </tbody>

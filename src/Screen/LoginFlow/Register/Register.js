@@ -182,7 +182,7 @@ const Register = () => {
         window.location.reload();
       } else {
         setload(false);
-        toast.error(response.result[0]);
+        toast.error(response.msg);
       }
     } catch (error) {
       const newErrors = {};

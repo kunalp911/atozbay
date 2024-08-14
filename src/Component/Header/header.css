@@ -197,3 +197,24 @@
 #main-content {
   padding-top: 60px; /* Adjust based on the height of your navbar */
 }
+
+/* add media query for web */
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .secondheader {
+    margin: 0px 4rem;
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .secondheader {
+    margin: 0px 4rem;
+  }
+}
+@media (min-width: 1200px) {
+  .secondheader {
+    margin: 0px 4rem;
+  }
+}
+/* .secondheader {
+  margin: 0px 4rem;
+} */

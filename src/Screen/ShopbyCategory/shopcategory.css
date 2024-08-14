@@ -25,3 +25,9 @@
   text-overflow: ellipsis;
   margin-top: -10px;
 }
+.titledescrip {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

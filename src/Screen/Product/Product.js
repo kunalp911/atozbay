@@ -18,6 +18,8 @@ import SharePopup from "./SharePopup";
 import { AuctionTimer } from "../../Component/AuctionTimer/AuctionTimer";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { getToken, getUserdata } from "../../Helper/Storage";
+import { Card, Col, Row } from "react-bootstrap";
+import { doller } from "../../Component/ReuseFormat/Doller";
 
 const Product = () => {
   const { id } = useParams();
@@ -32,6 +34,7 @@ const Product = () => {
   const [bidAmount, setBidAmount] = useState("");
   const [winningBid, setWiningBid] = useState({});
   const [userData, setUserData] = useState({});
+  const [shopProductLists, setShopProductLists] = useState([]);
   const averageRating =
     Number(productDetails?.avg_rating?.rating_all?.avg_rating) || 0;
   const [showAllReviews, setShowAllReviews] = useState(false);
@@ -40,15 +43,19 @@ const Product = () => {
     ? productDetails?.product_reviews
     : productDetails?.product_reviews?.slice(0, 2);
   const [isAuctionEnded, setIsAuctionEnded] = useState(false);
+  const [idArray, setIdArray] = useState(() => {
+    const savedIds = localStorage.getItem("uniqueIds");
+    return savedIds ? JSON.parse(savedIds) : [];
+  });
 
-  console.log(
-    "winningBid",
-    winningBid?.user_id,
-    "user id",
-    userData?.id,
-    "pro user",
-    productDetails?.user_id
-  );
+  // console.log(
+  //   "winningBid",
+  //   winningBid?.user_id,
+  //   "user id",
+  //   userData?.id,
+  //   "pro user",
+  //   productDetails?.user_id
+  // );
   useEffect(() => {
     if (id) {
       getProductDetails(id);
@@ -75,6 +82,23 @@ const Product = () => {
   const toggleShareModal = () => {
     setIsShareModalOpen(!isShareModalOpen);
   };
+
+  const addUniqueId = (newId) => {
+    setIdArray((prevArray) => {
+      if (prevArray.includes(newId)) {
+        return prevArray;
+      }
+      let updatedArray = [...prevArray];
+      if (updatedArray.length >= 20) {
+        updatedArray = updatedArray.slice(1);
+      }
+      updatedArray.push(newId);
+      localStorage.setItem("uniqueIds", JSON.stringify(updatedArray));
+
+      return updatedArray;
+    });
+  };
+
   const getProductDetails = (id) => {
     try {
       setload(true);
@@ -82,6 +106,8 @@ const Product = () => {
         (response) => {
           if (response.success) {
             setProductLists(response.result);
+            addUniqueId(response.result.id);
+            getShopProductList(response.result.category_id);
             setload(false);
           }
         }
@@ -159,6 +185,29 @@ const Product = () => {
     }
   };
 
+  const getShopProductList = async (id) => {
+    const payload = {
+      page: 0,
+      category_id: id,
+    };
+    try {
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.ShopProductList
+      );
+      if (response.success) {
+        setShopProductLists(response.result);
+        // setCount(response.product_count);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const shopFilterProduct = shopProductLists?.filter(
+    (item) => item?.id !== productDetails?.id
+  );
   const handleCheckout = () => {
     navigate(`/checkout/${productDetails?.id}`, { state: { quantity } });
   };
@@ -179,7 +228,6 @@ const Product = () => {
       };
       apiCallNew("post", payload, ApiEndPoints.Bidgive).then((response) => {
         if (response.success) {
-          console.log("res", response);
           toast.success(response.msg);
           setload(false);
           setBidAmount("");
@@ -207,6 +255,23 @@ const Product = () => {
       setload(false);
     }
   };
+
+  const handlelogin = () => {
+    if (token) {
+      handleAddToWishList();
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleAddtocartLogin = () => {
+    if (token) {
+      handleAddToCart();
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -315,7 +380,7 @@ const Product = () => {
                 </p>
               </div>
               <div className="seller-infoe mb-3">
-                <span className="seller-name d-block font-weight-bold">
+                <span className="seller-name d-block prodesc">
                   {productDetails?.description}
                 </span>
               </div>
@@ -338,19 +403,50 @@ const Product = () => {
                 <p className="mt-3">
                   Current bid:
                   <b className="ms-4 price-valuee">
-                    ${productDetails?.product_prices?.price}
+                    {doller.Aud} {productDetails?.product_prices?.price}
                   </b>
                 </p>
-                <input
-                  className="form-control w-50"
-                  type="text"
-                  placeholder="Enter bid amount"
-                  value={bidAmount}
-                  onChange={(e) => setBidAmount(e.target.value)}
-                />
-                <p className="mt-0 text-muted">
-                  Enter <b>${productDetails?.product_prices?.price}</b> or more
-                </p>
+                {productDetails?.user_id == userData?.id ? (
+                  ""
+                ) : isAuctionEnded ? (
+                  winningBid?.user_id == userData?.id ? (
+                    <>
+                      <input
+                        className="form-control w-50"
+                        type="text"
+                        placeholder="Enter bid amount"
+                        value={bidAmount}
+                        onChange={(e) => setBidAmount(e.target.value)}
+                      />
+                      <p className="mt-0 text-muted">
+                        Enter{" "}
+                        <b>
+                          {doller.Aud} {productDetails?.product_prices?.price}
+                        </b>{" "}
+                        or more
+                      </p>
+                    </>
+                  ) : (
+                    ""
+                  )
+                ) : (
+                  <>
+                    <input
+                      className="form-control w-50"
+                      type="text"
+                      placeholder="Enter bid amount"
+                      value={bidAmount}
+                      onChange={(e) => setBidAmount(e.target.value)}
+                    />
+                    <p className="mt-0 text-muted">
+                      Enter{" "}
+                      <b>
+                        {doller.Aud} {productDetails?.product_prices?.price}
+                      </b>{" "}
+                      or more
+                    </p>
+                  </>
+                )}
               </div>
               <div className="buttonse mb-3 mt-5">
                 {productDetails?.user_id == userData?.id ? (
@@ -397,13 +493,13 @@ const Product = () => {
                 </p>
               </div>
               <div className="seller-infoe mb-3">
-                <span className="seller-name d-block font-weight-bold">
+                <span className="seller-name d-block prodesc">
                   {productDetails?.description}
                 </span>
               </div>
               <div className="price mb-3">
                 <span className="price-valuee h4">
-                  ${productDetails?.product_prices?.price}
+                  {doller.Aud} {productDetails?.product_prices?.price}
                 </span>
                 <span className="price-offere d-block">or Best Offer</span>
               </div>
@@ -424,22 +520,19 @@ const Product = () => {
                   onChange={(e) => setQuantity(e.target.value)}
                 >
                   <option value="0" hidden></option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
+                  {[
+                    ...Array(productDetails?.product_prices?.quantity).keys(),
+                  ].map((x) => (
+                    <option key={x + 1} value={x + 1}>
+                      {x + 1}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="buttonse mb-3 mt-5">
                 <button
                   className="btn buyitnow-btn btn-block mb-2"
-                  onClick={handleAddToCart}
+                  onClick={handleAddtocartLogin}
                 >
                   Buy It Now
                 </button>
@@ -453,7 +546,7 @@ const Product = () => {
                 ) : (
                   <button
                     className="btn addcarditnow-btn btn-block mb-2"
-                    onClick={handleAddToCart}
+                    onClick={handleAddtocartLogin}
                   >
                     Add to Cart
                   </button>
@@ -469,7 +562,7 @@ const Product = () => {
                 ) : (
                   <button
                     className="btn  additnow-btn btn-block mb-2"
-                    onClick={handleAddToWishList}
+                    onClick={handlelogin}
                   >
                     <FavoriteBorderIcon />
                     Add to Watchlist
@@ -486,7 +579,7 @@ const Product = () => {
           <div className="col-lg-12 col-md-12 bg-light mt-5">
             <div className="d-flex justify-content-between mt-3">
               <h4> Product ratings and reviews</h4>
-              <button
+              {/* <button
                 className="btn additnow-btn"
                 onClick={() => {
                   token
@@ -495,7 +588,7 @@ const Product = () => {
                 }}
               >
                 Write a review
-              </button>
+              </button> */}
             </div>
             <div className="mt-4 d-flex border-bottom">
               {Array(5)
@@ -591,6 +684,75 @@ const Product = () => {
           product={productDetails}
         />
       </div>
+      {/* <div
+        className="m-5" 
+      >
+        <Row>
+          {shopProductLists?.map((item) => (
+            <Col xs={12} md={4} lg={2} key={item.id} className="mb-4">
+              <Card
+                className="mainsscart"
+                onClick={() => navigate(`/product/${item.id}`)}
+              >
+                <Card.Img
+                  variant="top"
+                  src={item?.product_images[0]?.product_image ?? ""}
+                  alt={`Product image for order #${item.id}`}
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+                <Card.Body>
+                  <p className="font-weight-bold mt-2 mb-1">
+                    {formatCapitalize(item?.category_name)}
+                  </p>
+                  <Card.Text style={{ fontSize: "15px" }}>
+                    <p className="descriptionsass">{item.description}</p>
+                    <b>${item?.product_prices?.price}</b>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div> */}
+      <div className="m-5 border-top">
+        <h4 className="helo mt-4">Similar Items</h4>
+        <Row className="justify-content-centes">
+          {shopFilterProduct?.map((item) => (
+            <Col
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              key={item.id}
+              className="mb-4 d-flex"
+            >
+              <Card
+                className="mainsscart w-100"
+                onClick={() => navigate(`/product/${item.id}`)}
+              >
+                <Card.Img
+                  variant="top"
+                  src={item?.product_images[0]?.product_image ?? ""}
+                  alt={item?.name}
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+                <Card.Body className="">
+                  <p className="titledescrip font-weight-bold mt-2 mb-1">
+                    {formatCapitalize(item?.name)}
+                  </p>
+                  <Card.Text style={{ fontSize: "15px" }}>
+                    <p className="descriptionsass">{item.description}</p>
+                    <b>
+                      {doller.Aud} {item?.product_prices?.price}
+                    </b>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
+
       <Footer />
     </div>
   );

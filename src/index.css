@@ -23,3 +23,22 @@ input::-webkit-inner-spin-button {
   background-color: #343a40;
   padding: 10px 0px 4px 20px;
 }
+
+/* Default styles for large screens (desktop) */
+.sideallspace {
+  margin: 0px 4rem; /* Default margin for large screens */
+}
+
+/* Styles for tablets (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .sideallspace {
+    margin: 0px 2rem; /* Adjust margin for tablet screens */
+  }
+}
+
+/* Styles for mobile devices (up to 767px) */
+@media (max-width: 767px) {
+  .sideallspace {
+    margin: 0px 1rem; /* Adjust margin for mobile screens */
+  }
+}
