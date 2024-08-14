@@ -8,6 +8,7 @@ import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { CircularProgress } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./sellerdetails.css";
+import { doller } from "../../../Component/ReuseFormat/Doller";
 
 const SellerOrderDetail = () => {
   const { id } = useParams();
@@ -118,7 +119,7 @@ const SellerOrderDetail = () => {
         </div>
       )}
       <Header />
-      <Container className="mt-3">
+      <div className="sideallspace mt-3">
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
@@ -148,13 +149,14 @@ const SellerOrderDetail = () => {
                     <strong>Transaction ID:</strong> {transaction_id}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Subtotal:</strong> ${sub_total}
+                    <strong>Subtotal:</strong> {doller.Aud} {sub_total}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Shipping Charge:</strong> ${shipping_charge}
+                    <strong>Shipping Charge:</strong>
+                    {doller.Aud} {shipping_charge}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Total:</strong> ${total}
+                    <strong>Total:</strong> {doller.Aud} {total}
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <strong>Status:</strong> {order_status}
@@ -315,7 +317,7 @@ const SellerOrderDetail = () => {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </div>
     </div>
   );
 };

@@ -94,7 +94,7 @@ const Footer = () => {
                   <li>
                     <Link to={"/terms-services"}>
                       <a className="text-dark footerdroptitle">
-                        Terms and Service
+                        Terms & Services
                       </a>
                     </Link>
                   </li>

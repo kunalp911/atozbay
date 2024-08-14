@@ -21,6 +21,9 @@ import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 import { useNavigate } from "react-router-dom";
+import flowimg from "../../Assets/image/flow.jpg";
+import jeanss from "../../Assets/image/jeanss.jpg";
+import books from "../../Assets/image/books.jpg";
 
 const divStyle = {
   display: "flex",
@@ -34,47 +37,28 @@ const divStyle = {
 
 const slideImages = [
   {
-    url: "https://i.ebayimg.com/00/s/NTgxWDE2MDA=/z/su8AAOSwJFRmWI32/$_57.JPG",
+    url: flowimg,
     caption: "Slide 1",
   },
   {
-    url: "https://i.ebayimg.com/thumbs/images/g/cjsAAOSwJRNlqAa5/s-l1200.webp",
+    url: jeanss,
     caption: "Slide 2",
+  },
+  {
+    url: books,
+    caption: "Slide 3",
+  },
+  {
+    url: "https://i.ebayimg.com/thumbs/images/g/cjsAAOSwJRNlqAa5/s-l1200.webp",
+    caption: "Slide 4",
   },
   {
     url: "https://i.ebayimg.com/00/s/MTM4OFgzODEw/z/RdYAAOSwzZtmbBpI/$_57.JPG",
-    caption: "Slide 2",
+    caption: "Slide 5",
   },
   {
     url: "https://i.ebayimg.com/00/s/NDk2WDE0NDA=/z/hcQAAOSwg2dj6n~7/$_57.JPG",
-    caption: "Slide 3",
-  },
-];
-
-const offers = [
-  {
-    img: "https://ir.ebaystatic.com/cr/v/c01/01_PopularDestination_Luxury.jpg",
-    label: "Luxury",
-  },
-  {
-    img: "https://ir.ebaystatic.com/cr/v/c01/02_PopularDestination_Sneakers.jpg",
-    label: "Sneakers",
-  },
-  {
-    img: "https://ir.ebaystatic.com/cr/v/c01/03_PopularDestination_Tire.jpg",
-    label: "P&A",
-  },
-  {
-    img: "https://ir.ebaystatic.com/cr/v/c01/ECM_PopularDestination_Reburbished.jpg",
-    label: "Refurbished",
-  },
-  {
-    img: "https://ir.ebaystatic.com/cr/v/c01/05_PopularDestination_Cards.jpg",
-    label: "Trading cards",
-  },
-  {
-    img: "https://ir.ebaystatic.com/cr/v/c01/07_PopularDestination_Toys.jpg",
-    label: "Toys",
+    caption: "Slide 6",
   },
 ];
 
@@ -82,28 +66,28 @@ const cardData = [
   {
     image: "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
     title: "Green Iguana",
-    price: "$49.99",
+    price: "AUD 49.99",
     status: "New",
     rating: 4.5,
   },
   {
     image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
     title: "Red Parrot",
-    price: "$59.99",
+    price: "AUD 59.99",
     status: "Sale",
     rating: 4.0,
   },
   {
     image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
     title: "Red Parrot",
-    price: "$59.99",
+    price: "AUD 59.99",
     status: "Sale",
     rating: 4.0,
   },
   {
     image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
     title: "Red Parrot",
-    price: "$59.99",
+    price: "AUD 59.99",
     status: "Sale",
     rating: 4.0,
   },
@@ -111,7 +95,7 @@ const cardData = [
     image:
       "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
     title: "Red Parrot",
-    price: "$59.99",
+    price: "AUD 59.99",
     status: "Sale",
     rating: 4.0,
   },
@@ -119,7 +103,7 @@ const cardData = [
     image:
       "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
     title: "Red Parrot",
-    price: "$59.99",
+    price: "AUD 59.99",
     status: "Sale",
     rating: 4.0,
   },
@@ -127,7 +111,7 @@ const cardData = [
     image:
       "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
     title: "Red Parrot",
-    price: "$59.99",
+    price: "AUD 59.99",
     status: "Sale",
     rating: 4.0,
   },
@@ -135,7 +119,7 @@ const cardData = [
     title: "Lizard",
     image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
     date: "8 July",
-    price: "$10001",
+    price: "AUD 10001",
   },
 ];
 const Dashboard = () => {

@@ -799,7 +799,7 @@ const PersonalInfo = () => {
             {type == "Personal information" && (
               <Grid item xs={12} md={9} className={classes.content}>
                 <Paper>
-                  <Box>
+                  <Box className="pb-3">
                     <Grid className={classes.section}>
                       <Typography variant="h6">Personal info</Typography>
                       {/* <Grid>

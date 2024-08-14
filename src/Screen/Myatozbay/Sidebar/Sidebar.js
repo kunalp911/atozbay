@@ -23,13 +23,15 @@ const Sidebar = ({ status, bidchild }) => {
             Summary
           </ListGroup.Item>
         </Link>
-        <ListGroup.Item
-          className={`fw-bold fs-6 ${
-            isActive("Recently viewed") ? "listitemname" : "listitemnamess"
-          }`}
-        >
-          Recently viewed
-        </ListGroup.Item>
+        <Link to="/recently-view" className="text-decoration-none">
+          <ListGroup.Item
+            className={`fw-bold fs-6 ${
+              isActive("recently") ? "listitemname" : "listitemnamess"
+            }`}
+          >
+            Recently viewed
+          </ListGroup.Item>
+        </Link>
         <Link to="/bids-offers" className="text-decoration-none">
           <ListGroup.Item
             className={`fw-bold fs-6 ${
@@ -57,15 +59,6 @@ const Sidebar = ({ status, bidchild }) => {
             Purchases
           </ListGroup.Item>
         </Link>
-        {/* <Link to="/orders-list" className="text-decoration-none">
-          <ListGroup.Item
-            className={`fw-bold fs-6 ${
-              isActive("orderlist") ? "listitemname" : "listitemnamess"
-            }`}
-          >
-            Order List
-          </ListGroup.Item>
-        </Link> */}
         <ListGroup.Item
           className={`fw-bold fs-6 ${
             isActive("selling") ? "listitemname" : "listitemnamess"
@@ -126,7 +119,11 @@ const Sidebar = ({ status, bidchild }) => {
         <Collapse in={open.biddinghis}>
           <div id="selling-collapse" className="ms-3">
             <ListGroup variant="flush">
-              <Link to="/all-product" className="text-decoration-none">
+              <Link
+                to="/all-product"
+                className="text-decoration-none"
+                onClick={() => toggleOpen("biddinghis")}
+              >
                 <ListGroup.Item
                   className={`fs-6 ${
                     bidchild == "all" ? "text-primary" : "text-muted"
@@ -135,7 +132,11 @@ const Sidebar = ({ status, bidchild }) => {
                   All
                 </ListGroup.Item>
               </Link>
-              <Link to="/auction-product" className="text-decoration-none">
+              <Link
+                to="/auction-product"
+                className="text-decoration-none"
+                onClick={() => toggleOpen("biddinghis")}
+              >
                 <ListGroup.Item
                   className={`fs-6 ${
                     bidchild == "auctionp" ? "text-primary" : "text-muted"
@@ -147,9 +148,137 @@ const Sidebar = ({ status, bidchild }) => {
             </ListGroup>
           </div>
         </Collapse>
+        <Link to="/message" className="text-decoration-none">
+          <ListGroup.Item
+            className={`fw-bold fs-6 ${
+              isActive("message") ? "listitemname" : "listitemnamess"
+            }`}
+          >
+            Messages
+          </ListGroup.Item>
+        </Link>
       </ListGroup>
     </div>
   );
 };
 
 export default Sidebar;
+
+// import React, { useState } from "react";
+// import { ListGroup, Collapse } from "react-bootstrap";
+// import "./sidebar.css";
+// import { Link, useNavigate } from "react-router-dom";
+// import { List, ListItem, ListItemText } from "@mui/material";
+// import { ExpandLess, ExpandMore } from "@mui/icons-material";
+
+// const Sidebar = ({ status, bidchild }) => {
+//   const [open, setOpen] = React.useState({
+//     selling: false,
+//     biddinghis: false,
+//   });
+
+//   const navigate = useNavigate();
+
+//   const toggleOpen = (section) => {
+//     setOpen((prevOpen) => ({
+//       ...prevOpen,
+//       [section]: !prevOpen[section],
+//     }));
+//   };
+
+//   const isActive = (section) => status === section;
+//   return (
+//     <List component="nav">
+//       <ListItem
+//         button
+//         onClick={() => navigate("/summary")}
+//         className={isActive("summary") ? "listitemname" : "listitemnamess"}
+//       >
+//         <ListItemText primary="Summary" />
+//       </ListItem>
+
+//       <ListItem
+//         button
+//         onClick={() => navigate("/recently-view")}
+//         className={isActive("recently") ? "listitemname" : "listitemnamess"}
+//       >
+//         <ListItemText primary="Recently viewed" />
+//       </ListItem>
+
+//       <ListItem
+//         button
+//         onClick={() => navigate("/bids-offers")}
+//         className={isActive("bidding") ? "listitemname" : "listitemnamess"}
+//       >
+//         <ListItemText primary="Bids & offers" />
+//       </ListItem>
+
+//       <ListItem
+//         button
+//         onClick={() => navigate("/watch-list")}
+//         className={isActive("watchlist") ? "listitemname" : "listitemnamess"}
+//       >
+//         <ListItemText primary="Watchlist" />
+//       </ListItem>
+
+//       <ListItem
+//         button
+//         onClick={() => navigate("/purchase")}
+//         className={isActive("purchase") ? "listitemname" : "listitemnamess"}
+//       >
+//         <ListItemText primary="Purchases" />
+//       </ListItem>
+
+//       <ListItem button onClick={() => toggleOpen("selling")}>
+//         <ListItemText primary="Selling" />
+//         {open.selling ? <ExpandLess /> : <ExpandMore />}
+//       </ListItem>
+//       <Collapse in={open.selling} timeout="auto" unmountOnExit>
+//         <List component="div" disablePadding sx={{ pl: 4 }}>
+//           <ListItem
+//             button
+//             onClick={() => navigate("/selling/overview")}
+//             className={isActive("overview") ? "text-primary" : "text-muted"}
+//           >
+//             <ListItemText primary="Overview" />
+//           </ListItem>
+//           <ListItem className="text-muted">
+//             <ListItemText primary="Sell an item" />
+//           </ListItem>
+//           <ListItem
+//             button
+//             onClick={() => navigate("/seller-orders-list")}
+//             className={isActive("ordersell") ? "text-primary" : "text-muted"}
+//           >
+//             <ListItemText primary="Orders" />
+//           </ListItem>
+//         </List>
+//       </Collapse>
+
+//       <ListItem button onClick={() => toggleOpen("biddinghis")}>
+//         <ListItemText primary="Bidding History" />
+//         {open.biddinghis ? <ExpandLess /> : <ExpandMore />}
+//       </ListItem>
+//       <Collapse in={open.biddinghis} timeout="auto" unmountOnExit>
+//         <List component="div" disablePadding sx={{ pl: 4 }}>
+//           <ListItem
+//             button
+//             onClick={() => navigate("/all-product")}
+//             className={isActive("all") ? "text-primary" : "text-muted"}
+//           >
+//             <ListItemText primary="All" />
+//           </ListItem>
+//           <ListItem
+//             button
+//             onClick={() => navigate("/auction-product")}
+//             className={isActive("auctionp") ? "text-primary" : "text-muted"}
+//           >
+//             <ListItemText primary="Auction" />
+//           </ListItem>
+//         </List>
+//       </Collapse>
+//     </List>
+//   );
+// };
+
+// export default Sidebar;

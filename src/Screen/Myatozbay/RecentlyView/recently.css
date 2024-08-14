@@ -1,0 +1,11 @@
+.descriptionsass {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* margin-top: -10px; */
+  margin: 0;
+}
+.mainsscart {
+  cursor: pointer;
+}

@@ -71,6 +71,14 @@ const ApiEndPoints = {
   UpdateOrderProductStatus: `${APPConfig.API_URL}/update-order-product-status/`,
   StockAdd: `${APPConfig.API_URL}/stock-add`,
   StockList: `${APPConfig.API_URL}/stocks-list/`,
+  MessageUserList: `${APPConfig.API_URL}/message-user-list`,
+  SendMessage: `${APPConfig.API_URL}/send-message`,
+  MessageHistory: `${APPConfig.API_URL}/message-history/`,
+  SaveLaterList: `${APPConfig.API_URL}/save-later-products`,
+  AddToSaveLater: `${APPConfig.API_URL}/add-to-save-later`,
+  DeleteSaveLater: `${APPConfig.API_URL}/delete-save-later/`,
+  SaveLaterCount: `${APPConfig.API_URL}/save-later-product-count`,
+  Terms: `${APPConfig.API_URL}/page/terms_condition`,
 };
 
 export default ApiEndPoints;

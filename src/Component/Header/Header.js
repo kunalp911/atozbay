@@ -148,56 +148,60 @@ const Header = () => {
                 Hi!
               </a>
             </li>
-            <li className="nav-item">
-              <a
-                className="nav-link first-title"
-                id="basic-button"
-                aria-controls={opens ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={opens ? "true" : undefined}
-                onClick={handleClicks}
-                style={{
-                  paddingRight: "0px",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {firstChars}
-              </a>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorE2}
-                open={opens}
-                onClose={handleCloses}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                <Grid container spacing={2}>
-                  <Grid sx={{ padding: "10px 20px" }}>
-                    <MenuItem sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                      {firstChars}
-                    </MenuItem>
-                    <MenuItem
-                      sx={{
-                        color: "#0064d2",
-                        fontWeight: "bold",
-                        fontSize: "14px",
-                      }}
-                      onClick={() => AccountSetting()}
-                    >
-                      Account settings
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ color: "#0064d2", fontWeight: "bold" }}
-                      onClick={Logout}
-                    >
-                      Logout
-                    </MenuItem>
+            {token && (
+              <li className="nav-item mr-3">
+                <a
+                  className="nav-link first-title"
+                  id="basic-button"
+                  aria-controls={opens ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={opens ? "true" : undefined}
+                  onClick={handleClicks}
+                  style={{
+                    paddingRight: "0px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  {data?.name ? data?.name : firstChars}
+                  <i className="fa fa-angle-down ms-1"></i>
+                </a>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorE2}
+                  open={opens}
+                  onClose={handleCloses}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  <Grid container spacing={2}>
+                    <Grid sx={{ padding: "10px 20px" }}>
+                      <MenuItem sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                        {data?.name ? data?.name : firstChars}
+                      </MenuItem>
+                      <MenuItem
+                        sx={{
+                          color: "#0064d2",
+                          fontWeight: "bold",
+                          fontSize: "14px",
+                        }}
+                        onClick={() => AccountSetting()}
+                      >
+                        Account settings
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ color: "#0064d2", fontWeight: "bold" }}
+                        onClick={Logout}
+                      >
+                        Logout
+                      </MenuItem>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </Menu>
-            </li>
+                </Menu>
+              </li>
+            )}
+
             {!token && (
               <li className="nav-item">
                 <Link
@@ -209,23 +213,27 @@ const Header = () => {
                 </Link>
               </li>
             )}
-            <li className="nav-item">
-              <a
-                className="nav-link first-title"
-                style={{ paddingRight: "0px" }}
-              >
-                or
-              </a>
-            </li>
-            <li className="nav-item">
-              <Link
-                to="/signup"
-                className="nav-link first-title"
-                style={{ color: "#0064d2" }}
-              >
-                register
-              </Link>
-            </li>
+            {!token && (
+              <li className="nav-item">
+                <a
+                  className="nav-link first-title"
+                  style={{ paddingRight: "0px" }}
+                >
+                  or
+                </a>
+              </li>
+            )}
+            {!token && (
+              <li className="nav-item">
+                <Link
+                  to="/signup"
+                  className="nav-link first-title"
+                  style={{ color: "#0064d2" }}
+                >
+                  register
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
               <a className="nav-link first-title" href="#">
                 Daily Deals
@@ -272,9 +280,11 @@ const Header = () => {
                         Summary
                       </ListGroup.Item>
                     </Link>
-                    <ListGroup.Item className="fw-bold">
-                      Recently viewed
-                    </ListGroup.Item>
+                    <Link to="/recently-view" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Recently viewed
+                      </ListGroup.Item>
+                    </Link>
                     <Link to="/bids-offers" className="text-decoration-none">
                       <ListGroup.Item className="fw-bold">
                         Bids & offers
@@ -301,6 +311,11 @@ const Header = () => {
                     <Link to="/all-product" className="text-decoration-none">
                       <ListGroup.Item className="fw-bold">
                         Bidding History
+                      </ListGroup.Item>
+                    </Link>
+                    <Link to="/message" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Messages
                       </ListGroup.Item>
                     </Link>
                   </ListGroup>
@@ -342,10 +357,10 @@ const Header = () => {
         </div>
       </nav>
       <div style={{ borderBottom: "1px solid #e5e5e5", paddingBottom: "10px" }}>
-        <div className="container mt-3">
-          <div className="row align-items-center">
+        <div className="secondheader mt-3">
+          <div className=" d-flex align-items-center">
             <div
-              className="col-2 text-center text-lg-left logodiv"
+              className="col- text-center text-lg-left logodiv"
               style={{ marginRight: "10px" }}
             >
               <Link to="/">
@@ -388,7 +403,7 @@ const Header = () => {
                 </Grid>
               </Menu>
             </div>
-            <div className="col-8 second-header ">
+            <div className="col-9 second-header ">
               <div className="input-group">
                 <input
                   type="search"

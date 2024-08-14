@@ -5,7 +5,7 @@ import "./review.css";
 import Header from "../Header/Header";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatCapitalize } from "../ReuseFormat/ReuseFormat";
 import Footer from "../Footer/Footer";
 import { CircularProgress } from "@mui/material";
@@ -14,6 +14,8 @@ import { toast } from "react-toastify";
 const Review = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const orderid = location?.state?.orderId;
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(null);
   const [review, setReview] = useState("");
@@ -50,11 +52,12 @@ const Review = () => {
         product_id: productDetails?.id,
         rating: rating,
         review: review,
+        order_id: orderid,
       };
       apiCallNew("post", payload, ApiEndPoints.GiveReview).then((response) => {
         if (response.success) {
           toast.success(response.msg);
-          navigate(`/product/${productDetails?.id}`);
+          navigate(`/order-details/${orderid}`);
           setload(false);
         } else {
           toast.error(response.msg);
@@ -149,7 +152,7 @@ const Review = () => {
           <button
             type="submit"
             className="btn reviewclsbtn"
-            onClick={() => navigate(`/product/${productDetails?.id}`)}
+            onClick={() => navigate(`/order-details/${orderid}`)}
           >
             Cancel
           </button>

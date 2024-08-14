@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import PhoneInput from "react-phone-input-2";
 import { getToken } from "../../Helper/Storage";
+import { doller } from "../../Component/ReuseFormat/Doller";
 
 const CheckOut = () => {
   const navigate = useNavigate();
@@ -389,6 +390,10 @@ const CheckOut = () => {
         shipping_id: shipAdd?.id,
         sub_total: totalPrices,
         total: totalPrices,
+        coupon_code: "",
+        coupon_amount: "",
+        shipping_charge: "",
+        device_type: "web",
       };
       const response = await apiCallNew(
         "post",
@@ -447,7 +452,10 @@ const CheckOut = () => {
                         <Card.Title className="card-titlesss">
                           {formatCapitalize(data?.product_name)}
                         </Card.Title>
-                        <b>US ${data?.product_price * data?.cart_quantity}</b>
+                        <b>
+                          {doller.Aud}{" "}
+                          {data?.product_price * data?.cart_quantity}
+                        </b>
                         <Row>
                           <Col md={10}>
                             <Form.Group controlId="quantity">
@@ -465,9 +473,9 @@ const CheckOut = () => {
                                   )
                                 }
                               >
-                                {[...Array(10).keys()].map((num) => (
-                                  <option key={num + 1} value={num + 1}>
-                                    {num + 1}
+                                {[...Array(data.quantity).keys()].map((x) => (
+                                  <option key={x + 1} value={x + 1}>
+                                    {x + 1}
                                   </option>
                                 ))}
                               </Form.Control>
@@ -504,7 +512,9 @@ const CheckOut = () => {
                       <Card.Title className="card-titlesss">
                         {formatCapitalize(productDetails?.name)}
                       </Card.Title>
-                      <b>US ${totalPrice?.toFixed(2)}</b>
+                      <b>
+                        {doller.Aud} {totalPrice?.toFixed(2)}
+                      </b>
                       <Form.Group controlId="quantity">
                         <p className="m-0" style={{ fontSize: "14px" }}>
                           Quantity
@@ -835,17 +845,21 @@ const CheckOut = () => {
                   <h5 className="paywithname">Order total</h5>
                   <Row>
                     <Col>Item ({cartList.length})</Col>
-                    <Col className="text-right">${totalPrices?.toFixed(2)}</Col>
+                    <Col className="text-right">
+                      {doller.Aud} {totalPrices?.toFixed(2)}
+                    </Col>
                   </Row>
                   <Row>
                     <Col>Shipping</Col>
-                    <Col className="text-right">$0</Col>
+                    <Col className="text-right">{doller.Aud} 0</Col>
                   </Row>
                   <hr />
                   <Row>
                     <Col>Total</Col>
                     <Col className="text-right">
-                      <b>${totalPrices?.toFixed(2)}</b>
+                      <b>
+                        {doller.Aud} {totalPrices?.toFixed(2)}
+                      </b>
                     </Col>
                   </Row>
                   <button
@@ -860,17 +874,21 @@ const CheckOut = () => {
                   <h5 className="paywithname">Order total</h5>
                   <Row>
                     <Col>Item ({quantity})</Col>
-                    <Col className="text-right">${totalPrice?.toFixed(2)}</Col>
+                    <Col className="text-right">
+                      {doller.Aud} {totalPrice?.toFixed(2)}
+                    </Col>
                   </Row>
                   <Row>
                     <Col>Shipping</Col>
-                    <Col className="text-right">$0</Col>
+                    <Col className="text-right">{doller.Aud} 0</Col>
                   </Row>
                   <hr />
                   <Row>
                     <Col>Total</Col>
                     <Col className="text-right">
-                      <b>${totalPrice?.toFixed(2)}</b>
+                      <b>
+                        {doller.Aud} {totalPrice?.toFixed(2)}
+                      </b>
                     </Col>
                   </Row>
                   <button

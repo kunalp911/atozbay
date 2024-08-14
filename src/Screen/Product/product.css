@@ -279,3 +279,15 @@
   margin-top: 3px;
   font-weight: 600;
 }
+
+.titledescrip {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.prodesc {
+  font-weight: 600;
+  font-size: 14px;
+  color: #525353;
+}

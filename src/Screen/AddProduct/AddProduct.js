@@ -73,9 +73,11 @@ const AddProduct = () => {
   const [load, setload] = useState(false);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [hour, setHour] = useState("");
-  const [minute, setMinute] = useState("");
-  const [period, setPeriod] = useState("");
+  const [customAttributes, setCustomAttributes] = useState({
+    customName: "",
+    customValue: "",
+  });
+  const [customArray, setCustomArray] = useState([]);
   const [addProductFormData, setAddProductFormData] = useState({
     name: "",
     sku: "",
@@ -97,8 +99,6 @@ const AddProduct = () => {
   const formattedDateTime = moment(`${date} ${time}`, "YYYY-MM-DD H:mm").format(
     "YYYY-MM-DD HH:mm"
   );
-
-  console.log("././././", formattedDateTime);
 
   useEffect(() => {
     if (updateProduct) {
@@ -126,9 +126,39 @@ const AddProduct = () => {
       getAttributesList(updateProduct?.category_id);
       setCategoryName(updateProduct?.category_name);
       setSelectedValue(updateProduct?.item_condition);
+      setDate(updateProduct?.product_prices?.auction_date_time);
     }
   }, []);
 
+  useEffect(() => {
+    setAddProductFormData((prevData) => ({
+      ...prevData,
+      condition_description: selectedValue || conditionName || "",
+    }));
+  }, [selectedValue, conditionName]);
+
+  const handleCustomAttributes = (e) => {
+    const { name, value } = e.target;
+    setCustomAttributes({
+      ...customAttributes,
+      [name]: value,
+    });
+  };
+
+  const customSubmit = (e) => {
+    e.preventDefault();
+    if (customAttributes.customName && customAttributes.customValue) {
+      setCustomArray((prevArray) => [...prevArray, customAttributes]);
+      setOpensss(false);
+      setCustomAttributes({
+        customName: "",
+        customValue: "",
+      });
+    } else {
+      setOpensss(true);
+    }
+  };
+  console.log("customAttributes>>>", customAttributes);
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     const attribute_ids = [];
@@ -468,6 +498,8 @@ const AddProduct = () => {
       video: video ? video : null,
       images: images,
       auction_date_time: formattedDateTime,
+      custom_attribute_name: customArray?.map((item) => item?.customName),
+      custom_attribute_value: customArray?.map((item) => item?.customValue),
 
       ...addProductFormData,
     };
@@ -709,6 +741,22 @@ const AddProduct = () => {
                 </div>
               </div>
             ))}
+            {customArray?.map((item, index) => (
+              <div className="form-group row">
+                <label for="cv" className="col-sm-2 col-form-label">
+                  {item.customName}
+                </label>
+                <div className="col-sm-10">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="cv"
+                    value={item.customValue}
+                  />
+                </div>
+              </div>
+            ))}
+
             <Dialog
               open={open}
               onClose={handleClose}
@@ -885,15 +933,27 @@ const AddProduct = () => {
                   </Button>
                 </Grid>
                 <DialogContent dividers>
-                  <form action="javascript:void(0)">
+                  <form action="javascript:void(0)" onSubmit={customSubmit}>
                     <div className="form-group">
                       <label>Name</label>
-                      <input type="text" className="form-control" />
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="customName"
+                        value={customAttributes.customName}
+                        onChange={handleCustomAttributes}
+                      />
                       Example: Year
                     </div>
                     <div className="form-group">
                       <label>Value</label>
-                      <input type="text" className="form-control" />
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="customValue"
+                        value={customAttributes.customValue}
+                        onChange={handleCustomAttributes}
+                      />
                       Example: 2017
                     </div>
                     <div className="d-flex justify-content-end">
@@ -1132,7 +1192,7 @@ const AddProduct = () => {
                   List it
                 </button>
               )}
-              <button className="btn btn-customss">Save for later</button>
+              {/* <button className="btn btn-customss">Save for later</button> */}
               <button className="btn btn-customss">Preview</button>
             </div>
           </div>
