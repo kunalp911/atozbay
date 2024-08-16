@@ -79,6 +79,7 @@ const ApiEndPoints = {
   DeleteSaveLater: `${APPConfig.API_URL}/delete-save-later/`,
   SaveLaterCount: `${APPConfig.API_URL}/save-later-product-count`,
   Terms: `${APPConfig.API_URL}/page/terms_condition`,
+  Privacy: `${APPConfig.API_URL}/page/privacy_policy`,
 };
 
 export default ApiEndPoints;

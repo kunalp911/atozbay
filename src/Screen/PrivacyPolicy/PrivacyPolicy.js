@@ -1,14 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
+import { apiCallNew } from "../../Network_Call/apiservices";
+import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 
 const PrivacyPolicy = () => {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    getData();
+  }, []);
+  const getData = async () => {
+    const response = await apiCallNew("get", null, ApiEndPoints.Privacy);
+    if (response.success == true) {
+      setData(response.result);
+    }
+  };
+  console.log("data", data);
+
   return (
     <div>
       <Header />
-      <div className="container mt-3"> 
+      <div className="container mt-3">
         <h4>Privacy Policy</h4>
-      <h1 className='text-center'>comming soon</h1>
+        <div dangerouslySetInnerHTML={{ __html: data?.content }} />
       </div>
       <Footer />
     </div>
