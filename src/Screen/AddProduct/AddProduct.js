@@ -14,6 +14,7 @@ import {
   Button,
   List,
   ListItem,
+  DialogActions,
   ListItemText,
   Grid,
   TextField,
@@ -35,6 +36,99 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "80vh",
   },
 }));
+const PreviewModal = ({ open, onClose, formData, images }) => {
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+      <DialogTitle>Product Preview</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h6">Basic Details</Typography>
+            <List>
+              <ListItem>
+                <strong>Name:</strong> {formData.name || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>SKU:</strong> {formData.sku || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Condition:</strong>{" "}
+                {formData.condition_description || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Description:</strong> {formData.description || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Price:</strong> {formData.price || "N/A"}{" "}
+                {formData.price_format}
+              </ListItem>
+              <ListItem>
+                <strong>Auction Duration:</strong>{" "}
+                {formData.auction_duration || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Available Quantity:</strong>{" "}
+                {formData.available_quantity || "N/A"}
+              </ListItem>
+            </List>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h6">Other Details</Typography>
+            <List>
+              <ListItem>
+                <strong>Starting Bid:</strong> {formData.starting_bid || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Brand ID:</strong> {formData.brand_id || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Color ID:</strong> {formData.color_id || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Category ID:</strong> {formData.category_id || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Short Description:</strong>{" "}
+                {formData.short_desc || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Shipping in Days:</strong>{" "}
+                {formData.shipping_in_days || "N/A"}
+              </ListItem>
+              <ListItem>
+                <strong>Shipping Charge:</strong>{" "}
+                {formData.shipping_charge || "N/A"}
+              </ListItem>
+            </List>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h6">Images</Typography>
+            {images.length > 0 ? (
+              <Grid container spacing={2}>
+                {images.map((image, index) => (
+                  <Grid item key={index} xs={6} sm={4}>
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={`Product Preview ${index + 1}`}
+                      style={{ width: "100%" }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography>No images uploaded</Typography>
+            )}
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 const AddProduct = () => {
   const classes = useStyles();
@@ -51,6 +145,7 @@ const AddProduct = () => {
   );
   const navigate = useNavigate();
   const [colorList, setColorList] = React.useState([]);
+  const [openPreview, setOpenPreview] = useState(false);
   const [brandList, setBrandList] = React.useState([]);
   const [isPhoto, setIsPhoto] = useState(true);
   const [images, setImages] = useState([]);
@@ -136,6 +231,13 @@ const AddProduct = () => {
       condition_description: selectedValue || conditionName || "",
     }));
   }, [selectedValue, conditionName]);
+  const handleOpenPreview = () => {
+    setOpenPreview(true);
+  };
+
+  const handleClosePreview = () => {
+    setOpenPreview(false);
+  };
 
   const handleCustomAttributes = (e) => {
     const { name, value } = e.target;
@@ -1193,7 +1295,15 @@ const AddProduct = () => {
                 </button>
               )}
               {/* <button className="btn btn-customss">Save for later</button> */}
-              <button className="btn btn-customss">Preview</button>
+              <button onClick={handleOpenPreview} className="btn btn-customss">
+                Preview
+              </button>
+              <PreviewModal
+                open={openPreview}
+                onClose={handleClosePreview}
+                formData={addProductFormData}
+                images={images}
+              />
             </div>
           </div>
         </section>
