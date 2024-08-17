@@ -435,7 +435,7 @@ const CheckOut = () => {
       <Container className="mt-3 mb-3">
         <Row>
           <Col md={8} style={{ height: "100vh", overflow: "auto" }}>
-            <h4>Checkout</h4>
+            <h4 className="helo">Checkout</h4>
             <Card className="mb-3">
               <Card.Body>
                 <h5 className="paywithname border-bottom pb-3">

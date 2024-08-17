@@ -6,15 +6,26 @@ const SharePopup = ({ product, show, onHide }) => {
   const [copied, setCopied] = React.useState(false);
 
   const { name, id, slug } = product;
-  const url = `https://atozbay.com/web/product/${id}`;
+  const url = `https://atozbay.com/web/product/${slug}`;
   const title = name;
 
+  // const shareLinks = {
+  //   facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+  //   twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+  //     title
+  //   )}&url=${url}`,
+  //   linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${url}`,
+  // };
   const shareLinks = {
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      url
+    )}`,
     twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       title
-    )}&url=${url}`,
-    linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${url}`,
+    )}&url=${encodeURIComponent(url)}`,
+    linkedin: `https://www.linkedin.com/messaging/compose/?body=${encodeURIComponent(
+      url
+    )}`,
   };
 
   const handleCopy = () => {

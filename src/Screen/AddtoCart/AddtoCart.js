@@ -94,11 +94,11 @@ const AddtoCart = () => {
     }
   };
 
-  const addSaveforLater = async (id) => {
+  const addSaveforLater = async (datas) => {
     try {
       setload(true);
       const payload = {
-        product_id: id,
+        product_id: datas.product_id,
       };
       const response = await apiCallNew(
         "post",
@@ -109,6 +109,7 @@ const AddtoCart = () => {
         getCartList();
         getSaveLateList();
         handleSaveCount();
+        removeCart(datas.id);
         setload(false);
       } else {
         toast.error(response.msg);
@@ -144,6 +145,33 @@ const AddtoCart = () => {
     calculateTotals(updatedCartList);
   };
 
+  const handleAddToCart = (item) => {
+    try {
+      setload(true);
+      const payload = {
+        product_id: item.product_id,
+        product_price_id: item.product_price_id,
+        cart_quantity: 1,
+      };
+      apiCallNew("post", payload, ApiEndPoints.AddToCart).then((response) => {
+        if (response.success) {
+          toast.success(response.msg);
+          getCartList();
+          updateCartCount();
+          removeSave(item.id);
+          setload(false);
+        } else {
+          toast.error(response.msg);
+          setload(false);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+
+      setload(false);
+    }
+  };
+
   const removeSave = async (id) => {
     try {
       const response = await apiCallNew(
@@ -168,7 +196,6 @@ const AddtoCart = () => {
         `${ApiEndPoints.DeleteCartProduct}?cart_id=${id}`
       );
       if (response.success === true) {
-        toast.success(response.msg);
         await getCartList();
         updateCartCount();
       }
@@ -257,7 +284,7 @@ const AddtoCart = () => {
                                 cursor: "pointer",
                                 transition: "transform 0.2s ease-in-out",
                               }}
-                              onClick={() => viewProduct(data.product_id)}
+                              onClick={() => viewProduct(data.product_slug)}
                             >
                               <img
                                 className="img-fluid mx-auto d-block"
@@ -292,7 +319,7 @@ const AddtoCart = () => {
                                       href="#"
                                       className="pro-name"
                                       onClick={() =>
-                                        viewProduct(data.product_id)
+                                        viewProduct(data.product_slug)
                                       }
                                     >
                                       <u>
@@ -347,7 +374,7 @@ const AddtoCart = () => {
                               fontSize: "14px",
                               marginTop: "7px",
                             }}
-                            onClick={() => addSaveforLater(data?.product_id)}
+                            onClick={() => addSaveforLater(data)}
                           >
                             <u>Save for later</u>
                           </p>
@@ -437,7 +464,7 @@ const AddtoCart = () => {
                               cursor: "pointer",
                               transition: "transform 0.2s ease-in-out",
                             }}
-                            onClick={() => viewProduct(item.product_id)}
+                            onClick={() => viewProduct(item.product_slug)}
                           >
                             <img
                               className="img-fluid mx-auto d-block"
@@ -470,7 +497,9 @@ const AddtoCart = () => {
                                   <a
                                     href="#"
                                     className="pro-name"
-                                    onClick={() => viewProduct(item.product_id)}
+                                    onClick={() =>
+                                      viewProduct(item.product_slug)
+                                    }
                                   >
                                     <u>{formatCapitalize(item.product_name)}</u>
                                   </a>
@@ -502,6 +531,7 @@ const AddtoCart = () => {
                             fontSize: "14px",
                             marginTop: "7px",
                           }}
+                          onClick={() => handleAddToCart(item)}
                         >
                           <u>Add to cart</u>
                         </p>

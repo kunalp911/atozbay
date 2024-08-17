@@ -118,7 +118,7 @@ const MessageScreen = () => {
   return (
     <div>
       <Header />
-      <div className="sideallspace mt-3">
+      <div className="sideallspace mt-3 mb-5">
         <h4 className="helo mt-3">Messages</h4>
         <Row>
           <Col xs={12} md={3} lg={2} className="p-3 bg-light">
@@ -225,6 +225,7 @@ const MessageScreen = () => {
                   />
                   <button
                     className="btn send-buttonchat"
+                    type="submit"
                     onClick={handleSendMessage}
                     disabled={!selectedUser} // Disable if no user is selected
                   >

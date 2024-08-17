@@ -1,3 +1,3 @@
 export const doller = {
-  Aud: "AUD",
+  Aud: "AED",
 };

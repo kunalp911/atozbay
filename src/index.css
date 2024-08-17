@@ -42,3 +42,53 @@ input::-webkit-inner-spin-button {
     margin: 0px 1rem; /* Adjust margin for mobile screens */
   }
 }
+
+/* *************top header******************* */
+/* make attractive */
+
+.custom-toast {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  font-family: "Arial", sans-serif;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.custom-toast .Toastify__close-button {
+  color: #023fa9;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.custom-toast .Toastify__close-button:hover {
+  opacity: 1;
+}
+
+.custom-toast:hover {
+  transform: scale(1.05);
+}
+
+.custom-toast svg {
+  fill: white;
+}
+
+.custom-toast--success {
+  background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+}
+
+.custom-toast--error {
+  background: linear-gradient(135deg, #d31027 0%, #ea384d 100%);
+}
+
+.custom-toast--info {
+  background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+}
+
+.custom-toast--warning {
+  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+}

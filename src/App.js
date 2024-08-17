@@ -94,7 +94,11 @@ function App() {
   // };
   return (
     <CartProvider>
-      <ToastContainer autoClose={1500} />
+      <ToastContainer
+        bodyClassName="custom-toast"
+        toastClassName="custom-toast"
+        autoClose={1500}
+      />
       <PublicRouter />
     </CartProvider>
   );

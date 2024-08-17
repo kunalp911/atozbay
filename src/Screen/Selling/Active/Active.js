@@ -1,129 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { useCart } from "../../../Component/context/AuthContext";
-import { apiCallNew } from "../../../Network_Call/apiservices";
-import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
-import { toast } from "react-toastify";
+import React, { useEffect } from "react";
 import Header from "../../../Component/Header/Header";
-import { Box, CircularProgress, Pagination } from "@mui/material";
-import Sidebar from "../Sidebar/Sidebar";
+import { Card, Col, Row } from "react-bootstrap";
+import Sidebar from "../../Myatozbay/Sidebar/Sidebar";
+import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
+import { apiCallNew } from "../../../Network_Call/apiservices";
 import { formatCapitalize } from "../../../Component/ReuseFormat/ReuseFormat";
-import Footer from "../../../Component/Footer/Footer";
-import "./biddinghis.css";
-import { AuctionTimer } from "../../../Component/AuctionTimer/AuctionTimer";
 import { doller } from "../../../Component/ReuseFormat/Doller";
+import { CircularProgress } from "@mui/material";
 
-const AuctionProduct = () => {
-  const navigate = useNavigate();
-  const [shopProductLists, setShopProductLists] = useState([]);
-  const [count, setCount] = useState(0);
-  const [page, setPage] = useState(1);
-
-  const itemsPerPage = 20;
-  console.log("shopProductLists", shopProductLists);
+const Active = () => {
+  const [productLists, setProductLists] = React.useState([]);
+  const [load, setload] = React.useState(false);
 
   useEffect(() => {
-    getShopProductList(page);
-  }, [page]);
-
-  const viewProduct = (id) => {
-    navigate(`/product/${id}`, { state: { bidStatus: 1 } });
-  };
-
-  const getShopProductList = async (page) => {
-    const payload = { page: page - 1, auction_product: 1 };
+    getProductList();
+  }, []);
+  const getProductList = () => {
+    const payload = {
+      active_auction_product: 1,
+    };
     try {
-      const response = await apiCallNew(
-        "post",
-        payload,
-        ApiEndPoints.ShopProductList
-      );
-      if (response.success) {
-        setShopProductLists(response.result);
-        setCount(response.product_count);
-      }
+      setload(true);
+      apiCallNew("post", payload, ApiEndPoints.ProductList).then((response) => {
+        if (response.success) {
+          setProductLists(response.result);
+          setload(false);
+        } else {
+          setload(false);
+        }
+      });
     } catch (error) {
-      console.error("Error fetching shop products:", error);
+      console.log(error);
+      setload(false);
     }
   };
-
-  const handleChange = (event, value) => {
-    setPage(value);
-  };
-
-  const currentItems = shopProductLists;
-
   return (
     <div>
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <Header />
       <div className="sideallspace mt-3">
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
-            <Sidebar status="biddinghis" bidchild="auctionp" />
+            <Sidebar status="selling" bidchild="active" />
           </Col>
           <Col md={10}>
             <Row className="mt-3">
               <Col xs={12} md={6}>
-                <h2 className="helo">Auction Products</h2>
+                <h2 className="helo">Active</h2>
               </Col>
             </Row>
-            {/* {currentItems?.map((item, index) => (
-              <>
-                <Card className="mb-3" key={index}>
-                  <Row className="justify-content-around">
-                    <Col className="text-center" xs={12} lg={2} md={2}>
-                      <Card.Img
-                        className="img-fluid  mt-lg-4 ms-lg-3"
-                        src={item?.product_images[0]?.product_image}
-                        style={{
-                          objectFit: "contain",
-                        }}
-                        onClick={() => viewProduct(item?.id)}
-                      />
-                    </Col>
-                    <Col xs={12} lg={10} md={10}>
-                      <div className="d-flex justify-content-end mr-2">
-                        <AuctionTimer
-                          createdAt={item?.created_at}
-                          auctionDuration={
-                            item?.product_prices?.auction_duration
-                          }
-                        />
-                      </div>
-                      <Card.Body>
-                        <Card.Title
-                          className="watch-title m-0"
-                          onClick={() => viewProduct(item?.id)}
-                        >
-                          {formatCapitalize(item?.name)}
-                        </Card.Title>
-                        <p className="m-0 text-muted">
-                          {item?.condition_description}
-                        </p>
-                        <Card.Text>
-                          Condition: <b>{item?.item_condition}</b>
-                        </Card.Text>
-                        <Row>
-                          <Col xs={6} md={4}>
-                            <Card.Text
-                              style={{ fontSize: "14px", marginBottom: "0" }}
-                            >
-                              ITEM PRICE:
-                            </Card.Text>
-                            <Card.Text className="font-weight-bold">
-                              US ${item?.product_prices?.price}
-                            </Card.Text>
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Col>
-                  </Row>
-                </Card>
-              </>
-            ))} */}
-            {currentItems?.map((item, index) => (
+            {productLists?.map((item, index) => (
               <Card
                 className="mb-4 p-3"
                 key={index}
@@ -139,7 +70,7 @@ const AuctionProduct = () => {
                   className="justify-content-around align-items-center"
                   style={{ height: "100%" }}
                 >
-                  <Col className="text-center" xs={12} lg={2} md={2}>
+                  <Col className="text-center" xs={12} lg={3} md={3}>
                     <div
                       style={{
                         width: "100%",
@@ -168,17 +99,11 @@ const AuctionProduct = () => {
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.transform = "scale(1)")
                         }
-                        onClick={() => viewProduct(item?.slug)}
+                        // onClick={() => viewProduct(item?.slug)}
                       />
                     </div>
                   </Col>
-                  <Col xs={12} lg={10} md={10}>
-                    <div className="d-flex justify-content-end mb-2">
-                      <AuctionTimer
-                        createdAt={item?.created_at}
-                        auctionDuration={item?.product_prices?.auction_duration}
-                      />
-                    </div>
+                  <Col xs={12} lg={9} md={9}>
                     <Card.Body
                       style={{
                         height: "100%",
@@ -194,7 +119,7 @@ const AuctionProduct = () => {
                           fontSize: "1.20rem",
                           marginBottom: "8px",
                         }}
-                        onClick={() => viewProduct(item?.slug)}
+                        // onClick={() => viewProduct(item?.slug)}
                       >
                         {formatCapitalize(item?.name)}
                       </Card.Title>
@@ -240,21 +165,14 @@ const AuctionProduct = () => {
                 </Row>
               </Card>
             ))}
+            {productLists?.length === 0 && (
+              <div className="text-center mt-5">
+                <p className="text-muted">No Product Found</p>
+              </div>
+            )}
           </Col>
         </Row>
-        {count > itemsPerPage && (
-          <Box display="flex" justifyContent="center" mt={4}>
-            <Pagination
-              count={Math.ceil(count / itemsPerPage)}
-              page={page}
-              onChange={handleChange}
-              showFirstButton
-              showLastButton
-            />
-          </Box>
-        )}
       </div>
-      <Footer />
     </div>
   );
 };
@@ -276,5 +194,4 @@ const styles = {
     color: "white",
   },
 };
-
-export default AuctionProduct;
+export default Active;

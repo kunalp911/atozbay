@@ -18,13 +18,14 @@ import { CircularProgress } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./OrderDetails.css";
 import { doller } from "../../../Component/ReuseFormat/Doller";
+import { formatCapitalize } from "../../../Component/ReuseFormat/ReuseFormat";
 
 const OrderDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState({});
   const [load, setLoad] = useState(false);
-  const [currentStep, setCurrentStep] = useState("");
+  const [currentStep, setCurrentStep] = useState([]);
   const steps = [
     "Packaging",
     "Dispatched",
@@ -33,26 +34,31 @@ const OrderDetails = () => {
     "Delivered",
     "Cancelled",
   ];
+  console.log("currentStep", currentStep);
 
-  console.log("order////", order);
-
-  // const handleStepClick = (index) => {
-  //   if (index <= currentStep) {
-  //     setCurrentStep(index + 1);
-  //   }
-  // };
   useEffect(() => {
     getProduct();
   }, [id]);
 
+  // useEffect(() => {
+  //   if (order?.order_product?.length) {
+  //     const stepIndexes = order.order_product.map((product) =>
+  //       steps.indexOf(product?.order_product_status)
+  //     );
+  //     setCurrentStep(Math.max(...stepIndexes));
+  //   }
+  // }, [order.order_product]);
+
   useEffect(() => {
+    const productSteps = {};
     order?.order_product?.forEach((product) => {
       const statusIndex = steps.indexOf(product?.order_product_status);
       if (statusIndex !== -1) {
-        setCurrentStep(statusIndex);
+        productSteps[product.product_id] = statusIndex;
       }
     });
-  }, [order.order_product, steps]);
+    setCurrentStep(productSteps);
+  }, [order.order_product]);
 
   const {
     order_no,
@@ -178,36 +184,44 @@ const OrderDetails = () => {
               <Card.Body>
                 {order_product?.map((product, index) => (
                   <>
-                    <Link to={`/product/${product?.product_id}`}>
-                      {" "}
-                      <Card key={index} className="mb-3">
-                        <Row noGutters>
-                          <Col md={4}>
-                            <Image
-                              src={product?.product_image_path}
-                              alt={product?.product_name}
-                              fluid
-                            />
-                          </Col>
-                          <Col md={8}>
-                            <Card.Body>
-                              <Card.Title>{product?.product_name}</Card.Title>
-                              <Card.Text>
-                                <strong>Price:</strong> {doller.Aud}
-                                {product?.product_price}
-                                <br />
-                                <strong>Quantity:</strong> {product?.quantity}
-                                <br />
-                                <strong>Description:</strong>{" "}
-                                {product?.description}
-                                <br />
-                                <strong>SKU:</strong> {product?.product_sku}
-                              </Card.Text>
-                            </Card.Body>
-                          </Col>
-                        </Row>
-                      </Card>
-                    </Link>
+                    {" "}
+                    <Card key={index} className="mb-3">
+                      <Row noGutters>
+                        <Col md={4}>
+                          <Image
+                            src={product?.product_image_path}
+                            alt={product?.product_name}
+                            fluid
+                            onClick={() =>
+                              navigate(`/product/${product?.product_slug}`)
+                            }
+                          />
+                        </Col>
+                        <Col md={8}>
+                          <Card.Body>
+                            <Card.Title
+                              className="font-weight-bold"
+                              onClick={() =>
+                                navigate(`/product/${product?.product_slug}`)
+                              }
+                            >
+                              {formatCapitalize(product?.product_name)}
+                            </Card.Title>
+                            <Card.Text>
+                              <strong>Price:</strong> {doller.Aud}
+                              {product?.product_price}
+                              <br />
+                              <strong>Quantity:</strong> {product?.quantity}
+                              <br />
+                              <strong>Description:</strong>{" "}
+                              {product?.description}
+                              <br />
+                              <strong>SKU:</strong> {product?.product_sku}
+                            </Card.Text>
+                          </Card.Body>
+                        </Col>
+                      </Row>
+                    </Card>
                     <div>
                       <div className="d-flex justify-content-between mt-3">
                         <b>Review</b>
@@ -257,16 +271,16 @@ const OrderDetails = () => {
                                 <div
                                   key={stepIndex}
                                   className={`step ${
-                                    step === "Cancelled"
-                                      ? "cancelled"
-                                      : stepIndex <= currentStep
+                                    currentStep[product?.product_id] >=
+                                    stepIndex
                                       ? "completed"
                                       : ""
                                   }`}
                                 >
                                   <div className="step-icon-wrap">
                                     <div className="step-icon">
-                                      {stepIndex <= currentStep && (
+                                      {currentStep[product?.product_id] >=
+                                        stepIndex && (
                                         <i className="fa fa-check"></i>
                                       )}
                                     </div>

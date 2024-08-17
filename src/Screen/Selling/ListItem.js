@@ -77,7 +77,7 @@ const ListItem = () => {
       </div>
       <div className="container" style={{ padding: "10px 40px" }}>
         <div className="d-flex justify-content-between">
-          <h4>Start Your Listing</h4>
+          <h4 className="helo">Start Your Listing</h4>
         </div>
         <div className="my-4 d-flex justify-content-center">
           <input
@@ -119,10 +119,7 @@ const ListItem = () => {
         </div>
         <div className="row mt-5">
           <div className="col-lg-4 col-md-6 mb-4">
-            <div
-              className="card card-customss card-red"
-              onClick={() => navigate("/selling/find-product")}
-            >
+            <div className="card card-customss card-red">
               <p>
                 Type keywords like brand, model, or other details (ISBN, MPN,
                 VIN) in the search box above
