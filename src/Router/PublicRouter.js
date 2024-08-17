@@ -47,6 +47,8 @@ import SellerOrderList from "../Screen/Orders/SellerOrderList/SellerOrderList";
 import SellerOrderDetail from "../Screen/Orders/SellerOrderDetail/SellerOrderDetail";
 import RecentlyView from "../Screen/Myatozbay/RecentlyView/RecentlyView";
 import MessageScreen from "../Screen/Message/Message";
+import Draft from "../Screen/Selling/Drafts/Draft";
+import Active from "../Screen/Selling/Active/Active";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -165,7 +167,7 @@ const PublicRouter = () => {
         <Route path="/account-setting" element={<PersonalInfo />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermandServices />} />
-        <Route path="/product/:id" element={<Product />} />
+        <Route path="/product/:slug" element={<Product />} />
         <Route path="/contact-info" element={<ContactInfo />} />
         <Route path="/add-to-cart" element={<AddtoCart />} />
         <Route path="/add-product" element={<AddProduct />} />
@@ -193,6 +195,8 @@ const PublicRouter = () => {
         />
         <Route path="/recently-view" element={<RecentlyView />} />
         <Route path="/message" element={<MessageScreen />} />
+        <Route path="/drafts" element={<Draft />} />
+        <Route path="active" element={<Active />} />
       </Routes>
     </BrowserRouter>
   );

@@ -158,7 +158,7 @@ const BidandOffer = () => {
                           onMouseLeave={(e) =>
                             (e.currentTarget.style.transform = "scale(1)")
                           }
-                          onClick={() => viewProduct(item?.product_id)}
+                          onClick={() => viewProduct(item?.product_slug)}
                         />
                       </div>
                     </Col>
@@ -179,7 +179,7 @@ const BidandOffer = () => {
                             marginBottom: "8px",
                             cursor: "pointer",
                           }}
-                          onClick={() => viewProduct(item?.product_id)}
+                          onClick={() => viewProduct(item?.product_slug)}
                         >
                           {formatCapitalize(item?.product_name)}
                         </Card.Title>

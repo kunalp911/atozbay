@@ -54,8 +54,8 @@ const ProductList = () => {
     type: "add",
     note: "",
   });
-  console.log(">>>>>>?", stockList);
 
+  const fiterData = productLists.filter((item) => item.status == 1);
   useEffect(() => {
     getProductList();
   }, []);
@@ -181,13 +181,13 @@ const ProductList = () => {
         <div className="row">
           <div className="col-md-2">
             <div className="mt-2">
-              <h3>Seller Hub</h3>
+              <h3 className="helo">Seller Hub</h3>
             </div>
           </div>
           <div className="col-md-10">
             <Row className="mt-2">
               <Col>
-                <h3>All Product</h3>
+                <h3 className="helo">All Product</h3>
               </Col>
               <Col className="d-flex justify-content-end">
                 <button
@@ -200,7 +200,7 @@ const ProductList = () => {
             </Row>
             <div className="mt-2">
               <Container fluid className="my-4">
-                {productLists?.map((product, index) => (
+                {fiterData?.map((product, index) => (
                   <Card className="mt-2" key={index}>
                     <Card.Header>
                       <Row>

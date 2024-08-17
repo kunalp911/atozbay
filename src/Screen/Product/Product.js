@@ -22,7 +22,7 @@ import { Card, Col, Row } from "react-bootstrap";
 import { doller } from "../../Component/ReuseFormat/Doller";
 
 const Product = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const location = useLocation();
   const bidstatus = location?.state?.bidStatus || 0;
   const token = getToken();
@@ -57,11 +57,14 @@ const Product = () => {
   //   productDetails?.user_id
   // );
   useEffect(() => {
-    if (id) {
-      getProductDetails(id);
-      winnigBid(id);
+    if (slug) {
+      getProductDetailsSlug(slug);
+      winnigBid(slug);
     }
-  }, [id]);
+  }, [slug]);
+  // useEffect(() => {
+  //   getProductDetailsSlug();
+  // }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -99,10 +102,29 @@ const Product = () => {
     });
   };
 
-  const getProductDetails = (id) => {
+  // const getProductDetails = (id) => {
+  //   try {
+  //     setload(true);
+  //     apiCallNew("get", {}, ApiEndPoints.ProductShopDetail + id).then(
+  //       (response) => {
+  //         if (response.success) {
+  //           setProductLists(response.result);
+  //           addUniqueId(response.result.id);
+  //           getShopProductList(response.result.category_id);
+  //           setload(false);
+  //         }
+  //       }
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //     setload(false);
+  //   }
+  // };
+
+  const getProductDetailsSlug = (slug) => {
     try {
       setload(true);
-      apiCallNew("get", {}, ApiEndPoints.ProductShopDetail + id).then(
+      apiCallNew("get", {}, ApiEndPoints.ProductShopDetailSlug + slug).then(
         (response) => {
           if (response.success) {
             setProductLists(response.result);
@@ -178,7 +200,7 @@ const Product = () => {
       );
       if (response.success === true) {
         toast.success(response.msg);
-        getProductDetails(productDetails?.id);
+        getProductDetailsSlug(productDetails?.slug);
       }
     } catch (error) {
       console.log(error);
@@ -380,9 +402,16 @@ const Product = () => {
                 </p>
               </div>
               <div className="seller-infoe mb-3">
-                <span className="seller-name d-block prodesc">
+                <p
+                  className="m-0 text-muted"
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "#6c757d",
+                    marginBottom: "16px",
+                  }}
+                >
                   {productDetails?.description}
-                </span>
+                </p>
               </div>
               <div className="conditione mb-3 border-top">
                 <p className="mt-3 mb-0">
@@ -493,9 +522,19 @@ const Product = () => {
                 </p>
               </div>
               <div className="seller-infoe mb-3">
-                <span className="seller-name d-block prodesc">
+                {/* <span className="seller-name d-block prodesc">
                   {productDetails?.description}
-                </span>
+                </span> */}
+                <p
+                  className="m-0 text-muted"
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "#6c757d",
+                    marginBottom: "16px",
+                  }}
+                >
+                  {productDetails?.description}
+                </p>
               </div>
               <div className="price mb-3">
                 <span className="price-valuee h4">
@@ -728,7 +767,7 @@ const Product = () => {
             >
               <Card
                 className="mainsscart w-100"
-                onClick={() => navigate(`/product/${item.id}`)}
+                onClick={() => navigate(`/product/${item.slug}`)}
               >
                 <Card.Img
                   variant="top"

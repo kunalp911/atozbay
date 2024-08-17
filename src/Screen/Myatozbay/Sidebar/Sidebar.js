@@ -98,6 +98,24 @@ const Sidebar = ({ status, bidchild }) => {
                   Orders
                 </ListGroup.Item>
               </Link>
+              <Link to="/active" className="text-decoration-none">
+                <ListGroup.Item
+                  className={`fs-6 ${
+                    bidchild == "active" ? "text-primary" : "text-muted"
+                  }`}
+                >
+                  Active
+                </ListGroup.Item>
+              </Link>
+              <Link to="/drafts" className="text-decoration-none">
+                <ListGroup.Item
+                  className={`fs-6 ${
+                    bidchild == "draft" ? "text-primary" : "text-muted"
+                  }`}
+                >
+                  Drafts
+                </ListGroup.Item>
+              </Link>
             </ListGroup>
           </div>
         </Collapse>

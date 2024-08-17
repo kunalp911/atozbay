@@ -75,12 +75,12 @@ const RecentlyView = () => {
                 <Col xs={12} md={6} lg={3} key={item.id} className="mb-4">
                   <Card
                     className="mainsscart"
-                    onClick={() => navigate(`/product/${item.id}`)}
+                    onClick={() => navigate(`/product/${item.slug}`)}
                   >
                     <Card.Img
                       variant="top"
                       src={item?.product_images[0]?.product_image ?? ""}
-                      alt={`Product image for order #${item.id}`}
+                      alt={item.id}
                       style={{ height: "200px", objectFit: "cover" }}
                     />
                     <Card.Body>

@@ -7,14 +7,32 @@ import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../context/AuthContext";
-import { ListGroup } from "react-bootstrap";
+import { Dropdown, ListGroup, Modal } from "react-bootstrap";
 import { getToken } from "../../Helper/Storage";
+
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 const Header = () => {
   const navigate = useNavigate();
   const token = getToken();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorE2, setAnchorE2] = React.useState(null);
+  const [keyword, setKeyword] = React.useState("");
+  const debouncedKeyword = useDebounce(keyword, 500);
   const open = Boolean(anchorEl);
   const opens = Boolean(anchorE2);
   const [categoriesList, setCategoriesList] = useState([]);
@@ -23,10 +41,16 @@ const Header = () => {
   const firstChars = data?.email?.substring(0, 6);
   const { cartCount, updateCartCount } = useCart();
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [productLists, setProductLists] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     updateCartCount();
   }, [updateCartCount]);
+
+  useEffect(() => {
+    getShopProductList();
+  }, [debouncedKeyword]);
 
   const Logout = () => {
     localStorage.clear("@userToken");
@@ -53,6 +77,7 @@ const Header = () => {
   }, []);
 
   const handleMenuItemClick = (category) => {
+    console.log("catfi", category);
     navigate(`/category/${category.id}`, {
       state: {
         category: category,
@@ -60,6 +85,15 @@ const Header = () => {
     });
     handleClose();
     setSelectedCategoryId(category.id);
+  };
+
+  const handleSearch = (e) => {
+    setKeyword(e.target.value);
+    if (e.target.value.length > 0) {
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
   };
 
   const handleCategorySelect = (event) => {
@@ -106,6 +140,33 @@ const Header = () => {
   //     navigate("/login");
   //   }
   // };
+  const getShopProductList = async () => {
+    const payload = { page: 0, keyword: debouncedKeyword };
+    try {
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.ShopProductList
+      );
+      if (response.success) {
+        setProductLists(response.result);
+      }
+    } catch (error) {
+      console.error("Error fetching shop products:", error);
+    }
+  };
+
+  const handleListItemClick = (item) => {
+    console.log("?????????", item);
+    setKeyword(item.name);
+    setShowDropdown(false);
+    navigate(`/category/${item.id}`, {
+      state: {
+        category: item,
+      },
+    });
+  };
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg main-navbar">
@@ -403,14 +464,17 @@ const Header = () => {
                 </Grid>
               </Menu>
             </div>
-            <div className="col-9 second-header ">
+            <div className="col-9 second-header search-container">
               <div className="input-group">
                 <input
                   type="search"
                   className="form-control"
                   placeholder="Search for anything"
                   aria-label="Search"
+                  value={keyword}
+                  onChange={handleSearch}
                 />
+
                 <div className="input-group-append search-drop">
                   <select
                     className="form-control category-select"
@@ -437,6 +501,23 @@ const Header = () => {
                   </button>
                 </div>
               </div>
+              {showDropdown && (
+                <Dropdown.Menu show className="search-dropdowns">
+                  {productLists?.length > 0 ? (
+                    productLists.map((product, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        className="searchname"
+                        onClick={() => handleListItemClick(product)}
+                      >
+                        {product.name}
+                      </Dropdown.Item>
+                    ))
+                  ) : (
+                    <Dropdown.Item>No results found.</Dropdown.Item>
+                  )}
+                </Dropdown.Menu>
+              )}
             </div>
           </div>
         </div>

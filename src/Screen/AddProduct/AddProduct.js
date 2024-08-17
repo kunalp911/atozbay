@@ -23,12 +23,14 @@ import {
   Radio,
   Typography,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
 import { makeStyles } from "@material-ui/core";
 import { toast } from "react-toastify";
 import moment from "moment/moment";
+import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles((theme) => ({
   dialogPaper: {
@@ -36,10 +38,12 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "80vh",
   },
 }));
-const PreviewModal = ({ open, onClose, formData, images }) => {
+const PreviewModal = ({ open, onClose, formData, images, imagess }) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>Product Preview</DialogTitle>
+      <DialogTitle className="font-weight-bold" variant="h5">
+        Product Preview
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -60,7 +64,6 @@ const PreviewModal = ({ open, onClose, formData, images }) => {
               </ListItem>
               <ListItem>
                 <strong>Price:</strong> {formData.price || "N/A"}{" "}
-                {formData.price_format}
               </ListItem>
               <ListItem>
                 <strong>Auction Duration:</strong>{" "}
@@ -115,9 +118,20 @@ const PreviewModal = ({ open, onClose, formData, images }) => {
                   </Grid>
                 ))}
               </Grid>
-            ) : (
+            ) : imagess ? null : (
               <Typography>No images uploaded</Typography>
             )}
+            <Grid container spacing={2}>
+              {imagess?.map((image, index) => (
+                <Grid item key={index} xs={6} sm={4}>
+                  <img
+                    src={image?.product_image}
+                    alt={`Product Preview ${index + 1}`}
+                    style={{ width: "100%" }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         </Grid>
       </DialogContent>
@@ -135,6 +149,7 @@ const AddProduct = () => {
   const location = useLocation();
   const conditionName = location.state?.condition;
   const updateProduct = location.state?.product || null;
+  const draf = location.state?.statuss || null;
   const isUpdateMode = !!updateProduct;
   const initialSelectedAttributes = updateProduct?.product_attributes?.reduce(
     (acc, item) => {
@@ -194,6 +209,7 @@ const AddProduct = () => {
   const formattedDateTime = moment(`${date} ${time}`, "YYYY-MM-DD H:mm").format(
     "YYYY-MM-DD HH:mm"
   );
+  console.log("customArray", customArray);
 
   useEffect(() => {
     if (updateProduct) {
@@ -260,7 +276,6 @@ const AddProduct = () => {
       setOpensss(true);
     }
   };
-  console.log("customAttributes>>>", customAttributes);
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     const attribute_ids = [];
@@ -283,6 +298,8 @@ const AddProduct = () => {
       video: video || null,
       images: allImages,
       auction_date_time: formattedDateTime,
+      custom_attribute_name: customArray?.map((item) => item?.customName),
+      custom_attribute_value: customArray?.map((item) => item?.customValue),
       ...addProductFormData,
     };
     setload(true);
@@ -578,7 +595,7 @@ const AddProduct = () => {
     }));
   };
 
-  const handleAddProduct = async (e) => {
+  const handleAddProduct = async (e, status) => {
     e.preventDefault();
     const attribute_ids = [];
     const attribute_value_ids = [];
@@ -602,7 +619,7 @@ const AddProduct = () => {
       auction_date_time: formattedDateTime,
       custom_attribute_name: customArray?.map((item) => item?.customName),
       custom_attribute_value: customArray?.map((item) => item?.customValue),
-
+      status: status,
       ...addProductFormData,
     };
     setload(true);
@@ -615,9 +632,13 @@ const AddProduct = () => {
       );
       setload(true);
       if (response.success === true) {
-        navigate("/product-list");
         toast.success(response.msg);
         setload(false);
+        if (status == 2) {
+          navigate("/drafts");
+        } else {
+          navigate("/product-list");
+        }
       } else {
         toast.error(response.msg[0]);
         setload(false);
@@ -644,7 +665,7 @@ const AddProduct = () => {
       </div>
       <div className="container" style={{ padding: "10px 40px" }}>
         <div className="d-flex justify-content-between">
-          <h4>Complete your listing</h4>
+          <h4 className="helo">Complete your listing</h4>
         </div>
         <section className="photos-video mt-2">
           <h6 style={{ fontWeight: "bold" }}>PHOTOS OR VIDEO</h6>
@@ -1030,9 +1051,17 @@ const AddProduct = () => {
                   <DialogTitle className="text-center">
                     Add custom item specific
                   </DialogTitle>
-                  <Button onClick={handleClosesss} color="primary">
-                    <i className="fa fa-times"></i>
-                  </Button>
+                  <IconButton
+                    aria-label="close"
+                    onClick={handleClosesss}
+                    sx={{
+                      position: "absolute",
+                      right: 8,
+                      top: 5,
+                    }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
                 </Grid>
                 <DialogContent dividers>
                   <form action="javascript:void(0)" onSubmit={customSubmit}>
@@ -1282,7 +1311,14 @@ const AddProduct = () => {
               <p>
                 A <a href="#">final value fee</a> applies when your item sells.
               </p>
-              {isUpdateMode ? (
+              {isUpdateMode && draf ? (
+                <button
+                  className="btn btn-customs"
+                  onClick={(e) => handleAddProduct(e, 1)}
+                >
+                  List it
+                </button>
+              ) : isUpdateMode ? (
                 <button
                   className="btn btn-customs"
                   onClick={handleUpdateProduct}
@@ -1290,11 +1326,19 @@ const AddProduct = () => {
                   Update it
                 </button>
               ) : (
-                <button className="btn btn-customs" onClick={handleAddProduct}>
+                <button
+                  className="btn btn-customs"
+                  onClick={(e) => handleAddProduct(e, 1)}
+                >
                   List it
                 </button>
               )}
-              {/* <button className="btn btn-customss">Save for later</button> */}
+              <button
+                className="btn btn-customss"
+                onClick={(e) => handleAddProduct(e, 2)}
+              >
+                Save for later
+              </button>
               <button onClick={handleOpenPreview} className="btn btn-customss">
                 Preview
               </button>
@@ -1303,6 +1347,7 @@ const AddProduct = () => {
                 onClose={handleClosePreview}
                 formData={addProductFormData}
                 images={images}
+                imagess={updateImage}
               />
             </div>
           </div>

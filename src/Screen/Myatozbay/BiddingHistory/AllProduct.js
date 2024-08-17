@@ -108,52 +108,6 @@ const AllProduct = () => {
                 />
               </Col>
             </Row>
-            {/* {currentItems?.map((item, index) => (
-              <>
-                <Card className="mb-3" key={index}>
-                  <Row className="justify-content-around">
-                    <Col className="text-center" xs={12} lg={2} md={2}>
-                      <Card.Img
-                        className="img-fluid  mt-lg-4 ms-lg-3"
-                        src={item?.product_images[0]?.product_image}
-                        style={{
-                          objectFit: "contain",
-                        }}
-                        onClick={() => viewProduct(item?.id)}
-                      />
-                    </Col>
-                    <Col xs={12} lg={10} md={10}>
-                      <Card.Body>
-                        <Card.Title
-                          className="watch-title m-0"
-                          onClick={() => viewProduct(item?.id)}
-                        >
-                          {formatCapitalize(item?.name)}
-                        </Card.Title>
-                        <p className="m-0 text-muted">
-                          {item?.condition_description}
-                        </p>
-                        <Card.Text>
-                          Condition: <b>{item?.item_condition}</b>
-                        </Card.Text>
-                        <Row>
-                          <Col xs={6} md={4}>
-                            <Card.Text
-                              style={{ fontSize: "14px", marginBottom: "0" }}
-                            >
-                              ITEM PRICE:
-                            </Card.Text>
-                            <Card.Text className="font-weight-bold">
-                              US ${item?.product_prices?.price}
-                            </Card.Text>
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Col>
-                  </Row>
-                </Card>
-              </>
-            ))} */}
             {currentItems?.map((item, index) => (
               <Card
                 className="mb-4 p-3"
@@ -174,7 +128,7 @@ const AllProduct = () => {
                     <div
                       style={{
                         width: "100%",
-                        paddingTop: "100%", // Maintains aspect ratio of 1:1
+                        paddingTop: "100%",
                         position: "relative",
                         overflow: "hidden",
                         borderRadius: "12px",
@@ -199,7 +153,7 @@ const AllProduct = () => {
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.transform = "scale(1)")
                         }
-                        onClick={() => viewProduct(item?.id)}
+                        onClick={() => viewProduct(item?.slug)}
                       />
                     </div>
                   </Col>
@@ -219,7 +173,7 @@ const AllProduct = () => {
                           fontSize: "1.20rem",
                           marginBottom: "8px",
                         }}
-                        onClick={() => viewProduct(item?.id)}
+                        onClick={() => viewProduct(item?.slug)}
                       >
                         {formatCapitalize(item?.name)}
                       </Card.Title>

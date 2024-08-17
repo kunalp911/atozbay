@@ -145,7 +145,7 @@ const Category = () => {
                     <div className="col-md-3 mb-4" key={index}>
                       <Card sx={{ maxWidth: 345 }}>
                         <CardActionArea
-                          onClick={() => navigate(`/product/${card.id}`)}
+                          onClick={() => navigate(`/product/${card.slug}`)}
                         >
                           <CardMedia
                             component="img"

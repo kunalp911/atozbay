@@ -218,3 +218,46 @@
 /* .secondheader {
   margin: 0px 4rem;
 } */
+
+.search-container {
+  position: relative;
+  width: 100%;
+}
+
+.search-dropdowns {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  max-height: 400px;
+  max-width: 100%;
+  overflow-y: auto;
+  background-color: #fff;
+  overflow-x: hidden;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+  /* border: 1px solid #ddd; */
+}
+
+.search-dropdowns .dropdown-item {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-dropdowns .dropdown-item:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    padding: 10px;
+  }
+
+  .search-dropdowns {
+    max-height: 200px;
+  }
+}
+
+.searchname {
+  font-size: 14px;
+}

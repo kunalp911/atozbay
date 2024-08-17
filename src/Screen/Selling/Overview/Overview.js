@@ -21,7 +21,9 @@ const Overview = () => {
               <Col>
                 <div>
                   <h3>0</h3>
-                  <p className="text-primary">Active</p>
+                  <Link to="/active">
+                    <p className="text-primary">Active</p>
+                  </Link>
                 </div>
               </Col>
               <Col>
@@ -35,7 +37,9 @@ const Overview = () => {
               <Col>
                 <div>
                   <h3>0</h3>
-                  <p className="text-primary">Unsold</p>
+                  <Link to="/drafts">
+                    <p className="text-primary">Drafts</p>
+                  </Link>
                 </div>
               </Col>
               <Col>
