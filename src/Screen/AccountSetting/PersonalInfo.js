@@ -136,7 +136,6 @@ const PersonalInfo = () => {
     address_first_name: "",
     address_last_name: "",
   });
-  console.log("contactData", contactData);
   useEffect(() => {
     if (file) {
       updateProfileImg();
@@ -524,7 +523,6 @@ const PersonalInfo = () => {
         payload,
         ApiEndPoints.UpdateCustomerProfile
       );
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -616,6 +614,8 @@ const PersonalInfo = () => {
       pincode: item.pincode,
       address_first_name: item.address_first_name,
       address_last_name: item.address_last_name,
+      mobile_number: item.mobile_number,
+      country_code: item.country_code,
     });
     setPhone(item.mobile_number);
     setCountryCode(item.country_code);
@@ -1833,19 +1833,6 @@ const PersonalInfo = () => {
                                 Street Address 2
                               </label>
                             </div>
-
-                            {/* <div className="form-floating mb-3">
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="floatingCity"
-                                placeholder="Address Type"
-                                name="address_type"
-                                value={addShipAddress.address_type}
-                                onChange={handleAddAddressChange}
-                              />
-                              <label htmlFor="floatingCity">Address Type</label>
-                            </div> */}
                             <div className="form-floating mb-3">
                               <input
                                 type="number"

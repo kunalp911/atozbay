@@ -11,17 +11,42 @@ import { CircularProgress } from "@mui/material";
 import Swal from "sweetalert2";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 import { doller } from "../../Component/ReuseFormat/Doller";
+import { getToken } from "../../Helper/Storage";
 
 const AddtoCart = () => {
   const navigate = useNavigate();
+  const token = getToken();
   const [cartList, setCartList] = useState([]);
   const [saveLateList, setSaveLateList] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [load, setload] = useState(false);
   const [saveCount, setSaveCount] = useState(0);
-  const { updateCartCount } = useCart();
+  const [cart, setCart] = useState([]);
+  const { updateCartCount, updateCart } = useCart();
+  const { updateCartnum } = useCart();
+  // const cartData = localStorage.getItem("cart");
+  // const savedCart = JSON.parse(cartData);
 
-  console.log("saveLateList", saveLateList);
+  // useEffect(() => {
+  //   const cartData = localStorage.getItem("cart");
+  //   const savedCart = JSON.parse(cartData) || [];
+  //   setCart(savedCart);
+  //   updateCart(savedCart);
+  // }, []);
+
+  useEffect(() => {
+    const cartData = localStorage.getItem("cart");
+    let savedCart = [];
+    if (cartData) {
+      try {
+        savedCart = JSON.parse(cartData);
+      } catch (error) {
+        savedCart = [];
+      }
+    }
+    setCart(savedCart);
+  }, []);
+
   useEffect(() => {
     getCartList();
     getSaveLateList();
@@ -243,6 +268,32 @@ const AddtoCart = () => {
     navigate(`/checkout/${data?.product_id}`, { state: { quantity } });
   };
 
+  const cartFilter = cart?.filter(
+    (item, index, self) => index === self.findIndex((t) => t.id === item.id)
+  );
+
+  const calculateSubtotal = (cart) => {
+    return cart?.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  };
+  const subtotal = calculateSubtotal(cart);
+
+  // const removeFromCart = (itemId) => {
+  //   const updatedCart = cart.filter((item) => item.id !== itemId);
+  //   localStorage.setItem("cart", JSON.stringify(updatedCart));
+  //   setCart(updatedCart);
+  //   updateCart(updatedCart);
+  // };
+  const removeFromCart = (id) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart?.filter((item) => item.id !== id);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      updateCartnum(updatedCart);
+      return updatedCart;
+    });
+  };
+  const navilogin = () => {
+    navigate("/login");
+  };
   return (
     <main className="page">
       <Header />
@@ -260,7 +311,7 @@ const AddtoCart = () => {
             <div className="row">
               <div className="col-md-12 col-lg-8">
                 <div className="items">
-                  {cartList.length > 0 ? (
+                  {cartList?.length || cartFilter?.length > 0 ? (
                     cartList?.map((data, index) => (
                       <div className="product pt-0" key={data.product_id}>
                         <p
@@ -400,42 +451,204 @@ const AddtoCart = () => {
                       </h4>
                     </div>
                   )}
+
+                  {/* *****************withouttoken********************* */}
+                  {!token &&
+                    cartFilter?.map((data, index) => (
+                      <div className="product pt-0" key={data.id}>
+                        <p
+                          className="m-0 pt-0 text-end text-primary"
+                          style={{ fontSize: "14px", cursor: "pointer" }}
+                          onClick={() => navilogin()}
+                        >
+                          <u>Pay only this product</u>
+                        </p>
+                        <div className="row">
+                          <div className="col-md-3 mt-3">
+                            <div
+                              style={{
+                                width: "100%",
+                                paddingTop: "100%",
+                                position: "relative",
+                                overflow: "hidden",
+                                borderRadius: "12px",
+                                backgroundColor: "#f8f9fa",
+                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                                cursor: "pointer",
+                                transition: "transform 0.2s ease-in-out",
+                              }}
+                              onClick={() => viewProduct(data.slug)}
+                            >
+                              <img
+                                className="img-fluid mx-auto d-block"
+                                src={data.image}
+                                alt={data.image}
+                                style={{
+                                  objectFit: "contain",
+                                  position: "absolute",
+                                  top: 0,
+                                  left: 0,
+                                  width: "100%",
+                                  height: "100%",
+                                  transition: "transform 0.3s ease",
+                                }}
+                                onMouseEnter={(e) =>
+                                  (e.currentTarget.style.transform =
+                                    "scale(1.1)")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.currentTarget.style.transform = "scale(1)")
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <div className="col-md-8">
+                            <div className="info">
+                              <div className="row">
+                                <div className="col-md-5 product-name">
+                                  <div className="product-name">
+                                    <a
+                                      href="#"
+                                      className="pro-name"
+                                      onClick={() => viewProduct(data.slug)}
+                                    >
+                                      <u>{formatCapitalize(data.name)}</u>
+                                    </a>
+                                  </div>
+                                </div>
+                                <div className="col-md-4 quantity">
+                                  <label htmlFor="quantity">Quantity:</label>
+                                  <select
+                                    id="quantity"
+                                    className="form-control quantity-input"
+                                    value={data.quantity}
+                                    onChange={(e) =>
+                                      handleQuantityChange(
+                                        index,
+                                        Number(e.target.value)
+                                      )
+                                    }
+                                  >
+                                    {[...Array(data.quantity).keys()].map(
+                                      (x) => (
+                                        <option key={x + 1} value={x + 1}>
+                                          {x + 1}
+                                        </option>
+                                      )
+                                    )}
+                                  </select>
+                                </div>
+                                <div className="col-md-3 price">
+                                  <span>
+                                    {doller.Aud} {data.price * data.quantity}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className=""
+                          style={{
+                            position: "absolute",
+                            right: 25,
+                            display: "flex",
+                          }}
+                        >
+                          <p
+                            style={{
+                              cursor: "pointer",
+                              fontSize: "14px",
+                              marginTop: "7px",
+                            }}
+                            onClick={() => navilogin()}
+                          >
+                            <u>Save for later</u>
+                          </p>
+                          <p
+                            className="ms-3 mt-2"
+                            style={{ cursor: "pointer", fontSize: "14px" }}
+                            onClick={() => removeFromCart(data.id)}
+                          >
+                            <u>Remove</u>
+                          </p>
+                        </div>
+                        <hr className="mt-5" />
+                      </div>
+                    ))}
                 </div>
               </div>
               <div className="col-md-12 col-lg-4">
-                <div className="summary">
-                  <h3>Summary</h3>
-                  <div className="summary-item">
-                    <span className="text">Items ({cartList.length})</span>
-                    <span className="price">
-                      {doller.Aud} {totalPrice}
-                    </span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="text">Discount</span>
-                    <span className="price">{doller.Aud} 0</span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="text">Shipping</span>
-                    <span className="price">{doller.Aud} 0</span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="text">Total</span>
-                    <span
-                      className="price"
-                      style={{ fontWeight: "bold", fontSize: "23px" }}
+                {!token ? (
+                  <div className="summary">
+                    <h3>Summary</h3>
+                    <div className="summary-item">
+                      <span className="text">Items ({cartFilter.length})</span>
+                      <span className="price">
+                        {doller.Aud} {subtotal}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="text">Discount</span>
+                      <span className="price">{doller.Aud} 0</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="text">Shipping</span>
+                      <span className="price">{doller.Aud} 0</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="text">Total</span>
+                      <span
+                        className="price"
+                        style={{ fontWeight: "bold", fontSize: "23px" }}
+                      >
+                        {doller.Aud} {subtotal}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-lg btn-block checkout-btn"
+                      onClick={navilogin}
                     >
-                      {doller.Aud} {totalPrice}
-                    </span>
+                      Go to checkout
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-lg btn-block checkout-btn"
-                    onClick={handleCheckout}
-                  >
-                    Go to checkout
-                  </button>
-                </div>
+                ) : (
+                  <div className="summary">
+                    <h3>Summary</h3>
+                    <div className="summary-item">
+                      <span className="text">Items ({cartList.length})</span>
+                      <span className="price">
+                        {doller.Aud} {totalPrice}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="text">Discount</span>
+                      <span className="price">{doller.Aud} 0</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="text">Shipping</span>
+                      <span className="price">{doller.Aud} 0</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="text">Total</span>
+                      <span
+                        className="price"
+                        style={{ fontWeight: "bold", fontSize: "23px" }}
+                      >
+                        {doller.Aud} {totalPrice}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-lg btn-block checkout-btn"
+                      onClick={handleCheckout}
+                    >
+                      Go to checkout
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -112,6 +112,7 @@
   font-size: 14px;
   cursor: pointer;
   color: #636161;
+  display: flex;
 }
 .shareicon:hover {
   color: #3665f3;

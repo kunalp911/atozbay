@@ -80,6 +80,9 @@ const ApiEndPoints = {
   SaveLaterCount: `${APPConfig.API_URL}/save-later-product-count`,
   Terms: `${APPConfig.API_URL}/page/terms_condition`,
   Privacy: `${APPConfig.API_URL}/page/privacy_policy`,
+  Contactus: `${APPConfig.API_URL}/contactus`,
+  SellerDashboard: `${APPConfig.API_URL}/seller-dashboard`,
+  NotificationList: `${APPConfig.API_URL}/notifications-list`,
 };
 
 export default ApiEndPoints;

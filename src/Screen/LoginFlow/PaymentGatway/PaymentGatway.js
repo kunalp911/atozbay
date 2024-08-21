@@ -8,11 +8,11 @@ import { toast } from "react-toastify";
 import logos from "../../../Assets/image/bay.png";
 
 const PaymentGatway = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [load, setload] = useState(false);
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
- 
+
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
@@ -71,7 +71,7 @@ const PaymentGatway = () => {
                 ></i>
               </Link>
               <div className="card-body p-4 p-sm-5">
-              <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center">
                   <Link to="/">
                     <img
                       src={logos}

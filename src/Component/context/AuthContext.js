@@ -7,7 +7,27 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
   const [wishListCount, setWishListCount] = useState(0);
+  const [cartnum, setCartnum] = useState(0);
 
+  useEffect(() => {
+    const cartData = localStorage.getItem("cart");
+    let savedCart = [];
+    if (cartData) {
+      try {
+        savedCart = JSON.parse(cartData);
+        setCartnum(savedCart?.length);
+      } catch (error) {
+        savedCart = [];
+      }
+    }
+  }, []);
+
+  const updateCartnum = (cart) => {
+    setCartnum(cart?.length);
+  };
+  // const updateCart = () => {
+  //   setCartnum(cart?.length);
+  // };
   const updateCartCount = () => {
     try {
       apiCallNew("get", {}, ApiEndPoints.CartProductCount).then((response) => {
@@ -41,6 +61,8 @@ export const CartProvider = ({ children }) => {
         updateCartCount,
         wishListCount,
         handleCartCount,
+        cartnum,
+        updateCartnum,
       }}
     >
       {children}

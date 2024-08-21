@@ -13,6 +13,7 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  CircularProgress,
   Pagination,
   Typography,
 } from "@mui/material";
@@ -32,6 +33,7 @@ const Category = () => {
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [cateId, setCateId] = useState(id);
+  const [load, setload] = useState(false);
 
   const itemsPerPage = 20;
 
@@ -81,6 +83,7 @@ const Category = () => {
       category_id: categoryId,
     };
     try {
+      setload(true);
       const response = await apiCallNew(
         "post",
         payload,
@@ -89,9 +92,12 @@ const Category = () => {
       if (response.success) {
         setShopProductLists(response.result);
         setCount(response.product_count);
+        setload(false);
       }
+      setload(false);
     } catch (error) {
       console.error("Error fetching shop products:", error);
+      setload(false);
     }
   };
 
@@ -104,6 +110,11 @@ const Category = () => {
   return (
     <div>
       <Header />
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <div style={{ padding: "0px 40px" }}>
         <Topheader mainTitle={categoryName} />
         <div className="row my-4">
@@ -197,6 +208,24 @@ const Category = () => {
       <Footer />
     </div>
   );
+};
+
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
 };
 
 export default Category;

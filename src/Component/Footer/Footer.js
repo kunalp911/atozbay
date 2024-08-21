@@ -109,9 +109,9 @@ const Footer = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="#!" className="text-dark footerdroptitle">
-                      Contact us
-                    </a>
+                    <Link to={"/contact-us"}>
+                      <a className="text-dark footerdroptitle">Contact us</a>
+                    </Link>
                   </li>
                 </ul>
               </div>
