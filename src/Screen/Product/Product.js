@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./product.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
@@ -20,6 +20,7 @@ import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { getToken, getUserdata } from "../../Helper/Storage";
 import { Card, Col, Row } from "react-bootstrap";
 import { doller } from "../../Component/ReuseFormat/Doller";
+import { useCart } from "../../Component/context/AuthContext";
 
 const Product = () => {
   const { slug } = useParams();
@@ -47,24 +48,26 @@ const Product = () => {
     const savedIds = localStorage.getItem("uniqueIds");
     return savedIds ? JSON.parse(savedIds) : [];
   });
+  const [cart, setCart] = useState([]);
+  const { updateCartnum } = useCart();
+  const itemRef = useRef(null);
 
-  // console.log(
-  //   "winningBid",
-  //   winningBid?.user_id,
-  //   "user id",
-  //   userData?.id,
-  //   "pro user",
-  //   productDetails?.user_id
-  // );
+  useEffect(() => {
+    const cartData = localStorage.getItem("cart");
+    let savedCart = [];
+    try {
+      savedCart = cartData ? JSON.parse(cartData) : [];
+    } catch (error) {
+      savedCart = [];
+    }
+    setCart(savedCart);
+  }, []);
+
   useEffect(() => {
     if (slug) {
       getProductDetailsSlug(slug);
-      winnigBid(slug);
     }
   }, [slug]);
-  // useEffect(() => {
-  //   getProductDetailsSlug();
-  // }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -121,7 +124,7 @@ const Product = () => {
   //   }
   // };
 
-  const getProductDetailsSlug = (slug) => {
+  const getProductDetailsSlug = useCallback((slug) => {
     try {
       setload(true);
       apiCallNew("get", {}, ApiEndPoints.ProductShopDetailSlug + slug).then(
@@ -130,7 +133,14 @@ const Product = () => {
             setProductLists(response.result);
             addUniqueId(response.result.id);
             getShopProductList(response.result.category_id);
+            winnigBid(response.result.id);
             setload(false);
+          }
+          if (itemRef.current) {
+            itemRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
           }
         }
       );
@@ -138,7 +148,7 @@ const Product = () => {
       console.log(error);
       setload(false);
     }
-  };
+  }, []);
 
   const handleAddToCart = () => {
     try {
@@ -165,6 +175,44 @@ const Product = () => {
       setload(false);
     }
   };
+
+  const addToCartwithoutlogi = (item) => {
+    const productToAdd = {
+      id: item?.id,
+      name: item?.name,
+      price: item?.product_prices?.price,
+      image: item?.product_images[0]?.product_image,
+      slug: item?.slug,
+      quantity: 1,
+    };
+    // setCart((prevCart) => {
+    //   const updatedCart = [...prevCart, productToAdd];
+    //   localStorage.setItem("cart", JSON.stringify(updatedCart));
+    //   navigate("/add-to-cart");
+    //   return updatedCart;
+    // });
+    setCart((prevCart) => {
+      const existingProduct = prevCart?.find(
+        (cartItem) => cartItem.id === item.id
+      );
+      let updatedCart;
+      if (existingProduct) {
+        updatedCart = prevCart?.map((cartItem) =>
+          cartItem.id === item.id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        );
+      } else {
+        updatedCart = [...prevCart, productToAdd];
+      }
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      updateCartnum(updatedCart);
+      navigate("/add-to-cart");
+      return updatedCart;
+    });
+  };
+
+  const matchId = cart?.filter((item) => item.id === productDetails?.id);
 
   const handleAddToWishList = () => {
     try {
@@ -207,7 +255,7 @@ const Product = () => {
     }
   };
 
-  const getShopProductList = async (id) => {
+  const getShopProductList = useCallback(async (id) => {
     const payload = {
       page: 0,
       category_id: id,
@@ -225,7 +273,7 @@ const Product = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
 
   const shopFilterProduct = shopProductLists?.filter(
     (item) => item?.id !== productDetails?.id
@@ -290,12 +338,12 @@ const Product = () => {
     if (token) {
       handleAddToCart();
     } else {
-      navigate("/login");
+      addToCartwithoutlogi(productDetails);
     }
   };
 
   return (
-    <div>
+    <div ref={itemRef}>
       <Header />
       {load && (
         <div style={styles.backdrop}>
@@ -398,7 +446,7 @@ const Product = () => {
                   {formatCapitalize(productDetails?.name)}
                 </h1>
                 <p className="shareicon" onClick={toggleShareModal}>
-                  <i class="fa fa-share"></i> Share
+                  <i class="fa fa-share me-1 mt-1"></i> Share
                 </p>
               </div>
               <div className="seller-infoe mb-3">
@@ -518,13 +566,10 @@ const Product = () => {
                   {formatCapitalize(productDetails?.name)}
                 </h1>
                 <p className="shareicon" onClick={toggleShareModal}>
-                  <i class="fa fa-share"></i> Share
+                  <i class="fa fa-share me-1 mt-1"></i> Share
                 </p>
               </div>
               <div className="seller-infoe mb-3">
-                {/* <span className="seller-name d-block prodesc">
-                  {productDetails?.description}
-                </span> */}
                 <p
                   className="m-0 text-muted"
                   style={{
@@ -575,7 +620,7 @@ const Product = () => {
                 >
                   Buy It Now
                 </button>
-                {productDetails?.cart_quantity ? (
+                {productDetails?.cart_quantity || matchId?.length > 0 ? (
                   <button
                     className="btn addcarditnow-btn btn-block mb-2"
                     onClick={viewInCart}

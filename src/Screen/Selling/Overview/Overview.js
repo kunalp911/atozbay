@@ -1,12 +1,31 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Header from "../../../Component/Header/Header";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import Sidebar from "../../Myatozbay/Sidebar/Sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import { doller } from "../../../Component/ReuseFormat/Doller";
+import { apiCallNew } from "../../../Network_Call/apiservices";
+import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 
 const Overview = () => {
   const navigate = useNavigate();
+  const [overCount, setOverCount] = useState({});
+
+  useEffect(() => {
+    getOverCount();
+  }, []);
+  const getOverCount = useCallback(() => {
+    try {
+      apiCallNew("post", {}, ApiEndPoints.SellerDashboard).then((response) => {
+        if (response.success) {
+          setOverCount(response.result);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return (
     <div>
       <Header />
@@ -20,7 +39,7 @@ const Overview = () => {
             <Row className="text-center py-4 bg-light">
               <Col>
                 <div>
-                  <h3>0</h3>
+                  <h3>{overCount?.active_product_count}</h3>
                   <Link to="/active">
                     <p className="text-primary">Active</p>
                   </Link>
@@ -28,7 +47,7 @@ const Overview = () => {
               </Col>
               <Col>
                 <div>
-                  <h3>0</h3>
+                  <h3>{overCount?.orders_count}</h3>
                   <Link to="/seller-orders-list">
                     <p className="text-primary">Orders</p>
                   </Link>
@@ -36,7 +55,7 @@ const Overview = () => {
               </Col>
               <Col>
                 <div>
-                  <h3>0</h3>
+                  <h3>{overCount?.draft_product_count}</h3>
                   <Link to="/drafts">
                     <p className="text-primary">Drafts</p>
                   </Link>

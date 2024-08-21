@@ -49,6 +49,8 @@ import RecentlyView from "../Screen/Myatozbay/RecentlyView/RecentlyView";
 import MessageScreen from "../Screen/Message/Message";
 import Draft from "../Screen/Selling/Drafts/Draft";
 import Active from "../Screen/Selling/Active/Active";
+import ContactUs from "../Screen/ContactUs/ContactUs";
+import Notification from "../Screen/Notification/Notification";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -196,7 +198,9 @@ const PublicRouter = () => {
         <Route path="/recently-view" element={<RecentlyView />} />
         <Route path="/message" element={<MessageScreen />} />
         <Route path="/drafts" element={<Draft />} />
-        <Route path="active" element={<Active />} />
+        <Route path="/active" element={<Active />} />
+        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/notification" element={<Notification />} />
       </Routes>
     </BrowserRouter>
   );

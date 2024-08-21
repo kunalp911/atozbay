@@ -17,7 +17,11 @@ const Active = () => {
   }, []);
   const getProductList = () => {
     const payload = {
-      active_auction_product: 1,
+      page: 0,
+      keyword: "",
+      category_id: "",
+      // active_auction_product: 1,
+      status: 1,
     };
     try {
       setload(true);

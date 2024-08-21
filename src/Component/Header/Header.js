@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./header.css";
 import { Link, useNavigate } from "react-router-dom";
 import logos from "../../Assets/image/bay.png";
@@ -39,7 +39,7 @@ const Header = () => {
   const userData = localStorage.getItem("@userData");
   const data = JSON.parse(userData);
   const firstChars = data?.email?.substring(0, 6);
-  const { cartCount, updateCartCount } = useCart();
+  const { cartCount, updateCartCount, cartnum } = useCart();
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [productLists, setProductLists] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -72,12 +72,16 @@ const Header = () => {
     setAnchorE2(null);
   };
 
+  // useEffect(() => {
+  //   getCategories();
+  // }, []);
   useEffect(() => {
-    getCategories();
-  }, []);
+    if (categoriesList?.length === 0) {
+      getCategories();
+    }
+  }, [categoriesList]);
 
-  const handleMenuItemClick = (category) => {
-    console.log("catfi", category);
+  const handleMenuItemClick = useCallback((category) => {
     navigate(`/category/${category.id}`, {
       state: {
         category: category,
@@ -85,23 +89,23 @@ const Header = () => {
     });
     handleClose();
     setSelectedCategoryId(category.id);
-  };
+  }, []);
 
-  const handleSearch = (e) => {
+  const handleSearch = useCallback((e) => {
     setKeyword(e.target.value);
     if (e.target.value.length > 0) {
       setShowDropdown(true);
     } else {
       setShowDropdown(false);
     }
-  };
+  }, []);
 
-  const handleCategorySelect = (event) => {
+  const handleCategorySelect = useCallback((event) => {
     const selectedId = event.target.value;
     setSelectedCategoryId(selectedId);
-  };
+  }, []);
 
-  const handleSearchClick = () => {
+  const handleSearchClick = useCallback(() => {
     if (selectedCategoryId) {
       const selectedCategory = categoriesList.find(
         (cat) => cat.id == selectedCategoryId
@@ -114,9 +118,9 @@ const Header = () => {
     } else {
       navigate("/category/all");
     }
-  };
+  }, [selectedCategoryId, categoriesList, navigate]);
 
-  const getCategories = () => {
+  const getCategories = useCallback(() => {
     try {
       apiCallNew("get", {}, ApiEndPoints.CategoriesList).then((response) => {
         if (response.success) {
@@ -126,7 +130,7 @@ const Header = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
   const AccountSetting = () => {
     navigate("/account-setting");
@@ -140,7 +144,7 @@ const Header = () => {
   //     navigate("/login");
   //   }
   // };
-  const getShopProductList = async () => {
+  const getShopProductList = useCallback(async () => {
     const payload = { page: 0, keyword: debouncedKeyword };
     try {
       const response = await apiCallNew(
@@ -154,18 +158,24 @@ const Header = () => {
     } catch (error) {
       console.error("Error fetching shop products:", error);
     }
-  };
+  }, [debouncedKeyword]);
 
-  const handleListItemClick = (item) => {
-    console.log("?????????", item);
+  const handleListItemClick = useCallback((item) => {
     setKeyword(item.name);
     setShowDropdown(false);
-    navigate(`/category/${item.id}`, {
-      state: {
-        category: item,
-      },
-    });
-  };
+    navigate(`/product/${item.slug}`);
+    setKeyword("");
+  }, []);
+
+  // const handleListItemClick = (item) => {
+  //   setKeyword(item.name);
+  //   setShowDropdown(false);
+  //   navigate(`/category/${item.id}`, {
+  //     state: {
+  //       category: item,
+  //     },
+  //   });
+  // };
 
   return (
     <div>
@@ -301,9 +311,11 @@ const Header = () => {
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link first-title" href="#">
-                Help & Contact
-              </a>
+              <Link to={"/contact-us"}>
+                <a className="nav-link first-title" href="#">
+                  Help & Contact
+                </a>
+              </Link>
             </li>
           </ul>
           <ul className="navbar-nav">
@@ -314,13 +326,23 @@ const Header = () => {
                 </a>
               </Link>
             </li>
-            <li className="nav-item dropdown">
-              <Link to="/watch-list">
-                <a className="nav-link first-titless " href="#">
-                  Watchlist
-                </a>
-              </Link>
-            </li>
+            {token ? (
+              <li className="nav-item dropdown">
+                <Link to="/watch-list">
+                  <a className="nav-link first-titless " href="#">
+                    Watchlist
+                  </a>
+                </Link>
+              </li>
+            ) : (
+              <li className="nav-item dropdown">
+                <Link to="/login">
+                  <a className="nav-link first-titless " href="#">
+                    Watchlist
+                  </a>
+                </Link>
+              </li>
+            )}
             {token ? (
               <li className="nav-item dropdown">
                 <a
@@ -397,9 +419,11 @@ const Header = () => {
               </li>
             )}
             <li className="nav-item">
-              <a className="nav-link first-iconss" href="#">
-                <i className="fas fa-bell"></i>
-              </a>
+              <Link to="/notification">
+                <a className="nav-link first-iconss" href="#">
+                  <i className="fas fa-bell"></i>
+                </a>
+              </Link>
             </li>
             <li className="nav-item nav-icon-cart">
               <Link to={"/add-to-cart"} className="text-dark">
@@ -408,7 +432,7 @@ const Header = () => {
                   aria-label="show 4 new mails"
                   color="inherit"
                 >
-                  <Badge badgeContent={cartCount} color="error">
+                  <Badge badgeContent={cartCount || cartnum} color="error">
                     <ShoppingCartIcon />
                   </Badge>
                 </IconButton>
