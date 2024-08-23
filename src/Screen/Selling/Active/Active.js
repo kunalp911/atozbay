@@ -15,6 +15,7 @@ const Active = () => {
   useEffect(() => {
     getProductList();
   }, []);
+
   const getProductList = () => {
     const payload = {
       page: 0,
@@ -38,6 +39,7 @@ const Active = () => {
       setload(false);
     }
   };
+
   return (
     <div>
       {load && (

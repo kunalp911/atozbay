@@ -83,6 +83,7 @@ const ApiEndPoints = {
   Contactus: `${APPConfig.API_URL}/contactus`,
   SellerDashboard: `${APPConfig.API_URL}/seller-dashboard`,
   NotificationList: `${APPConfig.API_URL}/notifications-list`,
+  TodayDeal: `${APPConfig.API_URL}/today-deal-product`,
 };
 
 export default ApiEndPoints;

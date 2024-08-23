@@ -4,6 +4,7 @@ import "react-slideshow-image/dist/styles.css";
 import "./dashboard.css";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
+import logo from "../../Assets/image/bay.png";
 import {
   Box,
   Button,
@@ -24,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import flowimg from "../../Assets/image/flow.jpg";
 import jeanss from "../../Assets/image/jeanss.jpg";
 import books from "../../Assets/image/books.jpg";
+import { doller } from "../../Component/ReuseFormat/Doller";
 
 const divStyle = {
   display: "flex",
@@ -126,10 +128,13 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [subCategoriesList, setSubCategoriesList] = React.useState([]);
   const [load, setload] = useState(false);
+  const [dealProduct, setDealProduct] = useState([]);
 
   const ReverseOrder = [...subCategoriesList].reverse();
+  console.log("dealProduct", dealProduct);
   useEffect(() => {
     getSubCategories();
+    getDailydealProduct();
   }, []);
   const getSubCategories = () => {
     try {
@@ -154,6 +159,26 @@ const Dashboard = () => {
     navigate(`/category/${item?.id}`, { state: { category: item } });
   };
 
+  const getDailydealProduct = async () => {
+    const payload = { page: 0, today_deal: 1, keyword: "" };
+    try {
+      setload(true);
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.ShopProductList
+      );
+      if (response.success) {
+        setDealProduct(response.result);
+        setload(false);
+      } else {
+        setload(false);
+      }
+    } catch (error) {
+      console.error("Error fetching shop products:", error);
+      setload(false);
+    }
+  };
   return (
     <>
       <Header />
@@ -230,22 +255,26 @@ const Dashboard = () => {
           </div>
           <div className="mt-3">
             <div className="row mx-0 mt-0">
-              {cardData.map((card, index) => (
+              {dealProduct?.map((card, index) => (
                 <div className="col-md-3 mb-4" key={index}>
                   <Card sx={{ maxWidth: 345 }}>
-                    <CardActionArea>
+                    <CardActionArea
+                      onClick={() => navigate(`/product/${card.slug}`)}
+                    >
                       <CardMedia
                         component="img"
                         sx={{ height: 200, objectFit: "contain", p: 2 }}
-                        image={card.image}
-                        alt={card.title}
+                        image={card.product_images[0]?.product_image || logo}
+                        alt={card.name}
                       />
                       <CardContent>
-                        <p className="font-weight-bold mt-2">{card.title}</p>
+                        <p className="titledescrip font-weight-bold mt-2">
+                          {formatCapitalize(card.name)}
+                        </p>
                         <Typography variant="body1" color="text.primary">
-                          {card.price}
+                          {doller.Aud} {card.product_prices.price}
                         </Typography>
-                        <Box display="flex" alignItems="center" mt={2}>
+                        {/* <Box display="flex" alignItems="center" mt={2}>
                           <Star color="primary" />
                           <Typography
                             variant="body2"
@@ -254,7 +283,7 @@ const Dashboard = () => {
                           >
                             {card.rating} / 5
                           </Typography>
-                        </Box>
+                        </Box> */}
                       </CardContent>
                     </CardActionArea>
                   </Card>
@@ -291,27 +320,6 @@ const Dashboard = () => {
             <h3>Popular Destinations</h3>
           </div>
           <div className="container mt-3">
-            {/* <div className="row" style={{ alignItems: "center" }}>
-              {ReverseOrder.map((offer, index) => (
-                <div
-                  key={index}
-                  className="col-6 col-md-4 col-lg-2 mb-3 text-center"
-                >
-                  <div className="offer-details">
-                    <img
-                      src={offer.image}
-                      width="150"
-                      className="rounded-circle img-fluid"
-                      alt={offer.category_name}
-                      style={{ backgroundColor: "#ccc" }}
-                    />
-                    <p className="font-weight-bold mt-2">
-                      {offer.category_name}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div> */}
             <div className="row">
               {ReverseOrder.map((offer, index) => (
                 <div

@@ -51,6 +51,7 @@ import Draft from "../Screen/Selling/Drafts/Draft";
 import Active from "../Screen/Selling/Active/Active";
 import ContactUs from "../Screen/ContactUs/ContactUs";
 import Notification from "../Screen/Notification/Notification";
+import DailyDeals from "../Screen/DailyDeals/DailyDeals";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -201,6 +202,7 @@ const PublicRouter = () => {
         <Route path="/active" element={<Active />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/notification" element={<Notification />} />
+        <Route path="/dailydeals" element={<DailyDeals />} />
       </Routes>
     </BrowserRouter>
   );

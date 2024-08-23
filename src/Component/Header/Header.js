@@ -306,9 +306,11 @@ const Header = () => {
               </li>
             )}
             <li className="nav-item">
-              <a className="nav-link first-title" href="#">
-                Daily Deals
-              </a>
+              <Link to="/dailydeals">
+                <a className="nav-link first-title" href="#">
+                  Daily Deals
+                </a>
+              </Link>
             </li>
             <li className="nav-item">
               <Link to={"/contact-us"}>
