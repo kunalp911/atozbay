@@ -30,6 +30,7 @@ import {
   Card,
   Image,
   Button,
+  Form,
 } from "react-bootstrap";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -39,6 +40,8 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CloseIcon from "@mui/icons-material/Close";
+import StarIcon from "@mui/icons-material/Star";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const ProductList = () => {
   const navigate = useNavigate();
@@ -54,11 +57,45 @@ const ProductList = () => {
     type: "add",
     note: "",
   });
-
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  console.log("selectedProducts", selectedProductId);
   const fiterData = productLists.filter((item) => item.status == 1);
   useEffect(() => {
     getProductList();
   }, []);
+
+  const handleProductSelect = (e, selectedProduct) => {
+    if (e.target.checked) {
+      setSelectedProductId(selectedProduct.id); // Store only the ID
+    } else {
+      setSelectedProductId(null); // Clear the selection
+    }
+  };
+
+  const handleAddToDailyDeal = (stat) => {
+    const payload = {
+      status: stat,
+      product_id: selectedProductId,
+    };
+    try {
+      setload(true);
+      apiCallNew("post", payload, ApiEndPoints.TodayDeal).then((response) => {
+        if (response.success) {
+          console.log("respo", response);
+          toast.success(response.msg);
+          getProductList();
+          setSelectedProductId(null);
+          setload(false);
+        } else {
+          setload(false);
+          toast.error(response.msg);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
 
   const handleStokeOpne = (id) => {
     setStokeOpen(true);
@@ -177,7 +214,7 @@ const ProductList = () => {
         </div>
       )}
       <Header />
-      <div className="" style={{ padding: "0px 40px" }}>
+      <div className="" style={{ padding: "0px 20px" }}>
         <div className="row">
           <div className="col-md-2">
             <div className="mt-2">
@@ -199,7 +236,7 @@ const ProductList = () => {
               </Col>
             </Row>
             <div className="mt-2">
-              <Container fluid className="my-4">
+              {/* <Container fluid className="my-4">
                 {fiterData?.map((product, index) => (
                   <Card className="mt-2" key={index}>
                     <Card.Header>
@@ -334,6 +371,154 @@ const ProductList = () => {
                     </Card.Body>
                   </Card>
                 ))}
+              </Container> */}
+              <Container fluid className="my-4">
+                <Row className="mt-3">
+                  <Col className="">
+                    <Button
+                      size="sm"
+                      style={{ backgroundColor: "#3665f3" }}
+                      onClick={() => handleAddToDailyDeal(1)}
+                      disabled={!selectedProductId}
+                    >
+                      Add Selected to Daily Deal
+                    </Button>
+                    <Button
+                      size="sm ms-3"
+                      style={{ backgroundColor: "#3665f3" }}
+                      onClick={() => handleAddToDailyDeal(0)}
+                      disabled={!selectedProductId}
+                    >
+                      Remove Selected from Daily Deal
+                    </Button>
+                  </Col>
+                </Row>
+                <Form action="javascript:void(0)">
+                  {fiterData?.map((product, index) => (
+                    <Card className="mt-2" key={product?.id}>
+                      <Card.Header>
+                        <Row>
+                          <Col md={1}>
+                            <Form.Check
+                              className="ms-2"
+                              type="checkbox"
+                              value={product?.id}
+                              onChange={(e) => handleProductSelect(e, product)}
+                              checked={selectedProductId === product?.id}
+                            />
+                          </Col>
+                          <Col md={5}>
+                            <Typography variant="h6">
+                              {index + 1}. Title: {product?.name}
+                              {product?.is_today_deal === 1 && (
+                                <>
+                                  <AccessTimeIcon
+                                    sx={{ color: "green", ml: 2 }}
+                                    titleAccess="This product is on Daily Deal"
+                                  />
+                                  <span
+                                    style={{ fontSize: "13px", color: "green" }}
+                                  >
+                                    Deal
+                                  </span>
+                                </>
+                              )}
+                            </Typography>
+                          </Col>
+                          <Col md={6} className="d-flex justify-content-end">
+                            <div>
+                              <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => handleStokeOpne(product?.id)}
+                              >
+                                Add & Remove Stock
+                              </button>
+                              <button
+                                className="btn btn-secondary btn-sm ms-3"
+                                onClick={() => handleOpen(product?.id)}
+                              >
+                                Stock list
+                              </button>
+                              <EditIcon
+                                className="ms-3"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => handleUpdate(product)}
+                              />
+                              <DeleteIcon
+                                className="ms-3"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => confirmDeletion(product?.id)}
+                              />
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card.Header>
+                      <Card.Body>
+                        <Row>
+                          <Col md={3}>
+                            <ImageCarousel
+                              productImages={product?.product_images}
+                            />
+                          </Col>
+                          <Col md={9}>
+                            <Table responsive bordered>
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <strong>SKU</strong>
+                                  </td>
+                                  <td>{product?.sku}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <strong>Category</strong>
+                                  </td>
+                                  <td>{product?.category_name}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <strong>Brand</strong>
+                                  </td>
+                                  <td>{product?.brand_name}</td>
+                                </tr>
+                                {/* Add more product details as needed */}
+                              </tbody>
+                            </Table>
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col>
+                            <h5>Attributes</h5>
+                            <Table responsive bordered>
+                              <thead>
+                                <tr>
+                                  <th>Attribute</th>
+                                  <th>Value</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {product?.product_attributes?.map((attr) => (
+                                  <tr key={attr?.id}>
+                                    <td>{attr?.attribute_name}</td>
+                                    <td>{attr?.attr_val_name}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                              <tbody>
+                                {product?.custom_attributes?.map((attr) => (
+                                  <tr key={attr?.id}>
+                                    <td>{attr?.custom_attribute_name}</td>
+                                    <td>{attr?.custom_attribute_value}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </Form>
               </Container>
             </div>
           </div>

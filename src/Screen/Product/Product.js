@@ -768,36 +768,6 @@ const Product = () => {
           product={productDetails}
         />
       </div>
-      {/* <div
-        className="m-5" 
-      >
-        <Row>
-          {shopProductLists?.map((item) => (
-            <Col xs={12} md={4} lg={2} key={item.id} className="mb-4">
-              <Card
-                className="mainsscart"
-                onClick={() => navigate(`/product/${item.id}`)}
-              >
-                <Card.Img
-                  variant="top"
-                  src={item?.product_images[0]?.product_image ?? ""}
-                  alt={`Product image for order #${item.id}`}
-                  style={{ height: "200px", objectFit: "cover" }}
-                />
-                <Card.Body>
-                  <p className="font-weight-bold mt-2 mb-1">
-                    {formatCapitalize(item?.category_name)}
-                  </p>
-                  <Card.Text style={{ fontSize: "15px" }}>
-                    <p className="descriptionsass">{item.description}</p>
-                    <b>${item?.product_prices?.price}</b>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div> */}
       <div className="m-5 border-top">
         <h4 className="helo mt-4">Similar Items</h4>
         <Row className="justify-content-centes">
