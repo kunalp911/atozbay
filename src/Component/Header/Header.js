@@ -44,7 +44,6 @@ const Header = () => {
   const [productLists, setProductLists] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  console.log("???????.....", cartCount, cartnum);
   useEffect(() => {
     updateCartCount();
   }, [updateCartCount]);

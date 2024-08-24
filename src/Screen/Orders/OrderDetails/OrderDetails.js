@@ -27,7 +27,7 @@ const OrderDetails = () => {
   const [load, setLoad] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
   const steps = [
-    "Packaging",
+    "Placed",
     "Dispatched",
     "In transit",
     "Out for delivery",
