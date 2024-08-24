@@ -84,6 +84,7 @@ const ApiEndPoints = {
   SellerDashboard: `${APPConfig.API_URL}/seller-dashboard`,
   NotificationList: `${APPConfig.API_URL}/notifications-list`,
   TodayDeal: `${APPConfig.API_URL}/today-deal-product`,
+  ConversationRead: `${APPConfig.API_URL}/conversation-read/`,
 };
 
 export default ApiEndPoints;

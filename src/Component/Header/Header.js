@@ -44,6 +44,7 @@ const Header = () => {
   const [productLists, setProductLists] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  console.log("???????.....", cartCount, cartnum);
   useEffect(() => {
     updateCartCount();
   }, [updateCartCount]);
@@ -434,7 +435,10 @@ const Header = () => {
                   aria-label="show 4 new mails"
                   color="inherit"
                 >
-                  <Badge badgeContent={cartCount || cartnum} color="error">
+                  <Badge
+                    badgeContent={token ? cartCount : cartnum}
+                    color="error"
+                  >
                     <ShoppingCartIcon />
                   </Badge>
                 </IconButton>

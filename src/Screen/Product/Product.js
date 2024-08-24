@@ -604,19 +604,26 @@ const Product = () => {
                   onChange={(e) => setQuantity(e.target.value)}
                 >
                   <option value="0" hidden></option>
-                  {[
-                    ...Array(productDetails?.product_prices?.quantity).keys(),
-                  ].map((x) => (
-                    <option key={x + 1} value={x + 1}>
-                      {x + 1}
-                    </option>
-                  ))}
+                  {productDetails?.product_prices?.quantity > 0 ? (
+                    [
+                      ...Array(productDetails?.product_prices?.quantity).keys(),
+                    ].map((x) => (
+                      <option key={x + 1} value={x + 1}>
+                        {x + 1}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="1">out of stock</option>
+                  )}
                 </select>
               </div>
               <div className="buttonse mb-3 mt-5">
                 <button
                   className="btn buyitnow-btn btn-block mb-2"
                   onClick={handleAddtocartLogin}
+                  disabled={
+                    productDetails?.product_prices?.quantity > 0 ? false : true
+                  }
                 >
                   Buy It Now
                 </button>
@@ -631,10 +638,16 @@ const Product = () => {
                   <button
                     className="btn addcarditnow-btn btn-block mb-2"
                     onClick={handleAddtocartLogin}
+                    disabled={
+                      productDetails?.product_prices?.quantity > 0
+                        ? false
+                        : true
+                    }
                   >
                     Add to Cart
                   </button>
                 )}
+
                 {productDetails?.wishlist_id ? (
                   <button
                     className="btn additnow-btn btn-block mb-2"
