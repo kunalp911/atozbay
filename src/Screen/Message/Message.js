@@ -43,7 +43,6 @@ const MessageScreen = () => {
     if (selectedUser) {
       getMessagesForUser(selectedUser.user_id);
       getMessagesHistory(selectedUser.user_id);
-      console.log("<><><>", selectedUser.user_id);
     }
   }, [selectedUser]);
 
@@ -85,9 +84,23 @@ const MessageScreen = () => {
       console.log(error);
     }
   };
+  const handleRead = (id) => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.ConversationRead + id).then(
+        (response) => {
+          if (response.success) {
+            getUserList();
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleUserSelection = (user) => {
     setSelectedUser(user);
+    handleRead(user?.user_id);
   };
 
   const handleSendMessage = () => {
@@ -152,13 +165,18 @@ const MessageScreen = () => {
                 >
                   <Form.Check type="checkbox" className="ml-1" />
                   <img
-                    src="https://i.ebayimg.com/00/s/MzAwWDMwMA==/z/-BwAAOSwvdZko4Ug/$_7.PNG"
-                    alt="eBay"
+                    src="https://icons.veryicon.com/png/o/internet--web/prejudice/user-128.png"
+                    alt="user"
                     className="me-2 rounded-circle ms-2"
                     width={20}
                     height={20}
                   />
                   {user?.name}
+                  {user?.unread_count > 0 && (
+                    <span className="badge bg-primary ms-1 float-end">
+                      {user?.unread_count}
+                    </span>
+                  )}
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -166,7 +184,7 @@ const MessageScreen = () => {
           <Col xs={12} md={8} lg={7} className="pl-3 mx-auto">
             <Card className="chat-card">
               <Card.Body>
-                <Card.Title className="mb-4">
+                <Card.Title className="mb-4 border-bottom">
                   {selectedUser?.name || "Select a user to chat"}
                 </Card.Title>
 
@@ -202,7 +220,12 @@ const MessageScreen = () => {
                           >
                             <p className="mb-1">{message.message}</p>
                             <small className="text-muted">
-                              {moment(message.created_at).format("LT")}
+                              {moment(message.created_at).calendar(null, {
+                                sameDay: "LT",
+                                lastDay: "[Yesterday at] LT",
+                                lastWeek: "dddd [at] LT",
+                                sameElse: "DD/MM/YYYY [at] LT",
+                              })}
                             </small>
                           </div>
                         </Col>

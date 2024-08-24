@@ -373,7 +373,7 @@ const ProductList = () => {
                 ))}
               </Container> */}
               <Container fluid className="my-4">
-                <Row className="mt-3">
+                {/* <Row className="mt-3">
                   <Col className="">
                     <Button
                       size="sm"
@@ -392,12 +392,54 @@ const ProductList = () => {
                       Remove Selected from Daily Deal
                     </Button>
                   </Col>
+                </Row> */}
+                <Row className="mt-3">
+                  <Col
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    className="d-flex justify-content-center mb-2 mb-sm-0"
+                  >
+                    <Button
+                      size="sm"
+                      style={{
+                        backgroundColor: "#3665f3",
+                        width: "100%",
+                        border: "none",
+                      }}
+                      onClick={() => handleAddToDailyDeal(1)}
+                      disabled={!selectedProductId}
+                    >
+                      Add Selected to Daily Deal
+                    </Button>
+                  </Col>
+                  <Col
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    className="d-flex justify-content-center"
+                  >
+                    <Button
+                      size="sm"
+                      className="ms-sm-3 mt-2 mt-sm-0"
+                      style={{
+                        backgroundColor: "#3665f3",
+                        width: "100%",
+                        border: "none",
+                      }}
+                      onClick={() => handleAddToDailyDeal(0)}
+                      disabled={!selectedProductId}
+                    >
+                      Remove Selected from Daily Deal
+                    </Button>
+                  </Col>
                 </Row>
+
                 <Form action="javascript:void(0)">
                   {fiterData?.map((product, index) => (
                     <Card className="mt-2" key={product?.id}>
                       <Card.Header>
-                        <Row>
+                        {/* <Row>
                           <Col md={1}>
                             <Form.Check
                               className="ms-2"
@@ -446,6 +488,65 @@ const ProductList = () => {
                               />
                               <DeleteIcon
                                 className="ms-3"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => confirmDeletion(product?.id)}
+                              />
+                            </div>
+                          </Col>
+                        </Row> */}
+                        <Row className="align-items-center">
+                          <Col xs={2} sm={1}>
+                            <Form.Check
+                              className="ms-2"
+                              type="checkbox"
+                              value={product?.id}
+                              onChange={(e) => handleProductSelect(e, product)}
+                              checked={selectedProductId === product?.id}
+                            />
+                          </Col>
+                          <Col xs={10} sm={5}>
+                            <Typography variant="h6" className="mb-2 mb-sm-0">
+                              {index + 1}. Title: {product?.name}
+                              {product?.is_today_deal === 1 && (
+                                <>
+                                  <AccessTimeIcon
+                                    sx={{ color: "green", ml: 2 }}
+                                    titleAccess="This product is on Daily Deal"
+                                  />
+                                  <span
+                                    style={{ fontSize: "13px", color: "green" }}
+                                  >
+                                    Deal
+                                  </span>
+                                </>
+                              )}
+                            </Typography>
+                          </Col>
+                          <Col
+                            xs={12}
+                            sm={6}
+                            className="d-flex justify-content-end mt-2 mt-sm-0"
+                          >
+                            <div>
+                              <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => handleStokeOpne(product?.id)}
+                              >
+                                Add & Remove Stock
+                              </button>
+                              <button
+                                className="btn btn-secondary btn-sm ms-3 mt-2 mt-sm-0"
+                                onClick={() => handleOpen(product?.id)}
+                              >
+                                Stock list
+                              </button>
+                              <EditIcon
+                                className="ms-3 mt-2 mt-sm-0"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => handleUpdate(product)}
+                              />
+                              <DeleteIcon
+                                className="ms-3 mt-2 mt-sm-0"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => confirmDeletion(product?.id)}
                               />

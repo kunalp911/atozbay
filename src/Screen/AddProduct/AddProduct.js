@@ -184,9 +184,11 @@ const AddProduct = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [customAttributes, setCustomAttributes] = useState({
-    customName: "",
-    customValue: "",
+    custom_attribute_name: "",
+    custom_attribute_value: "",
+    custom_attribute_id: null,
   });
+  const [editingIndex, setEditingIndex] = useState(null);
   const [customArray, setCustomArray] = useState([]);
   const [addProductFormData, setAddProductFormData] = useState({
     name: "",
@@ -210,7 +212,7 @@ const AddProduct = () => {
     "YYYY-MM-DD HH:mm"
   );
   console.log("customArray", customArray);
-
+  console.log("customAttributes", customAttributes);
   useEffect(() => {
     if (updateProduct) {
       setAddProductFormData({
@@ -238,6 +240,7 @@ const AddProduct = () => {
       setCategoryName(updateProduct?.category_name);
       setSelectedValue(updateProduct?.item_condition);
       setDate(updateProduct?.product_prices?.auction_date_time);
+      setCustomArray(updateProduct?.custom_attributes);
     }
   }, []);
 
@@ -263,19 +266,72 @@ const AddProduct = () => {
     });
   };
 
+  // const customSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (customAttributes.customName && customAttributes.customValue) {
+  //     setCustomArray((prevArray) => [...prevArray, customAttributes]);
+  //     setOpensss(false);
+  //     setCustomAttributes({
+  //       customName: "",
+  //       customValue: "",
+  //     });
+  //   } else {
+  //     setOpensss(true);
+  //   }
+  // };
   const customSubmit = (e) => {
     e.preventDefault();
-    if (customAttributes.customName && customAttributes.customValue) {
-      setCustomArray((prevArray) => [...prevArray, customAttributes]);
+
+    if (
+      customAttributes.custom_attribute_name &&
+      customAttributes.custom_attribute_value
+    ) {
+      const isEdit = customAttributes.custom_attribute_id !== null;
+      if (isEdit) {
+        setCustomArray((prevArray) =>
+          prevArray.map((item) =>
+            item.id === customAttributes.custom_attribute_id
+              ? {
+                  ...item,
+                  custom_attribute_name: customAttributes.custom_attribute_name,
+                  custom_attribute_value:
+                    customAttributes.custom_attribute_value,
+                  custom_attribute_id: customAttributes.custom_attribute_id,
+                }
+              : item
+          )
+        );
+      } else {
+        const newId = customArray.length + 1;
+        setCustomArray((prevArray) => [
+          ...prevArray,
+          {
+            custom_attribute_id: newId,
+            custom_attribute_name: customAttributes.custom_attribute_name,
+            custom_attribute_value: customAttributes.custom_attribute_value,
+          },
+        ]);
+      }
       setOpensss(false);
       setCustomAttributes({
-        customName: "",
-        customValue: "",
+        custom_attribute_name: "",
+        custom_attribute_value: "",
+        custom_attribute_id: null,
       });
     } else {
       setOpensss(true);
     }
   };
+
+  const handleEdit = (item) => {
+    setCustomAttributes({
+      custom_attribute_name: item?.custom_attribute_name,
+      custom_attribute_value: item?.custom_attribute_value,
+      custom_attribute_id: item?.id,
+    });
+    setOpensss(true);
+  };
+
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     const attribute_ids = [];
@@ -298,11 +354,19 @@ const AddProduct = () => {
       video: video || null,
       images: allImages,
       auction_date_time: formattedDateTime,
-      custom_attribute_name: customArray?.map((item) => item?.customName),
-      custom_attribute_value: customArray?.map((item) => item?.customValue),
+      custom_attribute_name: customArray?.map(
+        (item) => item?.custom_attribute_name
+      ),
+      custom_attribute_value: customArray?.map(
+        (item) => item?.custom_attribute_value
+      ),
+      custom_attribute_id: customArray?.map(
+        (item) => item?.custom_attribute_id
+      ),
       ...addProductFormData,
     };
     setload(true);
+    console.log("payload>>>>>>", payload);
     try {
       const response = await apiCallNew(
         "post",
@@ -617,8 +681,12 @@ const AddProduct = () => {
       video: video ? video : null,
       images: images,
       auction_date_time: formattedDateTime,
-      custom_attribute_name: customArray?.map((item) => item?.customName),
-      custom_attribute_value: customArray?.map((item) => item?.customValue),
+      custom_attribute_name: customArray?.map(
+        (item) => item?.custom_attribute_name
+      ),
+      custom_attribute_value: customArray?.map(
+        (item) => item?.custom_attribute_value
+      ),
       status: status,
       ...addProductFormData,
     };
@@ -864,7 +932,41 @@ const AddProduct = () => {
                 </div>
               </div>
             ))}
-            {customArray?.map((item, index) => (
+            {isUpdateMode
+              ? customArray?.map((item, index) => (
+                  <div className="form-group row">
+                    <label for="cv" className="col-sm-2 col-form-label">
+                      {item.custom_attribute_name}
+                    </label>
+                    <div className="col-sm-9">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="cv"
+                        value={item.custom_attribute_value}
+                      />
+                    </div>
+                    <div className="col-sm-1">
+                      <EditIcon onClick={() => handleEdit(item)} />
+                    </div>
+                  </div>
+                ))
+              : customArray?.map((item, index) => (
+                  <div className="form-group row">
+                    <label for="cv" className="col-sm-2 col-form-label">
+                      {item.custom_attribute_name}
+                    </label>
+                    <div className="col-sm-10">
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="cv"
+                        value={item.custom_attribute_value}
+                      />
+                    </div>
+                  </div>
+                ))}
+            {/* {customArray?.map((item, index) => (
               <div className="form-group row">
                 <label for="cv" className="col-sm-2 col-form-label">
                   {item.customName}
@@ -878,7 +980,7 @@ const AddProduct = () => {
                   />
                 </div>
               </div>
-            ))}
+            ))} */}
 
             <Dialog
               open={open}
@@ -1070,8 +1172,8 @@ const AddProduct = () => {
                       <input
                         type="text"
                         className="form-control"
-                        name="customName"
-                        value={customAttributes.customName}
+                        name="custom_attribute_name"
+                        value={customAttributes.custom_attribute_name}
                         onChange={handleCustomAttributes}
                       />
                       Example: Year
@@ -1081,8 +1183,8 @@ const AddProduct = () => {
                       <input
                         type="text"
                         className="form-control"
-                        name="customValue"
-                        value={customAttributes.customValue}
+                        name="custom_attribute_value"
+                        value={customAttributes.custom_attribute_value}
                         onChange={handleCustomAttributes}
                       />
                       Example: 2017

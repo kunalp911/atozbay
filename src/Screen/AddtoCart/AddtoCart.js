@@ -392,12 +392,17 @@ const AddtoCart = () => {
                                       )
                                     }
                                   >
-                                    {[...Array(data.quantity).keys()].map(
-                                      (x) => (
-                                        <option key={x + 1} value={x + 1}>
-                                          {x + 1}
-                                        </option>
+                                    {Array.isArray(data) &&
+                                    data.quantity > 0 ? (
+                                      [...Array(data.quantity).keys()].map(
+                                        (x) => (
+                                          <option key={x + 1} value={x + 1}>
+                                            {x + 1}
+                                          </option>
+                                        )
                                       )
+                                    ) : (
+                                      <option value="1">1</option>
                                     )}
                                   </select>
                                 </div>
