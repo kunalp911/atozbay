@@ -186,7 +186,7 @@ const AddProduct = () => {
   const [customAttributes, setCustomAttributes] = useState({
     custom_attribute_name: "",
     custom_attribute_value: "",
-    custom_attribute_id: null,
+    id: null,
   });
   const [editingIndex, setEditingIndex] = useState(null);
   const [customArray, setCustomArray] = useState([]);
@@ -268,17 +268,49 @@ const AddProduct = () => {
 
   // const customSubmit = (e) => {
   //   e.preventDefault();
-  //   if (customAttributes.customName && customAttributes.customValue) {
-  //     setCustomArray((prevArray) => [...prevArray, customAttributes]);
+
+  //   if (
+  //     customAttributes.custom_attribute_name &&
+  //     customAttributes.custom_attribute_value
+  //   ) {
+  //     const isEdit = customAttributes.custom_attribute_id !== null;
+  //     if (isEdit) {
+  //       setCustomArray((prevArray) =>
+  //         prevArray.map((item) =>
+  //           item.id === customAttributes.custom_attribute_id
+  //             ? {
+  //                 ...item,
+  //                 custom_attribute_name: customAttributes.custom_attribute_name,
+  //                 custom_attribute_value:
+  //                   customAttributes.custom_attribute_value,
+  //                 custom_attribute_id:
+  //                   customAttributes.id || customAttributes.custom_attribute_id,
+  //               }
+  //             : item
+  //         )
+  //       );
+  //     } else {
+  //       const newId = customArray.length + 1;
+  //       setCustomArray((prevArray) => [
+  //         ...prevArray,
+  //         {
+  //           custom_attribute_id: newId,
+  //           custom_attribute_name: customAttributes.custom_attribute_name,
+  //           custom_attribute_value: customAttributes.custom_attribute_value,
+  //         },
+  //       ]);
+  //     }
   //     setOpensss(false);
   //     setCustomAttributes({
-  //       customName: "",
-  //       customValue: "",
+  //       custom_attribute_name: "",
+  //       custom_attribute_value: "",
+  //       custom_attribute_id: null,
   //     });
   //   } else {
   //     setOpensss(true);
   //   }
   // };
+
   const customSubmit = (e) => {
     e.preventDefault();
 
@@ -286,37 +318,43 @@ const AddProduct = () => {
       customAttributes.custom_attribute_name &&
       customAttributes.custom_attribute_value
     ) {
-      const isEdit = customAttributes.custom_attribute_id !== null;
+      const isEdit = customAttributes.id !== null;
+
       if (isEdit) {
+        // Update the existing attribute
         setCustomArray((prevArray) =>
           prevArray.map((item) =>
-            item.id === customAttributes.custom_attribute_id
+            item.id === customAttributes.id
               ? {
                   ...item,
                   custom_attribute_name: customAttributes.custom_attribute_name,
                   custom_attribute_value:
                     customAttributes.custom_attribute_value,
-                  custom_attribute_id: customAttributes.custom_attribute_id,
                 }
               : item
           )
         );
       } else {
-        const newId = customArray.length + 1;
+        // Add a new attribute
+        const newId =
+          customArray.length > 0
+            ? Math.max(...customArray.map((attr) => attr.id)) + 1
+            : 1;
         setCustomArray((prevArray) => [
           ...prevArray,
           {
-            custom_attribute_id: newId,
+            id: newId,
             custom_attribute_name: customAttributes.custom_attribute_name,
             custom_attribute_value: customAttributes.custom_attribute_value,
           },
         ]);
       }
+      console.log("customArraydddd", customArray);
       setOpensss(false);
       setCustomAttributes({
         custom_attribute_name: "",
         custom_attribute_value: "",
-        custom_attribute_id: null,
+        id: null,
       });
     } else {
       setOpensss(true);
@@ -327,7 +365,7 @@ const AddProduct = () => {
     setCustomAttributes({
       custom_attribute_name: item?.custom_attribute_name,
       custom_attribute_value: item?.custom_attribute_value,
-      custom_attribute_id: item?.id,
+      id: item?.id,
     });
     setOpensss(true);
   };
@@ -360,9 +398,7 @@ const AddProduct = () => {
       custom_attribute_value: customArray?.map(
         (item) => item?.custom_attribute_value
       ),
-      custom_attribute_id: customArray?.map(
-        (item) => item?.custom_attribute_id
-      ),
+      custom_attribute_id: customArray?.map((item) => item?.id),
       ...addProductFormData,
     };
     setload(true);

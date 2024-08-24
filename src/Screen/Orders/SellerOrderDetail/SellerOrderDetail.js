@@ -381,7 +381,7 @@ const SellerOrderDetail = () => {
   const [productId, setProductId] = useState(0);
   const [currentStep, setCurrentStep] = useState({});
   const steps = [
-    "Processing",
+    "Placed",
     "Dispatched",
     "In transit",
     "Out for delivery",

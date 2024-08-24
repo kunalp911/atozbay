@@ -582,7 +582,39 @@ const ProductList = () => {
                                   </td>
                                   <td>{product?.brand_name}</td>
                                 </tr>
-                                {/* Add more product details as needed */}
+                                <tr>
+                                  <td>
+                                    <strong>Condition</strong>
+                                  </td>
+                                  <td>{product?.item_condition}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <strong>Condition Description</strong>
+                                  </td>
+                                  <td>{product?.condition_description}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <strong>Price</strong>
+                                  </td>
+                                  <td>AUD {product?.product_prices?.price}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <strong>Auction Duration</strong>
+                                  </td>
+                                  <td>
+                                    {product?.product_prices?.auction_duration}{" "}
+                                    days
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <strong>Available Quantity</strong>
+                                  </td>
+                                  <td>{product?.product_prices?.quantity} </td>
+                                </tr>
                               </tbody>
                             </Table>
                           </Col>

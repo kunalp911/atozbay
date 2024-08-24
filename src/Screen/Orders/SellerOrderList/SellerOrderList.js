@@ -19,10 +19,13 @@ const SellerOrderList = () => {
 
   const getProductList = async () => {
     setLoad(true);
+    const payload = {
+      page: 0,
+    };
     try {
       const response = await apiCallNew(
         "post",
-        null,
+        payload,
         ApiEndPoints.SellerOrderList
       );
       if (response.success == true) {
