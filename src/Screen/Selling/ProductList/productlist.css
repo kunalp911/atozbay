@@ -75,3 +75,6 @@
     height: auto;
   }
 }
+.swal2-container1 {
+  z-index: 9999 !important;
+}

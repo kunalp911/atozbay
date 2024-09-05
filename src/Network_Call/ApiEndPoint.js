@@ -57,7 +57,7 @@ const ApiEndPoints = {
   WishListProductCount: `${APPConfig.API_URL}/wishlist-product-count`,
   DeleteAddress: `${APPConfig.API_URL}/address-delete/`,
   ProductImage: `${APPConfig.API_URL}/product-image/`,
-  ProductBids: `${APPConfig.API_URL}/product-bids-list/1`,
+  ProductBids: `${APPConfig.API_URL}/product-bids-list/`,
   Bidgive: `${APPConfig.API_URL}/bid-give`,
   GiveReview: `${APPConfig.API_URL}/give-review`,
   UserBidList: `${APPConfig.API_URL}/user-bids-list`,
@@ -85,6 +85,11 @@ const ApiEndPoints = {
   NotificationList: `${APPConfig.API_URL}/notifications-list`,
   TodayDeal: `${APPConfig.API_URL}/today-deal-product`,
   ConversationRead: `${APPConfig.API_URL}/conversation-read/`,
+  CouponList: `${APPConfig.API_URL}/coupons-list`,
+  AddCoupon: `${APPConfig.API_URL}/coupon-add`,
+  DeleteCoupon: `${APPConfig.API_URL}/coupon/`,
+  Get_Data_By_CouponId: `${APPConfig.API_URL}/coupon/`,
+  UpdateCoupon: `${APPConfig.API_URL}/coupon-update/`,
 };
 
 export default ApiEndPoints;
