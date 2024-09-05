@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../../Component/context/AuthContext";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
@@ -19,25 +19,28 @@ const BidandOffer = () => {
   const [bidProductList, setBidProductList] = useState([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
+  const { id } = useParams();
+  console.log("ID>>>>>>", id);
 
   const itemsPerPage = 20;
 
   useEffect(() => {
     getShopProductList();
-  }, []);
+  }, [id]);
 
   const viewProduct = (id) => {
     navigate(`/product/${id}`, { state: { bidStatus: 1 } });
   };
 
   const getShopProductList = async (page) => {
-    const payload = { page: page - 1, auction_product: 1 };
+    const payload = { page: page - 1 };
+    const endPoint = id
+      ? `${ApiEndPoints.ProductBids}${id}`
+      : ApiEndPoints.UserBidList;
     try {
-      const response = await apiCallNew(
-        "post",
-        payload,
-        ApiEndPoints.UserBidList
-      );
+      const response = await apiCallNew("post", payload, endPoint);
+      console.log("response", response);
+
       if (response.success) {
         setBidProductList(response.result);
         // setCount(response.product_count);

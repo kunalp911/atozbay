@@ -46,23 +46,30 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 const ProductList = () => {
   const navigate = useNavigate();
   const [productLists, setProductLists] = React.useState([]);
+  const [couponList, setCouponList] = React.useState();
   const [stokeOpen, setStokeOpen] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [load, setload] = useState(false);
   const [stokeProductId, setStokeProductId] = useState(0);
   const [stockList, setStockList] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const [stockFormData, setStockFormData] = useState({
     product_id: stokeProductId,
     stock_qty: "",
     type: "add",
     note: "",
   });
+
   const [selectedProductId, setSelectedProductId] = useState(null);
   console.log("selectedProducts", selectedProductId);
+  console.log("couponList", couponList);
   const fiterData = productLists.filter((item) => item.status == 1);
   useEffect(() => {
     getProductList();
+    getCouponList();
   }, []);
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   const handleProductSelect = (e, selectedProduct) => {
     if (e.target.checked) {
@@ -70,6 +77,53 @@ const ProductList = () => {
     } else {
       setSelectedProductId(null); // Clear the selection
     }
+  };
+  const handleDelete = async (couponId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        container: "swal2-container1", // Apply custom class
+      },
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setload(true);
+        const response = await apiCallNew(
+          "delete",
+          {},
+          `${ApiEndPoints.DeleteCoupon}/${couponId}`
+        );
+        console.log("response of delete>>>", response);
+
+        if (response.success) {
+          toast.success(response.msg);
+          getCouponList();
+          setload(false);
+        } else {
+          setload(false);
+          toast.error(response.msg);
+        }
+      } catch (error) {
+        console.log(error);
+        setload(false);
+      }
+    }
+  };
+  const handleEdit = (couponid) => {
+    // You can open a new modal for editing the coupon
+    // Or you can populate the existing form fields with the coupon data
+
+    navigate("/add-coupon", { state: { couponid } });
+    // Example: Populate form fields with the selected coupon data
+
+    // Then, open the modal to edit
   };
 
   const handleAddToDailyDeal = (stat) => {
@@ -152,6 +206,20 @@ const ProductList = () => {
       setload(false);
     }
   };
+  const getCouponList = () => {
+    try {
+      setload(true);
+      apiCallNew("post", {}, ApiEndPoints.CouponList).then((response) => {
+        if (response.success) {
+          setCouponList(response.result);
+          setload(false);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      setload(false);
+    }
+  };
 
   const handleAddStock = () => {
     try {
@@ -213,6 +281,7 @@ const ProductList = () => {
           <CircularProgress style={styles.loader} />
         </div>
       )}
+
       <Header />
       <div className="" style={{ padding: "0px 20px" }}>
         <div className="row">
@@ -222,7 +291,7 @@ const ProductList = () => {
             </div>
           </div>
           <div className="col-md-10">
-            <Row className="mt-2">
+            {/* <Row className="mt-2">
               <Col>
                 <h3 className="helo">All Product</h3>
               </Col>
@@ -234,7 +303,169 @@ const ProductList = () => {
                   List an item
                 </button>
               </Col>
+            </Row> */}
+            <Row className="mt-2">
+              <Col className="d-flex justify-content-end">
+                <div className="dropdown me-3">
+                  <button
+                    className="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Manage Coupons
+                  </button>
+                  <ul
+                    className="dropdown-menu"
+                    aria-labelledby="dropdownMenuButton"
+                  >
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={handleShowModal}
+                      >
+                        Coupon List
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => navigate("/add-coupon")}
+                      >
+                        Add Coupon
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+                <button
+                  className="btn listanbutton"
+                  onClick={() => navigate("/selling/list-item")}
+                >
+                  List an item
+                </button>
+              </Col>
             </Row>
+            <Modal
+              open={showModal}
+              onClose={handleCloseModal}
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+            >
+              <Box sx={modalStyle}>
+                <Typography id="modal-title" variant="h6" component="h2">
+                  Coupon List
+                </Typography>
+                <Box id="modal-description" sx={{ mt: 2 }}>
+                  {couponList?.length > 0 ? (
+                    couponList.map((coupon) => (
+                      <Box key={coupon.id} sx={couponBoxStyle}>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              mb: 1,
+                            }}
+                          >
+                            <Typography sx={labelStyle}>
+                              Coupon Code:
+                            </Typography>
+                            <Typography sx={valueStyle}>
+                              {coupon.coupon_code}
+                            </Typography>
+                          </Typography>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              mb: 1,
+                            }}
+                          >
+                            <Typography sx={labelStyle}>
+                              Description:
+                            </Typography>
+                            <Typography sx={valueStyle}>
+                              {coupon.coupon_description}
+                            </Typography>
+                          </Typography>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              mb: 1,
+                            }}
+                          >
+                            <Typography sx={labelStyle}>Validity:</Typography>
+                            <Typography sx={valueStyle}>
+                              {coupon.start_date} - {coupon.end_date}
+                            </Typography>
+                          </Typography>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              mb: 1,
+                            }}
+                          >
+                            <Typography sx={labelStyle}>Public:</Typography>
+                            <Typography sx={valueStyle}>
+                              {coupon.is_public}
+                            </Typography>
+                          </Typography>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              mb: 1,
+                            }}
+                          >
+                            <Typography sx={labelStyle}>Amount:</Typography>
+                            <Typography sx={valueStyle}>
+                              {coupon.coupon_amount}
+                            </Typography>
+                          </Typography>
+                          <Typography
+                            sx={{ display: "flex", flexDirection: "row" }}
+                          >
+                            <Typography sx={labelStyle}>
+                              Usage Limit:
+                            </Typography>
+                            <Typography sx={valueStyle}>
+                              {coupon.coupon_time_use}
+                            </Typography>
+                          </Typography>
+                        </Box>
+                        <Box sx={iconContainerStyle}>
+                          <IconButton
+                            sx={iconStyle}
+                            onClick={() => handleEdit(coupon.id)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            sx={{ ...iconStyle, color: "error.main" }}
+                            onClick={() => handleDelete(coupon.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography>No coupons available.</Typography>
+                  )}
+                </Box>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleCloseModal}
+                  sx={{ mt: 2 }}
+                >
+                  Close
+                </Button>
+              </Box>
+            </Modal>
             <div className="mt-2">
               {/* <Container fluid className="my-4">
                 {fiterData?.map((product, index) => (
@@ -826,6 +1057,7 @@ const ProductList = () => {
           </List>
         </Box>
       </Modal>
+
       <Footer />
     </div>
   );
@@ -893,6 +1125,59 @@ const styles = {
   },
   loader: {
     color: "white",
+  },
+};
+
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
+  maxWidth: 800,
+  maxHeight: "90vh",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 2,
+  position: "relative",
+  overflowY: "auto",
+};
+
+const couponBoxStyle = {
+  position: "relative",
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "flex-start",
+  mb: 2,
+  p: 2,
+  bgcolor: "#f0f0f0",
+  borderRadius: 1,
+};
+
+const labelStyle = {
+  fontWeight: "bold",
+  mr: 1,
+};
+
+const valueStyle = {
+  mb: 1,
+};
+
+const iconContainerStyle = {
+  position: "absolute",
+  top: 8,
+  right: 8,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 1,
+};
+
+const iconStyle = {
+  color: "primary.main",
+  "&:hover": {
+    color: "primary.dark",
   },
 };
 

@@ -39,12 +39,10 @@ const TermandServices = () => {
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <h4 style={{ color: "#343a40", marginBottom: "1.5rem" }}>
+          {/* <h4 style={{ color: "#343a40", marginBottom: "1.5rem" }}>
             Terms & Conditions
-          </h4>
-          <p style={{ lineHeight: "1.6", color: "#495057", fontSize: "1rem" }}>
-            {plainTextContent}
-          </p>
+          </h4> */}
+          <div dangerouslySetInnerHTML={{ __html: data?.content }} />
         </div>
       </div>
 

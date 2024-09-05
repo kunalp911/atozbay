@@ -39,6 +39,7 @@ const Product = () => {
   const averageRating =
     Number(productDetails?.avg_rating?.rating_all?.avg_rating) || 0;
   const [showAllReviews, setShowAllReviews] = useState(false);
+  console.log("productDetails>>>>", productDetails);
 
   const displayedReviews = showAllReviews
     ? productDetails?.product_reviews
@@ -529,7 +530,9 @@ const Product = () => {
                 {productDetails?.user_id == userData?.id ? (
                   <button
                     className="btn addcarditnow-btn btn-block mb-2"
-                    onClick={() => navigate("/bids-offers")}
+                    onClick={() =>
+                      navigate(`/bids-offers/${productDetails?.id}`)
+                    }
                   >
                     Bidding History
                   </button>

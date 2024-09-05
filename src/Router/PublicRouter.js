@@ -52,6 +52,7 @@ import Active from "../Screen/Selling/Active/Active";
 import ContactUs from "../Screen/ContactUs/ContactUs";
 import Notification from "../Screen/Notification/Notification";
 import DailyDeals from "../Screen/DailyDeals/DailyDeals";
+import AddCoupon from "../Screen/Coupons/AddCoupon/AddCoupon";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -185,6 +186,7 @@ const PublicRouter = () => {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
         <Route path="/payment-declined" element={<PaymentDeclined />} />
+        <Route path="/bids-offers/:id" element={<BidandOffer />} />
         <Route path="/bids-offers" element={<BidandOffer />} />
         <Route path="/all-product" element={<AllProduct />} />
         <Route path="/auction-product" element={<AuctionProduct />} />
@@ -203,6 +205,7 @@ const PublicRouter = () => {
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/dailydeals" element={<DailyDeals />} />
+        <Route path="/add-coupon" element={<AddCoupon />} />
       </Routes>
     </BrowserRouter>
   );
