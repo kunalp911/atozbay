@@ -24,6 +24,8 @@ import {
   Typography,
   CircularProgress,
   IconButton,
+  Box,
+  Modal,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
@@ -188,8 +190,8 @@ const AddProduct = () => {
     custom_attribute_value: "",
     id: null,
   });
-  const [editingIndex, setEditingIndex] = useState(null);
   const [customArray, setCustomArray] = useState([]);
+  const [openPackage, setOpenPackage] = useState(false);
   const [addProductFormData, setAddProductFormData] = useState({
     name: "",
     sku: "",
@@ -211,8 +213,6 @@ const AddProduct = () => {
   const formattedDateTime = moment(`${date} ${time}`, "YYYY-MM-DD H:mm").format(
     "YYYY-MM-DD HH:mm"
   );
-  console.log("customArray", customArray);
-  console.log("customAttributes", customAttributes);
   useEffect(() => {
     if (updateProduct) {
       setAddProductFormData({
@@ -258,6 +258,8 @@ const AddProduct = () => {
     setOpenPreview(false);
   };
 
+  const handleClosePackage = () => setOpenPackage(false);
+
   const handleCustomAttributes = (e) => {
     const { name, value } = e.target;
     setCustomAttributes({
@@ -265,51 +267,6 @@ const AddProduct = () => {
       [name]: value,
     });
   };
-
-  // const customSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   if (
-  //     customAttributes.custom_attribute_name &&
-  //     customAttributes.custom_attribute_value
-  //   ) {
-  //     const isEdit = customAttributes.custom_attribute_id !== null;
-  //     if (isEdit) {
-  //       setCustomArray((prevArray) =>
-  //         prevArray.map((item) =>
-  //           item.id === customAttributes.custom_attribute_id
-  //             ? {
-  //                 ...item,
-  //                 custom_attribute_name: customAttributes.custom_attribute_name,
-  //                 custom_attribute_value:
-  //                   customAttributes.custom_attribute_value,
-  //                 custom_attribute_id:
-  //                   customAttributes.id || customAttributes.custom_attribute_id,
-  //               }
-  //             : item
-  //         )
-  //       );
-  //     } else {
-  //       const newId = customArray.length + 1;
-  //       setCustomArray((prevArray) => [
-  //         ...prevArray,
-  //         {
-  //           custom_attribute_id: newId,
-  //           custom_attribute_name: customAttributes.custom_attribute_name,
-  //           custom_attribute_value: customAttributes.custom_attribute_value,
-  //         },
-  //       ]);
-  //     }
-  //     setOpensss(false);
-  //     setCustomAttributes({
-  //       custom_attribute_name: "",
-  //       custom_attribute_value: "",
-  //       custom_attribute_id: null,
-  //     });
-  //   } else {
-  //     setOpensss(true);
-  //   }
-  // };
 
   const customSubmit = (e) => {
     e.preventDefault();
@@ -349,7 +306,6 @@ const AddProduct = () => {
           },
         ]);
       }
-      console.log("customArraydddd", customArray);
       setOpensss(false);
       setCustomAttributes({
         custom_attribute_name: "",
@@ -402,7 +358,6 @@ const AddProduct = () => {
       ...addProductFormData,
     };
     setload(true);
-    console.log("payload>>>>>>", payload);
     try {
       const response = await apiCallNew(
         "post",
@@ -562,12 +517,86 @@ const AddProduct = () => {
       });
 
       if (isPhoto) {
+        // setImages((prevImages) => {
+        //   const totalImages = prevImages.length + imageFiles.length;
+
+        //   // Get current date
+        //   const currentDate = new Date();
+        //   const packageEndDate = new Date(activPackage?.user_package_end_date);
+
+        //   // Check if the package has expired
+        //   if (packageEndDate < currentDate) {
+        //     alert("Your plan has expired. Please renew your plan.");
+        //     navigate("/subscription");
+        //     imageFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+        //     return prevImages;
+        //   }
+
+        //   // Check if the user has no subscription (current_no_of_images is 0)
+        //   if (activPackage?.current_no_of_images === 0) {
+        //     alert(
+        //       "You don't have an active plan. Please take a subscription to upload images."
+        //     );
+        //     navigate("/subscription");
+        //     imageFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+        //     return prevImages; // Prevent further uploads if no plan is active
+        //   }
+
+        //   // For users on a free plan (allowing only 4 images)
+        //   if (totalImages > 4) {
+        //     alert(
+        //       "You can upload a maximum of 4 images for free. Please upgrade your plan to upload more images."
+        //     );
+        //     navigate("/subscription");
+        //     imageFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+        //     return prevImages; // Prevent further uploads if they exceed the free limit
+        //   }
+
+        //   // Add the images if the user is within the free limit or has an active package
+        //   return [...prevImages, ...imageFiles];
+        // });
+        // setImages((prevImages) => {
+        //   const totalImages = prevImages.length + imageFiles.length;
+
+        //   // Get current date
+        //   const currentDate = new Date();
+        //   const packageEndDate = new Date(activPackage?.user_package_end_date);
+
+        //   // Check if the package has expired
+        //   const isPackageExpired = packageEndDate < currentDate;
+
+        //   // Check if the user has no active subscription (current_no_of_images is 0)
+        //   const isNoActivePlan = activPackage?.current_no_of_images === 0;
+
+        //   // If the plan is expired or there is no active plan, apply the free plan conditions
+        //   if (isPackageExpired || isNoActivePlan) {
+        //     // Limit free users to upload only 4 images
+        //     if (totalImages > 4) {
+        //       alert(
+        //         "You can upload a maximum of 4 images for free. Please upgrade your plan to upload more images."
+        //       );
+        //       navigate("/subscription");
+        //       imageFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+        //       return prevImages; // Prevent further uploads if they exceed the free limit
+        //     }
+        //     // Allow uploading images within the free limit
+        //     return [...prevImages, ...imageFiles];
+        //   }
+
+        //   // For users with an active plan, allow uploads without the 4-image limit
+        //   return [...prevImages, ...imageFiles];
+        // });
+
         setImages((prevImages) => {
-          const totalImages = prevImages.length + imageFiles.length;
+          const totalImages =
+            prevImages?.length +
+            imageFiles?.length +
+            (updateImage?.length || 0);
+
+          console.log("fsdssdsdsdssdsd", totalImages);
           if (totalImages > 4) {
-            alert(
-              "You can upload a maximum of 4 images. Please upgrade your plan to upload more images."
-            );
+            setOpenPackage(true);
+            // navigate("/subscription");
             imageFiles.forEach((file) => URL.revokeObjectURL(file.preview));
             return prevImages;
           }
@@ -1490,9 +1519,62 @@ const AddProduct = () => {
             </div>
           </div>
         </section>
+        <Modal
+          open={openPackage}
+          onClose={handleClosePackage}
+          aria-labelledby="modal-title"
+          aria-describedby="modal-description"
+        >
+          <Box sx={{ ...stylele }}>
+            <IconButton
+              aria-label="close"
+              onClick={handleClosePackage}
+              sx={{
+                position: "absolute",
+                right: 8,
+                top: 5,
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <>
+              <Typography
+                id="modal-description"
+                variant="h6"
+                component="h4"
+                sx={{
+                  mt: 2,
+                  color: "#333",
+                  fontWeight: "bold",
+                  letterSpacing: "0.5px",
+                  lineHeight: 1.5,
+                }}
+              >
+                You have uploaded more than 4 images. To add more images, please
+                add a product first, and then go to the product list to upload
+                additional images.
+              </Typography>
+            </>
+          </Box>
+        </Modal>
       </div>
     </div>
   );
+};
+
+const stylele = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
+  maxWidth: 500,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 2,
+  overflowY: "auto",
+  maxHeight: "90vh",
 };
 
 const dropzoneStyle = {

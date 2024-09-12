@@ -17,12 +17,7 @@ import { doller } from "../../../Component/ReuseFormat/Doller";
 const BidandOffer = () => {
   const navigate = useNavigate();
   const [bidProductList, setBidProductList] = useState([]);
-  const [count, setCount] = useState(0);
-  const [page, setPage] = useState(1);
   const { id } = useParams();
-  console.log("ID>>>>>>", id);
-
-  const itemsPerPage = 20;
 
   useEffect(() => {
     getShopProductList();
@@ -39,22 +34,14 @@ const BidandOffer = () => {
       : ApiEndPoints.UserBidList;
     try {
       const response = await apiCallNew("post", payload, endPoint);
-      console.log("response", response);
 
       if (response.success) {
         setBidProductList(response.result);
-        // setCount(response.product_count);
       }
     } catch (error) {
-      console.error("Error fetching shop products:", error);
+      console.error(error);
     }
   };
-
-  // const handleChange = (event, value) => {
-  //   setPage(value);
-  // };
-
-  // const currentItems = shopProductLists;
 
   return (
     <div>
@@ -76,45 +63,6 @@ const BidandOffer = () => {
             )}
             {bidProductList?.map((item, index) => (
               <>
-                {/* <Card className="mb-3" key={index}>
-                  <Row className="justify-content-around">
-                    <Col className="text-center" xs={12} lg={2} md={2}>
-                      <Card.Img
-                        className="img-fluid  mt-lg-4 ms-lg-3 mb-3"
-                        src={item?.product_image_path}
-                        style={{
-                          objectFit: "contain",
-                        }}
-                        onClick={() => viewProduct(item?.product_id)}
-                      />
-                    </Col>
-                    <Col xs={12} lg={10} md={10}>
-                      <Card.Body>
-                        <Card.Title
-                          className="watch-title m-0"
-                          onClick={() => viewProduct(item?.product_id)}
-                        >
-                          {formatCapitalize(item?.product_name)}
-                        </Card.Title>
-                        <p className="m-0 text-muted">
-                          {item?.condition_description}
-                        </p>
-                        <Row className="mt-3">
-                          <Col xs={6} md={4}>
-                            <Card.Text
-                              style={{ fontSize: "14px", marginBottom: "0" }}
-                            >
-                              Bidding Price:
-                            </Card.Text>
-                            <Card.Text className="font-weight-bold">
-                              US ${item?.bid_price}
-                            </Card.Text>
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Col>
-                  </Row>
-                </Card> */}
                 <Card
                   className="mb-4 p-2"
                   key={index}
@@ -125,12 +73,6 @@ const BidandOffer = () => {
                     cursor: "pointer",
                     border: "none",
                   }}
-                  // onMouseEnter={(e) =>
-                  //   (e.currentTarget.style.transform = "scale(1.02)")
-                  // }
-                  // onMouseLeave={(e) =>
-                  //   (e.currentTarget.style.transform = "scale(1)")
-                  // }
                 >
                   <Row className="justify-content-around">
                     <Col className="text-center" xs={12} lg={3} md={3}>
@@ -216,17 +158,6 @@ const BidandOffer = () => {
             ))}
           </Col>
         </Row>
-        {/* {count > itemsPerPage && (
-          <Box display="flex" justifyContent="center" mt={4}>
-            <Pagination
-              count={Math.ceil(count / itemsPerPage)}
-              page={page}
-              onChange={handleChange}
-              showFirstButton
-              showLastButton
-            />
-          </Box>
-        )} */}
       </div>
       <Footer />
     </div>

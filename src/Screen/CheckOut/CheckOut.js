@@ -58,8 +58,14 @@ const CheckOut = () => {
     pincode: "",
     address_type: "Shipping",
   });
+  const [couponCode, setCouponCode] = useState("");
+  const [couponData, setCouponData] = useState(0);
+  const [shipCharge, setShipCharge] = useState(0);
+
   const isEmpty = (obj) => !Object.keys(obj).length;
 
+  console.log("isEmpty", isEmpty(shipAdd));
+  console.log("addShow", addShow);
   useEffect(() => {
     if (shipAddList?.length > 0 && primaryAddress === null) {
       setPrimaryAddress(shipAddList[0]?.id);
@@ -123,6 +129,7 @@ const CheckOut = () => {
       );
       if (response.success) {
         setCartList(response.result);
+        setShipCharge(response.shipping_charge);
         calculateTotals(response.result);
         setload(false);
       }
@@ -390,9 +397,9 @@ const CheckOut = () => {
         shipping_id: shipAdd?.id,
         sub_total: totalPrices,
         total: totalPrices,
-        coupon_code: "",
-        coupon_amount: "",
-        shipping_charge: "",
+        coupon_code: couponCode,
+        coupon_amount: couponData,
+        shipping_charge: shipCharge,
         device_type: "web",
       };
       const response = await apiCallNew(
@@ -406,6 +413,31 @@ const CheckOut = () => {
         if (response?.result?.url) {
           window.location.href = response?.result?.url;
         }
+      } else {
+        setload(false);
+        toast.error(response?.msg);
+      }
+    } catch (error) {
+      setload(false);
+      toast.error(error);
+    }
+  };
+
+  const applyCoupon = async () => {
+    setload(true);
+    try {
+      const payload = {
+        coupon_code: couponCode,
+      };
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.ApplyCoupon
+      );
+      if (response?.success == true) {
+        setCouponData(response?.result?.coupon_amt);
+        toast.success(response?.msg);
+        setload(false);
       } else {
         setload(false);
         toast.error(response?.msg);
@@ -568,7 +600,7 @@ const CheckOut = () => {
                   </p>
                 ))}
 
-              {token && addShow === 1 && (
+              {isEmpty(shipAdd) == false && token && addShow === 1 && (
                 <Card.Body>
                   <h5 className="paywithname">Ship to</h5>
                   <Card.Text>
@@ -818,13 +850,24 @@ const CheckOut = () => {
                   <h5 className="paywithname">
                     Gift cards, coupons, atozbay Bucks{" "}
                   </h5>
-                  <Form.Control type="text" placeholder="Enter code" />
-                  <button className="btn mt-2 applybtn">Apply</button>
+                  <Form.Control
+                    required
+                    type="text"
+                    placeholder="Enter code"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                  />
+                  <button
+                    className="btn mt-2 applybtn"
+                    onClick={() => applyCoupon()}
+                  >
+                    Apply
+                  </button>
                 </Form.Group>
               </Card.Body>
             </Card>
 
-            <Card className="mt-4">
+            {/* <Card className="mt-4">
               <Card.Body>
                 <Form.Group controlId="charity">
                   <h5 className="paywithname">Donate to charity (optional)</h5>
@@ -835,7 +878,7 @@ const CheckOut = () => {
                   </Form.Control>
                 </Form.Group>
               </Card.Body>
-            </Card>
+            </Card> */}
           </Col>
 
           <Col md={4} className="address-detailss">
@@ -851,14 +894,23 @@ const CheckOut = () => {
                   </Row>
                   <Row>
                     <Col>Shipping</Col>
-                    <Col className="text-right">{doller.Aud} 0</Col>
+                    <Col className="text-right">
+                      + {doller.Aud} {shipCharge?.toFixed(2)}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>Discount</Col>
+                    <Col className="text-right">
+                      - {doller.Aud} {couponData?.toFixed(2)}
+                    </Col>
                   </Row>
                   <hr />
                   <Row>
                     <Col>Total</Col>
                     <Col className="text-right">
                       <b>
-                        {doller.Aud} {totalPrices?.toFixed(2)}
+                        {doller.Aud}{" "}
+                        {(totalPrices + shipCharge - couponData)?.toFixed(2)}
                       </b>
                     </Col>
                   </Row>
@@ -880,14 +932,23 @@ const CheckOut = () => {
                   </Row>
                   <Row>
                     <Col>Shipping</Col>
-                    <Col className="text-right">{doller.Aud} 0</Col>
+                    <Col className="text-right">
+                      + {doller.Aud} {shipCharge?.toFixed(2)}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>Discount</Col>
+                    <Col className="text-right">
+                      - {doller.Aud} {couponData?.toFixed(2)}
+                    </Col>
                   </Row>
                   <hr />
                   <Row>
                     <Col>Total</Col>
                     <Col className="text-right">
                       <b>
-                        {doller.Aud} {totalPrice?.toFixed(2)}
+                        {doller.Aud}{" "}
+                        {(totalPrices + shipCharge - couponData)?.toFixed(2)}
                       </b>
                     </Col>
                   </Row>

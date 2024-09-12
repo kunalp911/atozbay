@@ -5,24 +5,40 @@ import Sidebar from "../Sidebar/Sidebar";
 import { Link } from "react-router-dom";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Pagination } from "@mui/material";
 import "../../Orders/OrderList/OrderList.css";
 import { doller } from "../../../Component/ReuseFormat/Doller";
 
 const Purchase = () => {
   const [orders, setOrders] = useState([]);
   const [load, setLoad] = useState(false);
-  useEffect(() => {
-    getProductList();
-  }, []);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState();
 
-  const getProductList = async () => {
+  const handlePageChange = (event, value) => {
+    console.log("first", value);
+
+    setPage(value);
+  };
+
+  useEffect(() => {
+    getProductList(page);
+  }, [page]);
+
+  const getProductList = async (page) => {
     setLoad(true);
+    const payload = {
+      page: page - 1,
+    };
     try {
-      const response = await apiCallNew("post", null, ApiEndPoints.OrderList);
-      console.log("ORDER LIST RESPONSE", response);
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.OrderList
+      );
       if (response.success == true) {
         setOrders(response.result);
+        setTotalPages(Math.ceil(response.orders_count / 20));
         setLoad(false);
       }
     } catch (error) {
@@ -99,6 +115,15 @@ const Purchase = () => {
                   </Card>
                 </Col>
               ))}
+              <Box display="flex" justifyContent="center" mt={4}>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={handlePageChange}
+                  showFirstButton
+                  showLastButton
+                />
+              </Box>
             </Row>
           </Col>
         </Row>

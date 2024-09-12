@@ -39,10 +39,23 @@ const Register = () => {
     business_phone: "",
     device_type: "android",
   });
-  console.log("formData", formData);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     getCountries();
+  }, []);
+
+  useEffect(() => {
+    const cartData = localStorage.getItem("cart");
+    let savedCart = [];
+    if (cartData) {
+      try {
+        savedCart = JSON.parse(cartData);
+      } catch (error) {
+        savedCart = [];
+      }
+    }
+    setCart(savedCart);
   }, []);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -138,14 +151,14 @@ const Register = () => {
     try {
       setErrors({});
       await validationSchema.validate(formData, { abortEarly: false });
-      setActive(false); // Validation passed, set active to false
+      setActive(false);
     } catch (error) {
       const newErrors = {};
       error.inner.forEach((err) => {
         newErrors[err.path] = err.message;
       });
       setErrors(newErrors);
-      setActive(true); // Validation failed, keep active as true
+      setActive(true);
     }
   };
 
@@ -163,6 +176,11 @@ const Register = () => {
       mobile_number: formData.mobile_number,
       country_code: formData.country_code,
       device_type: "android",
+      cart_products: cart?.map((item, index) => ({
+        [`product_id`]: item.id,
+        [`product_price_id`]: item.priceId,
+        [`cart_quantity`]: item.quantity,
+      })),
     };
     try {
       setErrors({});
@@ -285,20 +303,6 @@ const Register = () => {
                       )}
                     </div>
                   </div>
-                  {/* <ul className="tab-group">
-                    <li
-                      className={active ? "tab active" : "tab"}
-                      onClick={handleActive}
-                    >
-                      <a>Personal</a>
-                    </li>
-                    <li
-                      className={active ? "tab" : "tab active"}
-                      onClick={handleActive}
-                    >
-                      <a>Business</a>
-                    </li>
-                  </ul> */}
                   {active ? (
                     <form action="javascript:void(0);">
                       <div className="form-floating mb-3">
@@ -331,7 +335,6 @@ const Register = () => {
                         )}
                         <label for="floatingInput">Surname</label>
                       </div>
-
                       <div className="form-floating mb-3">
                         <input
                           type="text"
@@ -347,41 +350,6 @@ const Register = () => {
                         )}
                         <label for="floatingInput">Email Address</label>
                       </div>
-                      {/* <div className="form-floating mb-3">
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          className="form-control"
-                          id="floatingPassword"
-                          placeholder="Password"
-                          name="password"
-                          value={formData.password}
-                          onChange={handleChange}
-                        />
-                        {showPassword ? (
-                          <VisibilityIcon
-                            style={{
-                              position: "absolute",
-                              top: "18px",
-                              right: "10px",
-                            }}
-                            onClick={handleClickShowPassword}
-                          />
-                        ) : (
-                          <VisibilityOffIcon
-                            style={{
-                              position: "absolute",
-                              top: "18px",
-                              right: "10px",
-                            }}
-                            onClick={handleClickShowPassword}
-                          />
-                        )}
-                        {errors.password && (
-                          <div className="text-danger">{errors.password}</div>
-                        )}
-                        <label for="floatingPassword">Password</label>
-                      </div> */}
-
                       <div className="form-floating mb-3">
                         <PhoneInput
                           country={"in"}
@@ -522,126 +490,6 @@ const Register = () => {
                       </div>
                     </form>
                   )}
-                  {/* ) : ( */}
-                  {/* <form onSubmit={handleBusinessSubmit}>
-                      <div className="form-floating mb-3">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="floatingInput"
-                          placeholder="fullname"
-                          name="business_name"
-                          value={businessformData.business_name}
-                          onChange={businesshandleChange}
-                        />
-                        {businessErrors.business_name && (
-                          <div className="text-danger">
-                            {businessErrors.business_name}
-                          </div>
-                        )}
-                        <label for="floatingInput">Business Name</label>
-                      </div>
-
-                      <div className="form-floating mb-3">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="floatingInput"
-                          placeholder="name@example.com"
-                          name="business_email"
-                          value={businessformData.business_email}
-                          onChange={businesshandleChange}
-                        />
-                        {businessErrors.business_email && (
-                          <div className="text-danger">
-                            {businessErrors.business_email}
-                          </div>
-                        )}
-                        <label for="floatingInput">Business Email</label>
-                      </div>
-                      <div className="form-floating mb-3">
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          className="form-control"
-                          id="floatingPassword"
-                          placeholder="Password"
-                          name="password"
-                          value={businessformData.password}
-                          onChange={businesshandleChange}
-                        />
-                        {showPassword ? (
-                          <VisibilityIcon
-                            style={{
-                              position: "absolute",
-                              top: "18px",
-                              right: "10px",
-                            }}
-                            onClick={handleClickShowPassword}
-                          />
-                        ) : (
-                          <VisibilityOffIcon
-                            style={{
-                              position: "absolute",
-                              top: "18px",
-                              right: "10px",
-                            }}
-                            onClick={handleClickShowPassword}
-                          />
-                        )}
-                        {businessErrors.password && (
-                          <div className="text-danger">
-                            {businessErrors.password}
-                          </div>
-                        )}
-                        <label for="floatingPassword">Password</label>
-                      </div>
-                      <div className="form-floating mb-3">
-                        <input
-                          type="number"
-                          className="form-control"
-                          id="floatingInput"
-                          placeholder="mobile number"
-                          name="business_phone"
-                          value={businessformData.business_phone}
-                          onChange={businesshandleChange}
-                        />
-                        {businessErrors.business_phone && (
-                          <div className="text-danger">
-                            {businessErrors.business_phone}
-                          </div>
-                        )}
-                        <label for="floatingInput">Mobile Number</label>
-                      </div>
-                      <div className="form-floating mb-3">
-                        <select
-                          className="form-control"
-                          id="floatingCountry"
-                          name="business_country_id"
-                          value={countryId}
-                          onChange={countryhandleChange}
-                        >
-                          <option value=""></option>
-                          {countryList.map((item, index) => (
-                            <option value={item.id} key={item.id}>
-                              {item.name}
-                            </option>
-                          ))}
-                        </select>
-                        {businessErrors.business_country_id && (
-                          <div className="text-danger">
-                            {businessErrors.business_country_id}
-                          </div>
-                        )}
-                        <label for="floatingCountry">Select Country</label>
-                      </div>
-                      <div className="d-grid">
-                        <button className="btn btn-login text-uppercase fw-bold">
-                          Create Business account
-                        </button>
-                      </div>
-                    </form> */}
-                  {/* )} */}
-
                   <div className="row">
                     <div className="col-12">
                       <hr className="mt-5 mb-4 border-secondary-subtle" />

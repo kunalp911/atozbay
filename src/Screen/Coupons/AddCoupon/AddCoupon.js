@@ -32,15 +32,10 @@ import {
   Button,
   Form,
 } from "react-bootstrap";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CloseIcon from "@mui/icons-material/Close";
-import StarIcon from "@mui/icons-material/Star";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import * as Yup from "yup";
 
@@ -76,9 +71,7 @@ const AddCoupon = () => {
     coupon_time_use: 0,
   });
   const { couponid } = location.state || {};
-  console.log("selectedProducts", selectedProducts);
-  console.log("couponProductListData>>>>", couponProductList);
-  console.log("productLists>>>>", productLists);
+
   useEffect(() => {
     GetCoupondData();
   }, [couponid]);
@@ -92,7 +85,7 @@ const AddCoupon = () => {
       coupon_amount: coupon.coupon_amount || 0,
       coupon_time_use: coupon.coupon_time_use || 0,
     });
-    setOpen(true); // Open the modal
+    setOpen(true);
   };
 
   const GetCoupondData = async () => {
@@ -103,10 +96,9 @@ const AddCoupon = () => {
         {},
         `${ApiEndPoints.Get_Data_By_CouponId}${couponid}`
       );
-      console.log("response of Get Coupon Data By ID", response);
 
       if (response.success) {
-        toast.success(response.msg);
+        // toast.success(response.msg);
         const initialSelectedProducts = response.result.coupon_products.map(
           (product) => product.product_id
         );
@@ -148,12 +140,12 @@ const AddCoupon = () => {
         ? ApiEndPoints.UpdateCoupon + couponid
         : ApiEndPoints.AddCoupon;
       const response = await apiCallNew("post", payload, endPoint);
-
-      console.log("response>>>>:", response);
       if (response.success) {
         setload(false);
         toast.success(response.msg);
         setOpen(false);
+        setSelectedProducts([]);
+        navigate("/product-list");
       }
       // Close modal after submission
     } catch (err) {
@@ -184,50 +176,6 @@ const AddCoupon = () => {
   useEffect(() => {
     getProductList();
   }, []);
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-
-  const handleProductSelect = (e, selectedProduct) => {
-    if (e.target.checked) {
-      setSelectedProductId(selectedProduct.id); // Store only the ID
-    } else {
-      setSelectedProductId(null); // Clear the selection
-    }
-  };
-
-  const handleAddToDailyDeal = (stat) => {
-    const payload = {
-      status: stat,
-      product_id: selectedProductId,
-    };
-    try {
-      setload(true);
-      apiCallNew("post", payload, ApiEndPoints.TodayDeal).then((response) => {
-        if (response.success) {
-          console.log("respo", response);
-          toast.success(response.msg);
-          getProductList();
-          setSelectedProductId(null);
-          setload(false);
-        } else {
-          setload(false);
-          toast.error(response.msg);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-      setload(false);
-    }
-  };
-
-  const handleStokeOpne = (id) => {
-    setStokeOpen(true);
-    setStokeProductId(id);
-    setStockFormData((prevData) => ({
-      ...prevData,
-      product_id: id,
-    }));
-  };
 
   const handlestokClose = () => {
     setStokeOpen(false);
@@ -235,25 +183,6 @@ const AddCoupon = () => {
   };
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleOpen = async (id) => {
-    setload(true);
-    try {
-      const response = await apiCallNew(
-        "post",
-        {},
-        ApiEndPoints.StockList + id
-      );
-      if (response.success) {
-        setStockList(response.result);
-      }
-      setOpen(true);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setload(false);
-    }
   };
 
   const handleStokeOnchange = (e) => {
@@ -295,40 +224,6 @@ const AddCoupon = () => {
     }
   };
 
-  const deletePrduct = (id) => {
-    try {
-      apiCallNew("delete", {}, ApiEndPoints.ProductSellDelete + id).then(
-        (response) => {
-          if (response.success) {
-            getProductList();
-            toast.success(response.msg);
-          }
-        }
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleUpdate = (product) => {
-    console.log("update", product);
-    navigate("/add-product", { state: { product: product } });
-  };
-  const confirmDeletion = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deletePrduct(id);
-      }
-    });
-  };
   const handleCheckboxChange = (productId) => {
     setSelectedProducts((prevSelected) => {
       if (prevSelected.includes(productId)) {
@@ -340,8 +235,6 @@ const AddCoupon = () => {
       }
     });
   };
-  // const enable = selectedProducts?.length > 0;
-
   return (
     <div>
       {load && (
@@ -488,9 +381,6 @@ const AddCoupon = () => {
       >
         <Grid container className="d-flex justify-content-between p-2">
           <DialogTitle className="text-center">Add Stock</DialogTitle>
-          {/* <button className="btn btn-sm" onClick={handlestokClose}>
-            <i className="fa fa-times"></i>
-          </button> */}
           <IconButton
             aria-label="close"
             onClick={handlestokClose}
@@ -666,14 +556,15 @@ const AddCoupon = () => {
             error={!!errors.coupon_time_use}
             helperText={errors.coupon_time_use}
           />
+
           <Button
-            variant="contained"
-            color="primary"
+            // variant="contained"
+            // color="primary"
+            className="mt-2 custom-button1"
             fullWidth
             onClick={handleSubmit}
-            sx={{ mt: 2 }}
           >
-            Add Coupon
+            {couponid ? "Update Coupon" : "Add Coupon"}
           </Button>
         </Box>
       </Modal>

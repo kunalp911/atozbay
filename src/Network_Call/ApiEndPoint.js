@@ -90,6 +90,14 @@ const ApiEndPoints = {
   DeleteCoupon: `${APPConfig.API_URL}/coupon/`,
   Get_Data_By_CouponId: `${APPConfig.API_URL}/coupon/`,
   UpdateCoupon: `${APPConfig.API_URL}/coupon-update/`,
+  NotificationDelete: `${APPConfig.API_URL}/notification-delete/`,
+  ApplyCoupon: `${APPConfig.API_URL}/apply-coupon`,
+  PackageList: `${APPConfig.API_URL}/packages-list`,
+  BuySubscription: `${APPConfig.API_URL}/buy-subscription`,
+  SubscriptionResponse: `${APPConfig.API_URL}/telr-subscription-response`,
+  SubscriptionList: `${APPConfig.API_URL}/subscriptions-list`,
+  ActiveSubscription: `${APPConfig.API_URL}/active-subscription`,
+  UploadImage: `${APPConfig.API_URL}/product-upload-images/`,
 };
 
 export default ApiEndPoints;

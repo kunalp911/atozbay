@@ -546,7 +546,7 @@ const SellerOrderDetail = () => {
                 </ListGroup>
               </Card.Body>
             </Card>
-            <Card className="mt-3">
+            <Card className="mt-3 mb-5">
               <Card.Header>Product Details</Card.Header>
               <Card.Body>
                 {order_product?.map((product, index) => (
@@ -616,32 +616,50 @@ const SellerOrderDetail = () => {
                           </div>
                           <div className="card-body">
                             <div className="stepper stepss d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
-                              {steps.map((step, idx) => (
-                                <div
-                                  key={idx}
-                                  className={`stepper-item stepsss ${
-                                    currentStep[product?.product_id] >= idx
-                                      ? "completed"
-                                      : ""
-                                  }`}
-                                  onClick={() => {
-                                    setProductId(product?.product_id);
-                                    if (step === "Cancelled") {
-                                      setOpen(true);
-                                    } else {
-                                      productStatus(step, product?.product_id);
-                                    }
-                                  }}
-                                >
-                                  <div className="step-icon-wrap">
-                                    <div className="step-icon">
-                                      {currentStep[product?.product_id] >=
-                                        idx && <i className="fa fa-check"></i>}
+                              {steps.map((step, idx) => {
+                                const isCancelled =
+                                  product.order_product_status ===
+                                    "Cancelled" && step === "Cancelled";
+                                return (
+                                  <div
+                                    key={idx}
+                                    // className={`stepper-item stepsss ${
+                                    //   currentStep[product?.product_id] >= idx
+                                    //     ? "completed"
+                                    //     : ""
+                                    // }`}
+                                    className={`stepper-item stepsss ${
+                                      currentStep[product?.product_id] >= idx
+                                        ? "completed"
+                                        : ""
+                                    } ${isCancelled ? "cancelled-step" : ""}`}
+                                    onClick={() => {
+                                      setProductId(product?.product_id);
+                                      if (step === "Cancelled") {
+                                        setOpen(true);
+                                      } else {
+                                        productStatus(
+                                          step,
+                                          product?.product_id
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    <div className="step-icon-wrap">
+                                      <div className="step-icon">
+                                        {currentStep[product?.product_id] >=
+                                          idx &&
+                                          (isCancelled ? (
+                                            <i className="fa fa-times"></i>
+                                          ) : (
+                                            <i className="fa fa-check"></i>
+                                          ))}
+                                      </div>
                                     </div>
+                                    <div className="step-name">{step}</div>
                                   </div>
-                                  <div className="step-name">{step}</div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                           {/* <div className="card-body">

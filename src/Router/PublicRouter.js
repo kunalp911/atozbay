@@ -41,7 +41,7 @@ import Review from "../Component/Review/Review";
 import { getToken } from "../Helper/Storage";
 import axios from "axios";
 import ApiEndPoints from "../Network_Call/ApiEndPoint";
-import OrderList from "../Screen/Orders/OrderList/OrderList";
+// import OrderList from "../Screen/Orders/OrderList/OrderList";
 import OrderDetails from "../Screen/Orders/OrderDetails/OrderDetails";
 import SellerOrderList from "../Screen/Orders/SellerOrderList/SellerOrderList";
 import SellerOrderDetail from "../Screen/Orders/SellerOrderDetail/SellerOrderDetail";
@@ -53,6 +53,11 @@ import ContactUs from "../Screen/ContactUs/ContactUs";
 import Notification from "../Screen/Notification/Notification";
 import DailyDeals from "../Screen/DailyDeals/DailyDeals";
 import AddCoupon from "../Screen/Coupons/AddCoupon/AddCoupon";
+import Subscription from "../Screen/Subscription/Subscription";
+import ImgPaymentSuccess from "../Screen/Payment/ImagePayment/ImgPaymentSuccess";
+import ImgPaymentCancel from "../Screen/Payment/ImagePayment/ImgPaymentCancel";
+import ImgPaymentDecliend from "../Screen/Payment/ImagePayment/ImgPaymentDecliend";
+import ActivePackage from "../Screen/Selling/ActivePackage/ActivePackage";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -110,7 +115,8 @@ const PublicRouter = () => {
               },
             })
             .then((response) => {
-              console.log("API Cancel Response:", response.data);
+              console.log("API Cancel Response:??????", response.data);
+              alert("API Cancel Response:??????", response.data);
             })
             .catch((error) => {
               console.error("API Error:", error);
@@ -137,6 +143,72 @@ const PublicRouter = () => {
             })
             .then((response) => {
               console.log("API Declined Response:", response.data);
+            })
+            .catch((error) => {
+              console.error("API Error:", error);
+            });
+        }
+      } else if (location.pathname === "/package-payment-success") {
+        const query = new URLSearchParams(location.search);
+        const id = query.get("id");
+        if (id) {
+          const token = getToken();
+          const postData = {
+            subscribe_id: id,
+            payment_status: "success",
+          };
+          axios
+            .post(ApiEndPoints.SubscriptionResponse, postData, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .then((response) => {
+              console.log("API Failed Response:", response.data);
+            })
+            .catch((error) => {
+              console.error("API Error:", error);
+            });
+        }
+      } else if (location.pathname === "/package-payment-cancel") {
+        const query = new URLSearchParams(location.search);
+        const id = query.get("id");
+        if (id) {
+          const token = getToken();
+          const postData = {
+            subscribe_id: id,
+            payment_status: "cancel",
+          };
+          axios
+            .post(ApiEndPoints.SubscriptionResponse, postData, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .then((response) => {
+              console.log("API Failed Response:", response.data);
+            })
+            .catch((error) => {
+              console.error("API Error:", error);
+            });
+        }
+      } else if (location.pathname === "/package-payment-declined") {
+        const query = new URLSearchParams(location.search);
+        const id = query.get("id");
+        if (id) {
+          const token = getToken();
+          const postData = {
+            subscribe_id: id,
+            payment_status: "declined",
+          };
+          axios
+            .post(ApiEndPoints.SubscriptionResponse, postData, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .then((response) => {
+              console.log("API Failed Response:", response.data);
             })
             .catch((error) => {
               console.error("API Error:", error);
@@ -186,12 +258,21 @@ const PublicRouter = () => {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
         <Route path="/payment-declined" element={<PaymentDeclined />} />
+        <Route
+          path="/package-payment-success"
+          element={<ImgPaymentSuccess />}
+        />
+        <Route path="/package-payment-cancel" element={<ImgPaymentCancel />} />
+        <Route
+          path="/package-payment-declined"
+          element={<ImgPaymentDecliend />}
+        />
         <Route path="/bids-offers/:id" element={<BidandOffer />} />
         <Route path="/bids-offers" element={<BidandOffer />} />
         <Route path="/all-product" element={<AllProduct />} />
         <Route path="/auction-product" element={<AuctionProduct />} />
         <Route path="/review/:id" element={<Review />} />
-        <Route path="/orders-list" element={<OrderList />} />
+        {/* <Route path="/orders-list" element={<OrderList />} /> */}
         <Route path="/seller-orders-list" element={<SellerOrderList />} />
         <Route path="/order-details/:id" element={<OrderDetails />} />
         <Route
@@ -206,6 +287,8 @@ const PublicRouter = () => {
         <Route path="/notification" element={<Notification />} />
         <Route path="/dailydeals" element={<DailyDeals />} />
         <Route path="/add-coupon" element={<AddCoupon />} />
+        <Route path="/subscription" element={<Subscription />} />
+        <Route path="/active-package" element={<ActivePackage />} />
       </Routes>
     </BrowserRouter>
   );
