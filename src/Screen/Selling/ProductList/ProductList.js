@@ -51,23 +51,64 @@ const ProductList = () => {
   const [open, setOpen] = React.useState(false);
   const [load, setload] = useState(false);
   const [stokeProductId, setStokeProductId] = useState(0);
+  const [packproductId, setPackproductId] = useState(0);
   const [stockList, setStockList] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [activPackage, setActivPackage] = useState(null);
+  const [openPackage, setOpenPackage] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
   const [stockFormData, setStockFormData] = useState({
     product_id: stokeProductId,
     stock_qty: "",
     type: "add",
     note: "",
   });
-
+  const [selectedImages, setSelectedImages] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  console.log("selectedProducts", selectedProductId);
-  console.log("couponList", couponList);
   const fiterData = productLists.filter((item) => item.status == 1);
+
   useEffect(() => {
     getProductList();
     getCouponList();
+    getActivePackage();
   }, []);
+
+  useEffect(() => {
+    if (activPackage?.user_package_end_date) {
+      const currentDate = new Date();
+      const packageEndDate = new Date(activPackage.user_package_end_date);
+      const isNoActivePlan = activPackage?.current_no_of_images === 0;
+
+      // Compare package end date with the current date
+      if (packageEndDate < currentDate || isNoActivePlan) {
+        setIsExpired(true); // Set expired status if the plan is expired
+      } else {
+        setIsExpired(false); // Set as active if the plan is not expired
+      }
+    } else {
+      setIsExpired(true);
+    }
+  }, [activPackage?.user_package_end_date, activPackage?.current_no_of_images]);
+
+  const handleClosePackage = () => setOpenPackage(false);
+  const handleOpenPackage = (id) => {
+    setPackproductId(id);
+    setOpenPackage(true);
+  };
+
+  const getActivePackage = () => {
+    try {
+      apiCallNew("get", {}, ApiEndPoints.ActiveSubscription).then(
+        (response) => {
+          if (response.success) {
+            setActivPackage(response.result);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
@@ -98,9 +139,8 @@ const ProductList = () => {
         const response = await apiCallNew(
           "delete",
           {},
-          `${ApiEndPoints.DeleteCoupon}/${couponId}`
+          `${ApiEndPoints.DeleteCoupon}${couponId}`
         );
-        console.log("response of delete>>>", response);
 
         if (response.success) {
           toast.success(response.msg);
@@ -117,13 +157,7 @@ const ProductList = () => {
     }
   };
   const handleEdit = (couponid) => {
-    // You can open a new modal for editing the coupon
-    // Or you can populate the existing form fields with the coupon data
-
     navigate("/add-coupon", { state: { couponid } });
-    // Example: Populate form fields with the selected coupon data
-
-    // Then, open the modal to edit
   };
 
   const handleAddToDailyDeal = (stat) => {
@@ -274,6 +308,39 @@ const ProductList = () => {
       }
     });
   };
+
+  const handleImageSelection = (event) => {
+    const files = Array.from(event.target.files);
+    const imagePreviews = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setSelectedImages(imagePreviews);
+  };
+
+  const handleImageUpload = async () => {
+    const payload = {};
+    selectedImages?.forEach((image, index) => {
+      payload[`images[${index}]`] = image.file;
+    });
+    try {
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.UploadImage + packproductId
+      );
+      if (response.success) {
+        toast.success(response.msg);
+        getProductList();
+        handleClosePackage();
+        setSelectedImages([]);
+      } else {
+        toast.error(response.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       {load && (
@@ -281,7 +348,6 @@ const ProductList = () => {
           <CircularProgress style={styles.loader} />
         </div>
       )}
-
       <Header />
       <div className="" style={{ padding: "0px 20px" }}>
         <div className="row">
@@ -457,8 +523,8 @@ const ProductList = () => {
                   )}
                 </Box>
                 <Button
-                  variant="contained"
-                  color="secondary"
+                  // variant="contained"
+                  // color="secondary"
                   onClick={handleCloseModal}
                   sx={{ mt: 2 }}
                 >
@@ -467,163 +533,7 @@ const ProductList = () => {
               </Box>
             </Modal>
             <div className="mt-2">
-              {/* <Container fluid className="my-4">
-                {fiterData?.map((product, index) => (
-                  <Card className="mt-2" key={index}>
-                    <Card.Header>
-                      <Row>
-                        <Col md={6}>
-                          <Typography variant="h6">
-                            {index + 1}. Title: {product?.name}
-                          </Typography>
-                        </Col>
-                        <Col md={6} className="d-flex justify-content-end">
-                          <div>
-                            <button
-                              className="btn btn-secondary btn-sm"
-                              onClick={() => handleStokeOpne(product?.id)}
-                            >
-                              Add & Remove Stock
-                            </button>
-                            <button
-                              className="btn btn-secondary btn-sm ms-3"
-                              onClick={() => handleOpen(product?.id)}
-                            >
-                              Stock list
-                            </button>
-                            <EditIcon
-                              className="ms-3"
-                              style={{ cursor: "pointer" }}
-                              onClick={() => handleUpdate(product)}
-                            />
-                            <DeleteIcon
-                              className="ms-3"
-                              style={{ cursor: "pointer" }}
-                              onClick={() => confirmDeletion(product?.id)}
-                            />
-                          </div>
-                        </Col>
-                      </Row>
-                    </Card.Header>
-                    <Card.Body>
-                      <Row>
-                        <Col md={3}>
-                          <ImageCarousel
-                            productImages={product?.product_images}
-                          />
-                        </Col>
-                        <Col md={9}>
-                          <Table responsive bordered>
-                            <tbody>
-                              <tr>
-                                <td>
-                                  <strong>SKU</strong>
-                                </td>
-                                <td>{product?.sku}</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong>Category</strong>
-                                </td>
-                                <td>{product?.category_name}</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong>Brand</strong>
-                                </td>
-                                <td>{product?.brand_name}</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong>Condition</strong>
-                                </td>
-                                <td>{product?.item_condition}</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong>Condition Description</strong>
-                                </td>
-                                <td>{product?.condition_description}</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong>Price</strong>
-                                </td>
-                                <td>AUD {product?.product_prices?.price}</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong>Auction Duration</strong>
-                                </td>
-                                <td>
-                                  {product?.product_prices?.auction_duration}{" "}
-                                  days
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong>Available Quantity</strong>
-                                </td>
-                                <td>{product?.product_prices?.quantity} </td>
-                              </tr>
-                            </tbody>
-                          </Table>
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <h5>Attributes</h5>
-                          <Table responsive bordered>
-                            <thead>
-                              <tr>
-                                <th>Attribute</th>
-                                <th>Value</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {product?.product_attributes?.map((attr) => (
-                                <tr key={attr?.id}>
-                                  <td>{attr?.attribute_name}</td>
-                                  <td>{attr?.attr_val_name}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                            <tbody>
-                              {product?.custom_attributes?.map((attr) => (
-                                <tr key={attr?.id}>
-                                  <td>{attr?.custom_attribute_name}</td>
-                                  <td>{attr?.custom_attribute_value}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </Table>
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                ))}
-              </Container> */}
               <Container fluid className="my-4">
-                {/* <Row className="mt-3">
-                  <Col className="">
-                    <Button
-                      size="sm"
-                      style={{ backgroundColor: "#3665f3" }}
-                      onClick={() => handleAddToDailyDeal(1)}
-                      disabled={!selectedProductId}
-                    >
-                      Add Selected to Daily Deal
-                    </Button>
-                    <Button
-                      size="sm ms-3"
-                      style={{ backgroundColor: "#3665f3" }}
-                      onClick={() => handleAddToDailyDeal(0)}
-                      disabled={!selectedProductId}
-                    >
-                      Remove Selected from Daily Deal
-                    </Button>
-                  </Col>
-                </Row> */}
                 <Row className="mt-3">
                   <Col
                     xs={12}
@@ -670,61 +580,6 @@ const ProductList = () => {
                   {fiterData?.map((product, index) => (
                     <Card className="mt-2" key={product?.id}>
                       <Card.Header>
-                        {/* <Row>
-                          <Col md={1}>
-                            <Form.Check
-                              className="ms-2"
-                              type="checkbox"
-                              value={product?.id}
-                              onChange={(e) => handleProductSelect(e, product)}
-                              checked={selectedProductId === product?.id}
-                            />
-                          </Col>
-                          <Col md={5}>
-                            <Typography variant="h6">
-                              {index + 1}. Title: {product?.name}
-                              {product?.is_today_deal === 1 && (
-                                <>
-                                  <AccessTimeIcon
-                                    sx={{ color: "green", ml: 2 }}
-                                    titleAccess="This product is on Daily Deal"
-                                  />
-                                  <span
-                                    style={{ fontSize: "13px", color: "green" }}
-                                  >
-                                    Deal
-                                  </span>
-                                </>
-                              )}
-                            </Typography>
-                          </Col>
-                          <Col md={6} className="d-flex justify-content-end">
-                            <div>
-                              <button
-                                className="btn btn-secondary btn-sm"
-                                onClick={() => handleStokeOpne(product?.id)}
-                              >
-                                Add & Remove Stock
-                              </button>
-                              <button
-                                className="btn btn-secondary btn-sm ms-3"
-                                onClick={() => handleOpen(product?.id)}
-                              >
-                                Stock list
-                              </button>
-                              <EditIcon
-                                className="ms-3"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleUpdate(product)}
-                              />
-                              <DeleteIcon
-                                className="ms-3"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => confirmDeletion(product?.id)}
-                              />
-                            </div>
-                          </Col>
-                        </Row> */}
                         <Row className="align-items-center">
                           <Col xs={2} sm={1}>
                             <Form.Check
@@ -761,6 +616,12 @@ const ProductList = () => {
                             <div>
                               <button
                                 className="btn btn-secondary btn-sm"
+                                onClick={() => handleOpenPackage(product?.id)}
+                              >
+                                Add more images
+                              </button>
+                              <button
+                                className="btn btn-secondary btn-sm ms-3 mt-2 mt-sm-0"
                                 onClick={() => handleStokeOpne(product?.id)}
                               >
                                 Add & Remove Stock
@@ -897,9 +758,6 @@ const ProductList = () => {
       >
         <Grid container className="d-flex justify-content-between p-2">
           <DialogTitle className="text-center">Add Stock</DialogTitle>
-          {/* <button className="btn btn-sm" onClick={handlestokClose}>
-            <i className="fa fa-times"></i>
-          </button> */}
           <IconButton
             aria-label="close"
             onClick={handlestokClose}
@@ -1057,7 +915,101 @@ const ProductList = () => {
           </List>
         </Box>
       </Modal>
-
+      <Modal
+        open={openPackage}
+        onClose={handleClosePackage}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box sx={{ ...stylele }}>
+          <IconButton
+            aria-label="close"
+            onClick={handleClosePackage}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 5,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          {isExpired ? (
+            <>
+              <Typography id="modal-title" variant="h6" component="h2">
+                Your Plan Has Expired!
+              </Typography>
+              <Typography id="modal-description" sx={{ mt: 2 }}>
+                You can upload a maximum of 4 images for free. Please upgrade
+                your plan to upload more images.
+              </Typography>
+              <Button
+                className="mt-4"
+                color="primary"
+                onClick={() => navigate("/subscription")}
+                size="sm"
+              >
+                Upgrade Now
+              </Button>
+            </>
+          ) : (
+            <>
+              <Typography
+                id="modal-title"
+                variant="h6"
+                component="h2"
+                sx={{
+                  mt: 2,
+                  color: "#333",
+                  fontWeight: "bold",
+                  letterSpacing: "0.5px",
+                  lineHeight: 1.5,
+                }}
+              >
+                Upload images
+              </Typography>
+              <div>
+                <input
+                  className="mt-3"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageSelection}
+                />
+              </div>
+              <Button
+                className="mt-4"
+                color="primary"
+                onClick={handleImageUpload}
+                size="sm"
+              >
+                Upload Images
+              </Button>
+              <div className="mt-3">
+                {selectedImages.length > 0 && (
+                  <Typography variant="body1">
+                    {selectedImages.length} images selected:
+                  </Typography>
+                )}
+                <div className="image-preview-container">
+                  {selectedImages.map((image, index) => (
+                    <div key={index} className="image-preview">
+                      <img
+                        className="imgpack"
+                        src={image.preview}
+                        alt={`Selected image ${index + 1}`}
+                        style={{
+                          width: "100%",
+                          height: "100px",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </Box>
+      </Modal>
       <Footer />
     </div>
   );
@@ -1108,6 +1060,21 @@ const ImageCarousel = ({ productImages }) => {
       )}
     </div>
   );
+};
+
+const stylele = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
+  maxWidth: 500,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 2,
+  overflowY: "auto",
+  maxHeight: "90vh",
 };
 
 const styles = {

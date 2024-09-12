@@ -85,7 +85,6 @@ const AddtoCart = () => {
         setload(false);
       } else {
         setload(false);
-        setCartList([]);
       }
     } catch (error) {
       console.log(error);

@@ -15,8 +15,6 @@ import logos from "../../../Assets/image/bay.png";
 import googlelogo from "../../../Assets/image/google-icon.png";
 import facebooklogo from "../../../Assets/image/Facebook.svg.png";
 import FacebookLogin from "react-facebook-login";
-import applelogo from "../../../Assets/image/Apple_gray.png";
-import AppleLogin from "react-apple-login";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,6 +29,20 @@ const Login = () => {
     password: "",
   });
   const [load, setload] = useState(false);
+  const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    const cartData = localStorage.getItem("cart");
+    let savedCart = [];
+    if (cartData) {
+      try {
+        savedCart = JSON.parse(cartData);
+      } catch (error) {
+        savedCart = [];
+      }
+    }
+    setCart(savedCart);
+  }, []);
 
   useEffect(() => {
     if (googleData && socialID) {
@@ -70,6 +82,7 @@ const Login = () => {
     }
     console.log("response", response);
   };
+
   const GoogleDataGet = useGoogleLogin({
     onSuccess: async (response) => {
       try {
@@ -110,6 +123,15 @@ const Login = () => {
     formData.append("name", googleData.name);
     formData.append("social_id", socialID);
     formData.append("login_type", 3);
+
+    cart?.forEach((item, index) => {
+      formData.append(`cart_products[${index}][product_id]`, item.id);
+      formData.append(
+        `cart_products[${index}][product_price_id]`,
+        item.priceId
+      );
+      formData.append(`cart_products[${index}][cart_quantity]`, item.quantity);
+    });
 
     try {
       const response = await apiCallNew(
@@ -166,13 +188,22 @@ const Login = () => {
       toast.error(error.message || "An error occurred");
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const payload = {
+      cart_products: cart?.map((item, index) => ({
+        [`product_id`]: item.id,
+        [`product_price_id`]: item.priceId,
+        [`cart_quantity`]: item.quantity,
+      })),
+      ...formData,
+    };
     try {
       setErrors({});
       await validationSchema.validate(formData, { abortEarly: false });
       setload(true);
-      const response = await apiCallNew("post", formData, ApiEndPoints.Login);
+      const response = await apiCallNew("post", payload, ApiEndPoints.Login);
       if (response.success === true) {
         setToken(response.result.api_token);
         setUserData(response.result);
@@ -192,35 +223,6 @@ const Login = () => {
       setErrors(newErrors);
     }
   };
-
-  // const appleResponse = (response) => {
-  //   console.log("rrrrr", response);
-  //   if (!response.error) {
-  //     axios
-  //       .post("/auth", response)
-  //       .then((res) => this.setState({ authResponse: res.data }))
-  //       .catch((err) => console.log(err));
-  //   }
-  // };
-
-  // const handleAppleLogin = () => {
-  //   window.AppleID.auth
-  //     .signIn()
-  //     .then((response) => {
-  //       console.log(response);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
-
-  // const handleAppleLoginSuccess = (response) => {
-  //   console.log("Apple login successful:", response);
-  // };
-
-  // const handleAppleLoginError = (error) => {
-  //   console.error("Apple login error:", error);
-  // };
 
   return (
     <div>

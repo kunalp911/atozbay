@@ -131,7 +131,6 @@ const Dashboard = () => {
   const [dealProduct, setDealProduct] = useState([]);
 
   const ReverseOrder = [...subCategoriesList].reverse();
-  console.log("dealProduct", dealProduct);
   useEffect(() => {
     getSubCategories();
     getDailydealProduct();
@@ -345,7 +344,7 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-          <div className="mt-5">
+          {/* <div className="mt-5">
             <h3>Recommended By Seller</h3>
           </div>
           <div className="mt-3">
@@ -381,7 +380,7 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
           <div className=" mt-5">
             <div className="container-fluid custom-cardss">
               <div className="custom-card-text">

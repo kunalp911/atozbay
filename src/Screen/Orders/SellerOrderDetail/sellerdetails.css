@@ -77,8 +77,11 @@
   color: #fff;
   cursor: pointer;
 }
-.step .cancelled {
+.stepsss .cancelled {
   border-color: red;
+  background-color: red;
+  color: #fff;
+  cursor: pointer;
 }
 @media (max-width: 576px) {
   .flex-sm-nowrap .stepsss .step-icon-wrap::before,

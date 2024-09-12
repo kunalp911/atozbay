@@ -39,7 +39,6 @@ const AllProduct = () => {
   const debouncedKeyword = useDebounce(keyword, 500);
   const itemsPerPage = 20;
 
-  console.log("keyword", keyword);
   useEffect(() => {
     getShopProductList(page);
   }, [page, debouncedKeyword]);
@@ -65,7 +64,7 @@ const AllProduct = () => {
         setload(false);
       }
     } catch (error) {
-      console.error("Error fetching shop products:", error);
+      console.error(error);
       setload(false);
     }
   };

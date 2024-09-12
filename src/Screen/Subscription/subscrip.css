@@ -1,0 +1,54 @@
+.pkgtitle {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+/* .subsbtn {
+  background-color: #3665f3;
+  color: #fff;
+} */
+/* .card-footer {
+  background-color: #f8f9fa;
+} */
+
+.subscription-container {
+  /* background-color: #f9f9f9; */
+  padding: 40px 0;
+}
+
+.subscription-card {
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.subscription-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.pkgtitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #0671c3, #0730c6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.price-tag {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00bfa5;
+}
+
+.subsbtn {
+  background-color: #3665f3;
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 50px;
+  transition: background-color 0.3s ease;
+}
+
+.subsbtn:hover {
+  background-color: #072d94;
+}

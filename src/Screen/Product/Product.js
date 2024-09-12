@@ -8,7 +8,17 @@ import "react-medium-image-zoom/dist/styles.css";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
-import { CircularProgress } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from "@mui/material";
 import logos from "../../Assets/image/bay.png";
 import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 import { toast } from "react-toastify";
@@ -21,6 +31,8 @@ import { getToken, getUserdata } from "../../Helper/Storage";
 import { Card, Col, Row } from "react-bootstrap";
 import { doller } from "../../Component/ReuseFormat/Doller";
 import { useCart } from "../../Component/context/AuthContext";
+import SellIcon from "@mui/icons-material/Sell";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Product = () => {
   const { slug } = useParams();
@@ -52,6 +64,7 @@ const Product = () => {
   const [cart, setCart] = useState([]);
   const { updateCartnum } = useCart();
   const itemRef = useRef(null);
+  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     const cartData = localStorage.getItem("cart");
@@ -82,6 +95,13 @@ const Product = () => {
     fetchUserData();
   }, []);
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
   const handleTimeEnd = () => {
     setIsAuctionEnded(true);
   };
@@ -182,16 +202,11 @@ const Product = () => {
       id: item?.id,
       name: item?.name,
       price: item?.product_prices?.price,
+      priceId: item?.product_prices?.id,
       image: item?.product_images[0]?.product_image,
       slug: item?.slug,
       quantity: 1,
     };
-    // setCart((prevCart) => {
-    //   const updatedCart = [...prevCart, productToAdd];
-    //   localStorage.setItem("cart", JSON.stringify(updatedCart));
-    //   navigate("/add-to-cart");
-    //   return updatedCart;
-    // });
     setCart((prevCart) => {
       const existingProduct = prevCart?.find(
         (cartItem) => cartItem.id === item.id
@@ -362,8 +377,28 @@ const Product = () => {
           </p>
         </div>
       </Link>
-      <div className="container mt-4 mb-4">
-        <div className="row justify-content-center">
+      <div className="container mb-4">
+        {productDetails?.product_coupons?.length > 0 && (
+          <div className="">
+            <span
+              style={{
+                color: "green",
+                border: "1px solid green",
+                padding: "5px",
+                borderRadius: "25px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+              onClick={handleOpen}
+            >
+              <SellIcon />
+              Coupon Active
+            </span>
+          </div>
+        )}
+
+        <div className="row justify-content-center mt-4">
           <div
             className="col-lg-6 col-md-12 d-flex flex-column align-items-center"
             style={{
@@ -822,7 +857,76 @@ const Product = () => {
           ))}
         </Row>
       </div>
-
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            p: 4,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            maxWidth: 500,
+            margin: "auto",
+            mt: 5,
+            mb: 5,
+            fontFamily: "'Roboto', sans-serif",
+            textAlign: "center",
+            position: "relative",
+            overflow: "auto",
+            height: "90vh",
+          }}
+        >
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h5" component="h2" sx={{ mb: 2, color: "#000" }}>
+            Coupon Details
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <List>
+            {productDetails?.product_coupons?.map((coupon) => (
+              <ListItem
+                key={coupon.id}
+                sx={{ mb: 2, bgcolor: "#f9f9f9", borderRadius: 1, p: 2 }}
+              >
+                <ListItemText
+                  primary={
+                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                      Coupon Code: {coupon.coupon_code}
+                    </Typography>
+                  }
+                  secondary={
+                    <>
+                      <Typography variant="body2">
+                        <strong>Amount:</strong> {coupon.coupon_amount}{" "}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Valid From:</strong>{" "}
+                        {new Date(coupon.start_date).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Valid Until:</strong>{" "}
+                        {new Date(coupon.end_date).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Description:</strong>{" "}
+                        {coupon.coupon_description}
+                      </Typography>
+                    </>
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Modal>
       <Footer />
     </div>
   );

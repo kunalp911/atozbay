@@ -5,6 +5,7 @@ import Footer from "../../Component/Footer/Footer";
 import "./notification.css";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
+import moment from "moment/moment";
 
 // const initialNotifications = [
 //   {
@@ -27,32 +28,13 @@ import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 //   // Add more notifications as needed
 // ];
 const Notification = () => {
-  // const [notifications, setNotifications] = useState([]);
-  // const [selectedNotifications, setSelectedNotifications] = useState([]);
   const [notificationList, setNotificationList] = useState([]);
-
-  // const handleCheckboxChange = (id) => {
-  //   setSelectedNotifications((prevSelected) =>
-  //     prevSelected.includes(id)
-  //       ? prevSelected.filter((notificationId) => notificationId !== id)
-  //       : [...prevSelected, id]
-  //   );
-  // };
-
-  // const handleMultipleDelete = () => {
-  //   setNotifications(
-  //     notifications.filter(
-  //       (notification) => !selectedNotifications.includes(notification.id)
-  //     )
-  //   );
-  //   setSelectedNotifications([]); // Clear the selection after deletion
-  // };
-
-  //   NotificationList
+  const [selectedNotifications, setSelectedNotifications] = useState([]);
 
   useEffect(() => {
     getNotification();
   }, []);
+
   const getNotification = () => {
     try {
       apiCallNew("post", {}, ApiEndPoints.NotificationList).then((response) => {
@@ -64,28 +46,86 @@ const Notification = () => {
       console.log(error);
     }
   };
+
+  const handleSelect = (id) => {
+    if (selectedNotifications.includes(id)) {
+      setSelectedNotifications(
+        selectedNotifications.filter((selectedId) => selectedId !== id)
+      );
+    } else {
+      setSelectedNotifications([...selectedNotifications, id]);
+    }
+  };
+
+  const deleteSelectedNotifications = () => {
+    selectedNotifications.forEach((id) => deleteNotification(id));
+    setSelectedNotifications([]); // Clear selections after deleting
+  };
+
+  const deleteNotification = (id) => {
+    try {
+      apiCallNew("delete", {}, ApiEndPoints.NotificationDelete + id).then(
+        (response) => {
+          if (response.success) {
+            getNotification();
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <Header />
       <Container className="p-3 mb-4">
-        <h2 className="text-center helo mb-4">Notifications</h2>
-        <Button variant="danger" className="mb-3" size="sm">
+        <h2
+          className="text-center mb-4 helo"
+          style={{ fontWeight: "bold", color: "#343a40" }}
+        >
+          Notifications
+        </h2>
+        <Button
+          variant="danger"
+          className="mb-3"
+          size="sm"
+          onClick={deleteSelectedNotifications}
+          disabled={selectedNotifications.length === 0}
+        >
           Delete Selected
         </Button>
         <Row>
           {notificationList.map((notification) => (
-            <Col xs={12} md={12} lg={12} key={notification.id} className="mb-3">
-              <Card className="notification-card">
-                <Card.Body>
-                  <Form.Check type="checkbox" className="mb-1 mr-2 ms-1" />
-                  <Card.Title className="ms-2">{notification.title}</Card.Title>
-                  <Card.Text className="ms-2">{notification.message}</Card.Text>
+            <Col xs={12} key={notification.id} className="mb-3">
+              <Card className="notification-card shadow-sm">
+                <Card.Body className="d-flex align-items-start">
+                  <Form.Check
+                    type="checkbox"
+                    className="me-3"
+                    onChange={() => handleSelect(notification.id)}
+                    checked={selectedNotifications.includes(notification.id)}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <Card.Title className="d-flex justify-content-between align-items-center">
+                      <span style={{ fontSize: "1.1rem", fontWeight: "600" }}>
+                        {notification.title}
+                      </span>
+                      <small className="text-muted">
+                        {moment(notification.created_at).fromNow()}
+                      </small>
+                    </Card.Title>
+                    <Card.Text className="mt-2" style={{ color: "#6c757d" }}>
+                      {notification.message}
+                    </Card.Text>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>
           ))}
         </Row>
       </Container>
+
       <Footer />
     </div>
   );

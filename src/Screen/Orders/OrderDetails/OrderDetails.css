@@ -78,6 +78,21 @@
 .step .cancelled {
   border-color: red;
 }
+
+.cancelled-step {
+  color: red !important;
+  border-color: red !important;
+}
+
+.cancelled-step .step-icon {
+  background-color: red !important;
+  border-color: red !important;
+}
+
+.cancelled-step .step-title {
+  color: red !important;
+}
+
 @media (max-width: 576px) {
   .flex-sm-nowrap .step .step-icon-wrap::before,
   .flex-sm-nowrap .step .step-icon-wrap::after {

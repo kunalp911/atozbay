@@ -5,22 +5,29 @@ import Sidebar from "../../Myatozbay/Sidebar/Sidebar";
 import { Link } from "react-router-dom";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Pagination } from "@mui/material";
 import "../OrderList/OrderList.css";
 import { doller } from "../../../Component/ReuseFormat/Doller";
 
 const SellerOrderList = () => {
   const [orders, setOrders] = useState([]);
   const [load, setLoad] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState();
 
   useEffect(() => {
-    getProductList();
-  }, []);
+    getProductList(page);
+  }, [page]);
 
-  const getProductList = async () => {
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    getProductList(value);
+  };
+
+  const getProductList = async (page) => {
     setLoad(true);
     const payload = {
-      page: 0,
+      page: page - 1,
     };
     try {
       const response = await apiCallNew(
@@ -30,6 +37,7 @@ const SellerOrderList = () => {
       );
       if (response.success == true) {
         setOrders(response.result);
+        setTotalPages(Math.ceil(response.orders_count / 20));
         setLoad(false);
       } else {
         setLoad(false);
@@ -93,6 +101,15 @@ const SellerOrderList = () => {
                   </Card>
                 </Col>
               ))}
+              <Box display="flex" justifyContent="center" mt={4}>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={handlePageChange}
+                  showFirstButton
+                  showLastButton
+                />
+              </Box>
             </Row>
           </Col>
         </Row>
@@ -100,6 +117,7 @@ const SellerOrderList = () => {
     </div>
   );
 };
+
 const styles = {
   backdrop: {
     position: "fixed",

@@ -1,0 +1,33 @@
+.subscriptionss-title {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.subscriptionss-card {
+  border-radius: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.subscriptionss-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.subscriptionss-icon {
+  margin-bottom: 10px;
+}
+
+.package_no_of_images {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.card-text p {
+  font-size: 1rem;
+}
+
+.badge-success {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+}
