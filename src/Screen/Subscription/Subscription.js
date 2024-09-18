@@ -7,6 +7,7 @@ import Footer from "../../Component/Footer/Footer";
 import "./subscrip.css";
 import { CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
+import { doller } from "../../Component/ReuseFormat/Doller";
 
 const Subscription = () => {
   const [packages, setPackages] = React.useState([]);
@@ -74,7 +75,7 @@ const Subscription = () => {
                     {pkg.title}
                   </Card.Title>
                   <Card.Subtitle className="mb-3 price-tag">
-                    ${pkg.price}
+                    {doller?.Aud} {pkg.price}
                   </Card.Subtitle>
                   <Card.Text>
                     <strong>Valid for:</strong> {pkg.days} days
@@ -89,7 +90,7 @@ const Subscription = () => {
                     size="sm"
                     onClick={() => makePayment(pkg.id)}
                   >
-                    Subscribe Now
+                    Buy Now
                   </Button>
                 </Card.Footer>
               </Card>

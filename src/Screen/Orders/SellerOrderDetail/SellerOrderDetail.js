@@ -460,6 +460,7 @@ const SellerOrderDetail = () => {
   const handleSubmit = (e, productId) => {
     e.preventDefault();
     productStatus("Cancelled", productId);
+    setOpen(false);
   };
 
   return (
@@ -537,11 +538,8 @@ const SellerOrderDetail = () => {
                     <strong>Pincode:</strong> {order_address?.pincode}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Country Code:</strong> {order_address?.country_code}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Mobile Number:</strong>{" "}
-                    {order_address?.mobile_number}
+                    <strong>Mobile Number:</strong> +
+                    {order_address?.country_code} {order_address?.mobile_number}
                   </ListGroup.Item>
                 </ListGroup>
               </Card.Body>
@@ -582,7 +580,8 @@ const SellerOrderDetail = () => {
                               {formatCapitalize(product?.product_name)}
                             </Card.Title>
                             <Card.Text>
-                              <strong>Price:</strong> ${product?.product_price}
+                              <strong>Price:</strong> {doller.Aud}{" "}
+                              {product?.product_price}
                               <br />
                               <strong>Quantity:</strong> {product?.quantity}
                               <br />
@@ -606,16 +605,12 @@ const SellerOrderDetail = () => {
                           </div>
                           <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between py-2 px-2 bg-secondary">
                             <div className="w-100 text-center py-1 px-2">
-                              <span className="text-medium">
-                                Estimated Delivery Date:
-                              </span>{" "}
-                              <strong>
-                                {new Date(created_at).toLocaleDateString()}
-                              </strong>
+                              <span className="text-medium">Status:</span>{" "}
+                              <b>{product.order_product_status}</b>
                             </div>
                           </div>
                           <div className="card-body">
-                            <div className="stepper stepss d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                            {/* <div className="stepper stepss d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
                               {steps.map((step, idx) => {
                                 const isCancelled =
                                   product.order_product_status ===
@@ -623,11 +618,6 @@ const SellerOrderDetail = () => {
                                 return (
                                   <div
                                     key={idx}
-                                    // className={`stepper-item stepsss ${
-                                    //   currentStep[product?.product_id] >= idx
-                                    //     ? "completed"
-                                    //     : ""
-                                    // }`}
                                     className={`stepper-item stepsss ${
                                       currentStep[product?.product_id] >= idx
                                         ? "completed"
@@ -649,6 +639,190 @@ const SellerOrderDetail = () => {
                                       <div className="step-icon">
                                         {currentStep[product?.product_id] >=
                                           idx &&
+                                          (isCancelled ? (
+                                            <i className="fa fa-times"></i>
+                                          ) : (
+                                            <i className="fa fa-check"></i>
+                                          ))}
+                                      </div>
+                                    </div>
+                                    <div className="step-name">{step}</div>
+                                  </div>
+                                );
+                              })}
+                            </div> */}
+                            {/* <div className="stepper stepss d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                              {steps.map((step, idx) => {
+                                const isCancelled =
+                                  product.order_product_status ===
+                                    "Cancelled" && step === "Cancelled";
+                                const isCompleted =
+                                  currentStep[product?.product_id] >= idx;
+                                const isClickable =
+                                  currentStep[product?.product_id] === idx ||
+                                  currentStep[product?.product_id] + 1 === idx;
+
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={`stepper-item stepsss ${
+                                      isCompleted ? "completed" : ""
+                                    } ${isCancelled ? "cancelled-step" : ""}`}
+                                    onClick={() => {
+                                      // Only allow clicking on the current or next step, disable previous steps
+                                      if (isClickable) {
+                                        setProductId(product?.product_id);
+                                        if (step === "Cancelled") {
+                                          setOpen(true);
+                                        } else {
+                                          productStatus(
+                                            step,
+                                            product?.product_id
+                                          );
+                                        }
+                                      }
+                                    }}
+                                    style={{
+                                      pointerEvents: isClickable
+                                        ? "auto"
+                                        : "none",
+                                      cursor: isClickable
+                                        ? "pointer"
+                                        : "default",
+                                    }}
+                                  >
+                                    <div className="step-icon-wrap">
+                                      <div className="step-icon">
+                                        {isCompleted &&
+                                          (isCancelled ? (
+                                            <i className="fa fa-times"></i>
+                                          ) : (
+                                            <i className="fa fa-check"></i>
+                                          ))}
+                                      </div>
+                                    </div>
+                                    <div className="step-name">{step}</div>
+                                  </div>
+                                );
+                              })}
+                            </div> */}
+                            {/* <div className="stepper stepss d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                              {steps.map((step, idx) => {
+                                const isCancelled =
+                                  product.order_product_status ===
+                                    "Cancelled" && step === "Cancelled";
+                                const isCompleted =
+                                  currentStep[product?.product_id] >= idx;
+                                const isClickable =
+                                  currentStep[product?.product_id] === idx ||
+                                  currentStep[product?.product_id] + 1 === idx;
+
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={`stepper-item stepsss ${
+                                      isCompleted ? "completed" : ""
+                                    } ${isCancelled ? "cancelled-step" : ""}`}
+                                    onClick={() => {
+                                      // Check if the user is trying to skip steps
+                                      if (
+                                        idx >
+                                        currentStep[product?.product_id] + 1
+                                      ) {
+                                        alert(
+                                          "You cannot skip steps. Please go step by step."
+                                        );
+                                        return;
+                                      }
+
+                                      // Show confirmation alert before proceeding
+                                      if (isClickable) {
+                                        const confirmation = window.confirm(
+                                          `Do you want to change the status to "${step}"?`
+                                        );
+                                        if (confirmation) {
+                                          setProductId(product?.product_id);
+                                          if (step === "Cancelled") {
+                                            setOpen(true);
+                                          } else {
+                                            productStatus(
+                                              step,
+                                              product?.product_id
+                                            );
+                                          }
+                                        }
+                                      }
+                                    }}
+                                    style={{
+                                      pointerEvents: isClickable
+                                        ? "auto"
+                                        : "none",
+                                      cursor: isClickable
+                                        ? "pointer"
+                                        : "default",
+                                    }}
+                                  >
+                                    <div className="step-icon-wrap">
+                                      <div className="step-icon">
+                                        {isCompleted &&
+                                          (isCancelled ? (
+                                            <i className="fa fa-times"></i>
+                                          ) : (
+                                            <i className="fa fa-check"></i>
+                                          ))}
+                                      </div>
+                                    </div>
+                                    <div className="step-name">{step}</div>
+                                  </div>
+                                );
+                              })}
+                            </div> */}
+                            <div className="stepper stepss d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                              {steps.map((step, idx) => {
+                                const isCancelled =
+                                  product.order_product_status ===
+                                    "Cancelled" && step === "Cancelled";
+                                const isCompleted =
+                                  currentStep[product?.product_id] >= idx;
+                                const isClickable =
+                                  idx > currentStep[product?.product_id];
+
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={`stepper-item stepsss ${
+                                      isCompleted ? "completed" : ""
+                                    } ${isCancelled ? "cancelled-step" : ""}`}
+                                    onClick={() => {
+                                      if (isClickable) {
+                                        const confirmation = window.confirm(
+                                          `Do you want to jump to "${step}"?`
+                                        );
+                                        if (confirmation) {
+                                          setProductId(product?.product_id);
+                                          if (step === "Cancelled") {
+                                            setOpen(true);
+                                          } else {
+                                            productStatus(
+                                              step,
+                                              product?.product_id
+                                            );
+                                          }
+                                        }
+                                      }
+                                    }}
+                                    style={{
+                                      pointerEvents: isClickable
+                                        ? "auto"
+                                        : "none",
+                                      cursor: isClickable
+                                        ? "pointer"
+                                        : "default",
+                                    }}
+                                  >
+                                    <div className="step-icon-wrap">
+                                      <div className="step-icon">
+                                        {isCompleted &&
                                           (isCancelled ? (
                                             <i className="fa fa-times"></i>
                                           ) : (
@@ -706,6 +880,7 @@ const SellerOrderDetail = () => {
                             placeholder="Enter cancel reason"
                             className="form-control"
                             onChange={(e) => setCanselReason(e.target.value)}
+                            required
                           />
                           <button
                             className="btn btn-primary mt-3"
@@ -714,6 +889,20 @@ const SellerOrderDetail = () => {
                             Cancel
                           </button>
                         </form>
+                      </div>
+                    )}
+                    {product?.cancel_reason && (
+                      <div className="card-footer mb-3">
+                        <p>
+                          <b>Reason:</b> {product?.cancel_reason}
+                        </p>
+                      </div>
+                    )}
+                    {product?.return_reason && (
+                      <div className="card-footer mb-3">
+                        <p>
+                          <b>Reason:</b> {product?.return_reason}
+                        </p>
                       </div>
                     )}
                   </div>

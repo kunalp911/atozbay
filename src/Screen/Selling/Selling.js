@@ -23,7 +23,7 @@ const Selling = () => {
             </button>
             <button
               className="btn listanbutton ms-3"
-              onClick={() => navigate("/selling/list-item")}
+              onClick={() => navigate("/selling/select-condition")}
             >
               List an item
             </button>

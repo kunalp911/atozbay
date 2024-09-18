@@ -16,7 +16,6 @@ const Draft = () => {
   const [load, setload] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
 
-  console.log("productListsssssss", productLists);
   useEffect(() => {
     getProductList();
   }, []);

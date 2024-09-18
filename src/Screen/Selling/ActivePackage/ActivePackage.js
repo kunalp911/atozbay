@@ -6,6 +6,7 @@ import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
 import { FaCalendarAlt, FaCheckCircle, FaDollarSign } from "react-icons/fa";
 import "./activep.css";
+import { doller } from "../../../Component/ReuseFormat/Doller";
 
 const ActivePackage = () => {
   const [packages, setPackages] = React.useState([]);
@@ -58,8 +59,9 @@ const ActivePackage = () => {
                           </Card.Title>
                           <Card.Text className="text-center">
                             <p className="mb-2">
-                              <FaDollarSign className="me-2 text-primary" />
-                              <strong>Price:</strong> ${plan.package_price}
+                              {/* <FaDollarSign className="me-2 text-primary" /> */}
+                              <strong>Price:</strong> {doller?.Aud}{" "}
+                              {plan.package_price}
                             </p>
                             <p className="mb-2">
                               <strong>No. of Images:</strong>

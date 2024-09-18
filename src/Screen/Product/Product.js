@@ -51,7 +51,7 @@ const Product = () => {
   const averageRating =
     Number(productDetails?.avg_rating?.rating_all?.avg_rating) || 0;
   const [showAllReviews, setShowAllReviews] = useState(false);
-  console.log("productDetails>>>>", productDetails);
+  console.log("winningBid>>>>", winningBid);
 
   const displayedReviews = showAllReviews
     ? productDetails?.product_reviews
@@ -295,7 +295,13 @@ const Product = () => {
     (item) => item?.id !== productDetails?.id
   );
   const handleCheckout = () => {
-    navigate(`/checkout/${productDetails?.id}`, { state: { quantity } });
+    navigate(`/checkout/${productDetails?.id}`, {
+      state: {
+        quantity,
+        bidID: winningBid?.id,
+        winstatus: "win",
+      },
+    });
   };
 
   const viewInCart = () => {
@@ -516,7 +522,7 @@ const Product = () => {
                 <p className="mt-3">
                   Current bid:
                   <b className="ms-4 price-valuee">
-                    {doller.Aud} {productDetails?.product_prices?.price}
+                    {doller.Aud} {productDetails?.product_prices?.starting_bid}
                   </b>
                 </p>
                 {productDetails?.user_id == userData?.id ? (
@@ -534,7 +540,8 @@ const Product = () => {
                       <p className="mt-0 text-muted">
                         Enter{" "}
                         <b>
-                          {doller.Aud} {productDetails?.product_prices?.price}
+                          {doller.Aud}{" "}
+                          {productDetails?.product_prices?.starting_bid}
                         </b>{" "}
                         or more
                       </p>
@@ -554,7 +561,8 @@ const Product = () => {
                     <p className="mt-0 text-muted">
                       Enter{" "}
                       <b>
-                        {doller.Aud} {productDetails?.product_prices?.price}
+                        {doller.Aud}{" "}
+                        {productDetails?.product_prices?.starting_bid}
                       </b>{" "}
                       or more
                     </p>

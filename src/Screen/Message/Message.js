@@ -19,16 +19,20 @@ import { FaPaperclip } from "react-icons/fa";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import moment from "moment/moment";
+import { useLocation } from "react-router-dom";
 
 const MessageScreen = () => {
+  const location = useLocation();
+  const sellId = location?.state?.id || null;
   const [userList, setUserList] = useState([]);
+
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageHistory, setMessageHistory] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const chatEndRef = useRef(null);
 
-  console.log("messageHistory", messageHistory);
+  console.log("sellId", sellId);
   useEffect(() => {
     getUserList();
   }, []);
@@ -45,6 +49,12 @@ const MessageScreen = () => {
       getMessagesHistory(selectedUser.user_id);
     }
   }, [selectedUser]);
+
+  useEffect(() => {
+    if (sellId) {
+      getMessagesHistory(sellId);
+    }
+  }, [sellId]);
 
   const getUserList = () => {
     try {
@@ -107,7 +117,7 @@ const MessageScreen = () => {
     if (!newMessage.trim()) return;
 
     const payload = {
-      to_id: selectedUser.user_id,
+      to_id: selectedUser?.user_id || sellId,
       message: newMessage,
     };
 
@@ -118,7 +128,7 @@ const MessageScreen = () => {
             ...messages,
             { id: Date.now(), text: newMessage, sender: "You", time: "Now" },
           ]);
-          getMessagesHistory(selectedUser.user_id);
+          getMessagesHistory(selectedUser?.user_id || sellId);
           setNewMessage("");
         }
       });
@@ -186,14 +196,15 @@ const MessageScreen = () => {
               <Card.Body>
                 <Card.Title className="mb-4 border-bottom">
                   {selectedUser?.name || "Select a user to chat"}
+                  {sellId && messageHistory?.user_info?.name}
                 </Card.Title>
 
                 <div className="chat-messages mb-4">
-                  {messageHistory.map((message) => (
+                  {messageHistory?.map((message) => (
                     <div
                       key={message.id}
                       className={`chat-bubble ${
-                        message.to_id === selectedUser.user_id
+                        message.to_id === selectedUser?.user_id
                           ? "sent"
                           : "received"
                       }`}
@@ -206,14 +217,14 @@ const MessageScreen = () => {
                         <Col
                           xs={12}
                           className={`d-flex ${
-                            message.to_id === selectedUser.user_id
+                            message.to_id === selectedUser?.user_id
                               ? "justify-content-end"
                               : "justify-content-start"
                           }`}
                         >
                           <div
                             className={`message-box ${
-                              message.to_id === selectedUser.user_id
+                              message.to_id === selectedUser?.user_id
                                 ? "sent-message"
                                 : "received-message"
                             }`}
@@ -244,13 +255,13 @@ const MessageScreen = () => {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     className="message-input"
-                    disabled={!selectedUser} // Disable if no user is selected
+                    // disabled={!selectedUser} // Disable if no user is selected
                   />
                   <button
                     className="btn send-buttonchat"
                     type="submit"
                     onClick={handleSendMessage}
-                    disabled={!selectedUser} // Disable if no user is selected
+                    // disabled={!selectedUser} // Disable if no user is selected
                   >
                     Send
                   </button>

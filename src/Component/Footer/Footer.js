@@ -92,9 +92,9 @@ const Footer = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link to={"/terms-services"}>
+                    <Link to={"/terms-conditions"}>
                       <a className="text-dark footerdroptitle">
-                        Terms & Services
+                        Terms & Conditions
                       </a>
                     </Link>
                   </li>

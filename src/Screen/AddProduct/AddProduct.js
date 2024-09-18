@@ -208,11 +208,13 @@ const AddProduct = () => {
     short_desc: "short description",
     shipping_in_days: "",
     shipping_charge: "",
+    return_days: "",
   });
-
+  console.log("addProductFormData", addProductFormData);
   const formattedDateTime = moment(`${date} ${time}`, "YYYY-MM-DD H:mm").format(
     "YYYY-MM-DD HH:mm"
   );
+  console.log("/.././././update", updateProduct);
   useEffect(() => {
     if (updateProduct) {
       setAddProductFormData({
@@ -231,6 +233,7 @@ const AddProduct = () => {
         short_desc: updateProduct?.short_desc,
         shipping_in_days: updateProduct?.product_shipping?.shipping_in_days,
         shipping_charge: updateProduct?.product_shipping?.shipping_charge,
+        return_days: updateProduct?.return_days,
       });
 
       // Initialize attributes
@@ -592,8 +595,6 @@ const AddProduct = () => {
             prevImages?.length +
             imageFiles?.length +
             (updateImage?.length || 0);
-
-          console.log("fsdssdsdsdssdsd", totalImages);
           if (totalImages > 4) {
             setOpenPackage(true);
             // navigate("/subscription");
@@ -723,7 +724,7 @@ const AddProduct = () => {
       [name]: value,
     }));
   };
-
+  console.log("updateImage", updateImage);
   const handleAddProduct = async (e, status) => {
     e.preventDefault();
     const attribute_ids = [];
@@ -738,6 +739,7 @@ const AddProduct = () => {
         attribute_value_ids.push(attributeValueId);
       }
     });
+    // const allImages = [...(images || []), ...(updateImage || [])];
 
     const payload = {
       attribute_id: attribute_ids,
@@ -1451,11 +1453,10 @@ const AddProduct = () => {
                 onChange={handleaddProductChange}
               >
                 <option value="" hidden></option>
-                <option value="2">2 days</option>
-                <option value="5">5 days</option>
-                <option value="7">7 days</option>
-                <option value="10">10 days</option>
-                <option value="15">15 days</option>
+                <option value="1-3">1-3 days</option>
+                <option value="3-5">3-5 days</option>
+                <option value="5-7">5-7 days</option>
+                <option value="10-15">10-15 days</option>
               </select>
             </div>
           </div>
@@ -1470,6 +1471,36 @@ const AddProduct = () => {
                 value={addProductFormData.shipping_charge}
                 onChange={handleaddProductChange}
               />
+            </div>
+          </div>
+          <div className="col-sm-4 p-0 mt-4">
+            <div className="section-header mb-2">Return</div>
+            <label for="ship">Return in days</label>
+            <div className="">
+              <select
+                className="form-control"
+                id="return"
+                name="return_days"
+                value={addProductFormData.return_days}
+                onChange={handleaddProductChange}
+              >
+                <option value="" hidden></option>
+                <option value="1">1 day</option>
+                <option value="2">2 days</option>
+                <option value="3">3 days</option>
+                <option value="4">4 days</option>
+                <option value="5">5 days</option>
+                <option value="6">6 days</option>
+                <option value="7">7 days</option>
+                <option value="8">8 days</option>
+                <option value="9">9 days</option>
+                <option value="10">10 days</option>
+                <option value="11">11 days</option>
+                <option value="12">12 days</option>
+                <option value="13">13 days</option>
+                <option value="14">14 days</option>
+                <option value="15">15 days</option>
+              </select>
             </div>
           </div>
           <div className="listing-section mt-4 border-top">

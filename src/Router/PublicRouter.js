@@ -58,6 +58,8 @@ import ImgPaymentSuccess from "../Screen/Payment/ImagePayment/ImgPaymentSuccess"
 import ImgPaymentCancel from "../Screen/Payment/ImagePayment/ImgPaymentCancel";
 import ImgPaymentDecliend from "../Screen/Payment/ImagePayment/ImgPaymentDecliend";
 import ActivePackage from "../Screen/Selling/ActivePackage/ActivePackage";
+import CookieConsent from "../Component/Cookie/CookieConsent";
+import Earning from "../Screen/Selling/Earning/Earning";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -116,7 +118,6 @@ const PublicRouter = () => {
             })
             .then((response) => {
               console.log("API Cancel Response:??????", response.data);
-              alert("API Cancel Response:??????", response.data);
             })
             .catch((error) => {
               console.error("API Error:", error);
@@ -222,6 +223,7 @@ const PublicRouter = () => {
   return (
     <BrowserRouter basename="/web">
       <PaymentSuccessListener />
+      <CookieConsent />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
@@ -242,7 +244,7 @@ const PublicRouter = () => {
         <Route path="/selling/select-condition" element={<SelectCondition />} />
         <Route path="/account-setting" element={<PersonalInfo />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-services" element={<TermandServices />} />
+        <Route path="/terms-conditions" element={<TermandServices />} />
         <Route path="/product/:slug" element={<Product />} />
         <Route path="/contact-info" element={<ContactInfo />} />
         <Route path="/add-to-cart" element={<AddtoCart />} />
@@ -287,8 +289,9 @@ const PublicRouter = () => {
         <Route path="/notification" element={<Notification />} />
         <Route path="/dailydeals" element={<DailyDeals />} />
         <Route path="/add-coupon" element={<AddCoupon />} />
-        <Route path="/subscription" element={<Subscription />} />
+        <Route path="/packages" element={<Subscription />} />
         <Route path="/active-package" element={<ActivePackage />} />
+        <Route path="/earning" element={<Earning />} />
       </Routes>
     </BrowserRouter>
   );

@@ -98,6 +98,9 @@ const ApiEndPoints = {
   SubscriptionList: `${APPConfig.API_URL}/subscriptions-list`,
   ActiveSubscription: `${APPConfig.API_URL}/active-subscription`,
   UploadImage: `${APPConfig.API_URL}/product-upload-images/`,
+  OrderProductCancel: `${APPConfig.API_URL}/order-product-cancel/`,
+  OrderProductReturn: `${APPConfig.API_URL}/order-product-return/`,
+  WalletHistory: `${APPConfig.API_URL}/wallet-history`,
 };
 
 export default ApiEndPoints;

@@ -28,6 +28,8 @@ const CheckOut = () => {
   const { id } = useParams();
   const location = useLocation();
   const data = location?.state || {};
+  const bid_id = location?.state?.bidID || {};
+  const winstatus = location?.state?.winstatus || {};
   const status = location?.state?.status || "";
   const token = getToken();
   const [productDetails, setProductLists] = React.useState({});
@@ -64,8 +66,11 @@ const CheckOut = () => {
 
   const isEmpty = (obj) => !Object.keys(obj).length;
 
-  console.log("isEmpty", isEmpty(shipAdd));
-  console.log("addShow", addShow);
+  // const DirectPrice = responseData?.product_prices?.price;
+  // const Price = status === "wining" ? auctionPrice : DirectPrice;
+
+  console.log("bid_id", bid_id, ">>", winstatus);
+  console.log("productDetails", productDetails);
   useEffect(() => {
     if (shipAddList?.length > 0 && primaryAddress === null) {
       setPrimaryAddress(shipAddList[0]?.id);
@@ -79,7 +84,11 @@ const CheckOut = () => {
   }, [id]);
 
   useEffect(() => {
-    setTotalPrice(quantity * productDetails?.product_prices?.price);
+    setTotalPrice(
+      winstatus == "win"
+        ? quantity * productDetails?.auctions?.bid_price
+        : quantity * productDetails?.product_prices?.price
+    );
   }, [quantity, productDetails?.product_prices?.price]);
 
   useEffect(() => {
@@ -401,6 +410,8 @@ const CheckOut = () => {
         coupon_amount: couponData,
         shipping_charge: shipCharge,
         device_type: "web",
+        bid_id: winstatus == "win" ? bid_id : null,
+        product_id: status == 1 ? "" : id,
       };
       const response = await apiCallNew(
         "post",
@@ -450,12 +461,17 @@ const CheckOut = () => {
 
   const handleContinue = () => {
     if (token) {
-      makePayment();
+      if (shipAdd?.id) {
+        makePayment();
+      } else {
+        toast.error("Please add shipping address");
+      }
     } else {
       navigate("/login");
     }
   };
 
+  console.log("status", status, ">>>tt", totalPrices);
   return (
     <div>
       <Header />
@@ -933,7 +949,10 @@ const CheckOut = () => {
                   <Row>
                     <Col>Shipping</Col>
                     <Col className="text-right">
-                      + {doller.Aud} {shipCharge?.toFixed(2)}
+                      + {doller.Aud}{" "}
+                      {productDetails?.product_shipping?.shipping_charge?.toFixed(
+                        2
+                      )}
                     </Col>
                   </Row>
                   <Row>
@@ -948,7 +967,11 @@ const CheckOut = () => {
                     <Col className="text-right">
                       <b>
                         {doller.Aud}{" "}
-                        {(totalPrices + shipCharge - couponData)?.toFixed(2)}
+                        {(
+                          totalPrice +
+                          productDetails?.product_shipping?.shipping_charge -
+                          couponData
+                        )?.toFixed(2)}
                       </b>
                     </Col>
                   </Row>

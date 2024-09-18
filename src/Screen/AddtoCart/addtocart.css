@@ -69,7 +69,7 @@
   background-color: #3665f3;
   color: #fff;
   font-size: 18px;
-  border-radius: 25px;
+  /* border-radius: 25px; */
 }
 
 .checkout-btn:hover {

@@ -130,6 +130,17 @@ const BidandOffer = () => {
                         </Card.Title>
                         <Row className="mt-3">
                           <Col xs={6} md={4}>
+                            {item?.customer_name && (
+                              <Card.Text
+                                style={{
+                                  fontSize: "0.875rem",
+                                  color: "#666",
+                                  marginBottom: "0",
+                                }}
+                              >
+                                User: {formatCapitalize(item?.customer_name)}
+                              </Card.Text>
+                            )}
                             <Card.Text
                               style={{
                                 fontSize: "0.875rem",

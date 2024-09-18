@@ -61,12 +61,12 @@ const Overview = () => {
                   </Link>
                 </div>
               </Col>
-              <Col>
+              {/* <Col>
                 <div>
                   <h3>{doller.Aud} 0.00</h3>
                   <p>90-day total</p>
                 </div>
-              </Col>
+              </Col> */}
               <Col>
                 <button
                   className="btn listanbutton ms-3"
