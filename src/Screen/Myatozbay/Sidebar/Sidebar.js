@@ -125,13 +125,22 @@ const Sidebar = ({ status, bidchild }) => {
                   Active Package
                 </ListGroup.Item>
               </Link>
-              <Link to="/subscription" className="text-decoration-none">
+              <Link to="/packages" className="text-decoration-none">
                 <ListGroup.Item
                   className={`fs-6 ${
                     bidchild == "draftss" ? "text-primary" : "text-muted"
                   }`}
                 >
                   Packages
+                </ListGroup.Item>
+              </Link>
+              <Link to="/packages" className="text-decoration-none">
+                <ListGroup.Item
+                  className={`fs-6 ${
+                    bidchild == "earning" ? "text-primary" : "text-muted"
+                  }`}
+                >
+                  Earnings
                 </ListGroup.Item>
               </Link>
             </ListGroup>

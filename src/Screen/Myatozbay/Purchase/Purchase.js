@@ -65,7 +65,7 @@ const Purchase = () => {
               <Col>
                 <h2 className="helo">Orders</h2>
               </Col>
-              <Col>
+              {/* <Col>
                 <div className="mb-3">
                   <input
                     type="search"
@@ -74,7 +74,7 @@ const Purchase = () => {
                     placeholder="Search your orders"
                   />
                 </div>
-              </Col>
+              </Col> */}
             </Row>
             <Row>
               {orders?.map((order) => (
@@ -98,8 +98,6 @@ const Purchase = () => {
                         <b>
                           {doller.Aud} {order?.shipping_charge}
                         </b>
-                        <br />
-                        Order Status: <b>{order?.order_status}</b>
                         <br />
                         Payment Status: <b>{order?.payment_status ?? "Null"}</b>
                         <br />

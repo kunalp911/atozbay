@@ -93,6 +93,23 @@
   color: red !important;
 }
 
+.proreturn:hover {
+  color: rgb(1, 115, 244);
+}
+.procancel:hover {
+  color: rgb(2, 80, 169);
+}
+.procancel {
+  text-align: end;
+  margin-top: -13px;
+  color: rgb(1, 115, 244);
+}
+.proreturn {
+  text-align: end;
+  margin-top: -13px;
+  color: rgb(1, 115, 244);
+}
+
 @media (max-width: 576px) {
   .flex-sm-nowrap .step .step-icon-wrap::before,
   .flex-sm-nowrap .step .step-icon-wrap::after {

@@ -56,7 +56,7 @@ const ProductList = () => {
   const [showModal, setShowModal] = useState(false);
   const [activPackage, setActivPackage] = useState(null);
   const [openPackage, setOpenPackage] = useState(false);
-  const [isExpired, setIsExpired] = useState(false);
+  const [isExpired, setIsExpired] = useState(0);
   const [stockFormData, setStockFormData] = useState({
     product_id: stokeProductId,
     stock_qty: "",
@@ -74,19 +74,22 @@ const ProductList = () => {
   }, []);
 
   useEffect(() => {
-    if (activPackage?.user_package_end_date) {
-      const currentDate = new Date();
-      const packageEndDate = new Date(activPackage.user_package_end_date);
-      const isNoActivePlan = activPackage?.current_no_of_images === 0;
+    const currentDate = new Date();
+    const endDate = activPackage?.user_package_end_date;
+    const RemainImage = activPackage?.current_no_of_images;
 
-      // Compare package end date with the current date
-      if (packageEndDate < currentDate || isNoActivePlan) {
-        setIsExpired(true); // Set expired status if the plan is expired
+    if (endDate) {
+      if (currentDate > endDate) {
+        setIsExpired(1);
       } else {
-        setIsExpired(false); // Set as active if the plan is not expired
+        if (RemainImage > 0) {
+          setIsExpired(2);
+        } else {
+          setIsExpired(1);
+        }
       }
     } else {
-      setIsExpired(true);
+      setIsExpired(0);
     }
   }, [activPackage?.user_package_end_date, activPackage?.current_no_of_images]);
 
@@ -334,6 +337,7 @@ const ProductList = () => {
         getProductList();
         handleClosePackage();
         setSelectedImages([]);
+        getActivePackage();
       } else {
         toast.error(response.msg);
       }
@@ -371,14 +375,15 @@ const ProductList = () => {
               </Col>
             </Row> */}
             <Row className="mt-2">
-              <Col className="d-flex justify-content-end">
-                <div className="dropdown me-3">
+              <Col className="d-flex justify-content-end ">
+                <div className="dropdown me-3 ">
                   <button
-                    className="btn btn-secondary dropdown-toggle"
+                    className="btn btn-secondary dropdown-toggle btn-sm"
                     type="button"
                     id="dropdownMenuButton"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    size="sm"
                   >
                     Manage Coupons
                   </button>
@@ -405,8 +410,8 @@ const ProductList = () => {
                   </ul>
                 </div>
                 <button
-                  className="btn listanbutton"
-                  onClick={() => navigate("/selling/list-item")}
+                  className="btn listanbutton btn-sm mx-3"
+                  onClick={() => navigate("/selling/select-condition")}
                 >
                   List an item
                 </button>
@@ -692,15 +697,21 @@ const ProductList = () => {
                                   </td>
                                   <td>AUD {product?.product_prices?.price}</td>
                                 </tr>
-                                <tr>
-                                  <td>
-                                    <strong>Auction Duration</strong>
-                                  </td>
-                                  <td>
-                                    {product?.product_prices?.auction_duration}{" "}
-                                    days
-                                  </td>
-                                </tr>
+                                {product?.product_prices?.auction_duration && (
+                                  <tr>
+                                    <td>
+                                      <strong>Auction Duration</strong>
+                                    </td>
+                                    <td>
+                                      {
+                                        product?.product_prices
+                                          ?.auction_duration
+                                      }{" "}
+                                      days
+                                    </td>
+                                  </tr>
+                                )}
+
                                 <tr>
                                   <td>
                                     <strong>Available Quantity</strong>
@@ -933,7 +944,24 @@ const ProductList = () => {
           >
             <CloseIcon />
           </IconButton>
-          {isExpired ? (
+          {isExpired == 0 ? (
+            <>
+              <Typography id="modal-title" variant="h6" component="h2">
+                No Plan Available!
+              </Typography>
+              <Typography id="modal-description" sx={{ mt: 2 }}>
+                You don't have any active Plan. Please buy first
+              </Typography>
+              <Button
+                className="mt-4"
+                color="primary"
+                onClick={() => navigate("/packages")}
+                size="sm"
+              >
+                Buy Now
+              </Button>
+            </>
+          ) : isExpired == 1 ? (
             <>
               <Typography id="modal-title" variant="h6" component="h2">
                 Your Plan Has Expired!
@@ -945,14 +973,18 @@ const ProductList = () => {
               <Button
                 className="mt-4"
                 color="primary"
-                onClick={() => navigate("/subscription")}
+                onClick={() => navigate("/packages")}
                 size="sm"
               >
                 Upgrade Now
               </Button>
             </>
-          ) : (
+          ) : isExpired == 2 ? (
             <>
+              <span className="text-muted fw-bold">
+                {activPackage?.current_no_of_images} images remaining in your
+                package.
+              </span>
               <Typography
                 id="modal-title"
                 variant="h6"
@@ -1007,7 +1039,7 @@ const ProductList = () => {
                 </div>
               </div>
             </>
-          )}
+          ) : null}
         </Box>
       </Modal>
       <Footer />

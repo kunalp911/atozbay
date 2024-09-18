@@ -5,6 +5,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { makeStyles } from "@material-ui/core";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import "../selling.css";
+import { getToken } from "../../../Helper/Storage";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -46,6 +47,7 @@ const conditions = [
 const SelectCondition = () => {
   const navigate = useNavigate();
   const classes = useStyles();
+  const token = getToken();
   const [selected, setSelected] = React.useState(null);
   const [conditionName, setConditionName] = React.useState("");
 
@@ -59,12 +61,17 @@ const SelectCondition = () => {
   };
 
   const handleSubmit = () => {
-    navigate("/add-product", {
-      state: {
-        condition: conditionName,
-      },
-    });
+    if (token) {
+      navigate("/add-product", {
+        state: {
+          condition: conditionName,
+        },
+      });
+    } else {
+      navigate("/login");
+    }
   };
+
   return (
     <div>
       <div className="container col-12 d-flex justify-content-between border-bottom">

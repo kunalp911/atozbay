@@ -24,6 +24,7 @@ const AddtoCart = () => {
   const [cart, setCart] = useState([]);
   const { updateCartCount, updateCart } = useCart();
   const { updateCartnum } = useCart();
+  const [shipCharge, setShipCharge] = useState(0);
   // const cartData = localStorage.getItem("cart");
   // const savedCart = JSON.parse(cartData);
 
@@ -64,6 +65,7 @@ const AddtoCart = () => {
       if (response.success === true) {
         setCartList(response.result);
         calculateTotals(response.result);
+        setShipCharge(response.shipping_charge);
         setload(false);
       } else {
         setload(false);
@@ -85,6 +87,7 @@ const AddtoCart = () => {
         setload(false);
       } else {
         setload(false);
+        setSaveLateList([]);
       }
     } catch (error) {
       console.log(error);
@@ -594,14 +597,10 @@ const AddtoCart = () => {
                       </span>
                     </div>
                     <div className="summary-item">
-                      <span className="text">Discount</span>
-                      <span className="price">{doller.Aud} 0</span>
-                    </div>
-                    <div className="summary-item">
                       <span className="text">Shipping</span>
                       <span className="price">{doller.Aud} 0</span>
                     </div>
-                    <div className="summary-item">
+                    <div className="summary-item mt-4">
                       <span className="text">Total</span>
                       <span
                         className="price"
@@ -627,21 +626,20 @@ const AddtoCart = () => {
                         {doller.Aud} {totalPrice}
                       </span>
                     </div>
-                    <div className="summary-item">
-                      <span className="text">Discount</span>
-                      <span className="price">{doller.Aud} 0</span>
-                    </div>
+
                     <div className="summary-item">
                       <span className="text">Shipping</span>
-                      <span className="price">{doller.Aud} 0</span>
+                      <span className="price">
+                        {doller.Aud} {shipCharge}
+                      </span>
                     </div>
-                    <div className="summary-item">
+                    <div className="summary-item mt-4">
                       <span className="text">Total</span>
                       <span
                         className="price"
                         style={{ fontWeight: "bold", fontSize: "23px" }}
                       >
-                        {doller.Aud} {totalPrice}
+                        {doller.Aud} {totalPrice + shipCharge}
                       </span>
                     </div>
                     <button
