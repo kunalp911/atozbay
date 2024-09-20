@@ -26,7 +26,9 @@ const Review = () => {
     if (id) {
       getProductDetails(id);
     }
+    window.scrollTo(0, 0);
   }, []);
+
   const getProductDetails = (id) => {
     try {
       setload(true);

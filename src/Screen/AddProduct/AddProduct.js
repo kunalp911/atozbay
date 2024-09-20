@@ -215,6 +215,7 @@ const AddProduct = () => {
     "YYYY-MM-DD HH:mm"
   );
   console.log("/.././././update", updateProduct);
+  console.log("updateImage", updateImage);
   useEffect(() => {
     if (updateProduct) {
       setAddProductFormData({
@@ -724,7 +725,6 @@ const AddProduct = () => {
       [name]: value,
     }));
   };
-  console.log("updateImage", updateImage);
   const handleAddProduct = async (e, status) => {
     e.preventDefault();
     const attribute_ids = [];
@@ -739,14 +739,14 @@ const AddProduct = () => {
         attribute_value_ids.push(attributeValueId);
       }
     });
-    // const allImages = [...(images || []), ...(updateImage || [])];
+    const allImages = [...(images || []), ...(updateImage || [])];
 
     const payload = {
       attribute_id: attribute_ids,
       attribute_value_id: attribute_value_ids,
       item_condition: selectedValue ? selectedValue : conditionName,
       video: video ? video : null,
-      images: images,
+      images: allImages,
       auction_date_time: formattedDateTime,
       custom_attribute_name: customArray?.map(
         (item) => item?.custom_attribute_name

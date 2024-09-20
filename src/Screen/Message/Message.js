@@ -29,10 +29,10 @@ const MessageScreen = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageHistory, setMessageHistory] = useState([]);
+  const [selleName, setSelleName] = useState("");
   const [newMessage, setNewMessage] = useState("");
   const chatEndRef = useRef(null);
 
-  console.log("sellId", sellId);
   useEffect(() => {
     getUserList();
   }, []);
@@ -87,6 +87,7 @@ const MessageScreen = () => {
         (response) => {
           if (response.success) {
             setMessageHistory(response.result);
+            setSelleName(response.user_info);
           }
         }
       );
@@ -136,15 +137,13 @@ const MessageScreen = () => {
       console.log(error);
     }
   };
-  console.log("userList", userList);
-
   return (
     <div>
       <Header />
       <div className="sideallspace mt-3 mb-5">
         <h4 className="helo mt-3">Messages</h4>
         <Row>
-          <Col xs={12} md={3} lg={2} className="p-3 bg-light">
+          {/* <Col xs={12} md={3} lg={2} className="p-3 bg-light">
             <ListGroup>
               <ListGroup.Item className="font-weight-bold">
                 From atozbay
@@ -153,7 +152,7 @@ const MessageScreen = () => {
                 From members
               </ListGroup.Item>
             </ListGroup>
-          </Col>
+          </Col> */}
           <Col xs={12} md={4} lg={3} className=" border-end">
             <div className="d-flex justify-content-between align-items-center border-bottom">
               <Form.Check type="checkbox" className="mb-3 ml-4" />
@@ -191,12 +190,11 @@ const MessageScreen = () => {
               ))}
             </ListGroup>
           </Col>
-          <Col xs={12} md={8} lg={7} className="pl-3 mx-auto">
+          <Col xs={12} md={8} lg={9} className="pl-3 mx-auto">
             <Card className="chat-card">
               <Card.Body>
                 <Card.Title className="mb-4 border-bottom">
-                  {selectedUser?.name || "Select a user to chat"}
-                  {sellId && messageHistory?.user_info?.name}
+                  {selectedUser?.name || selleName?.name}
                 </Card.Title>
 
                 <div className="chat-messages mb-4">
@@ -204,7 +202,7 @@ const MessageScreen = () => {
                     <div
                       key={message.id}
                       className={`chat-bubble ${
-                        message.to_id === selectedUser?.user_id
+                        message.to_id === selectedUser?.user_id || sellId
                           ? "sent"
                           : "received"
                       }`}
@@ -217,14 +215,14 @@ const MessageScreen = () => {
                         <Col
                           xs={12}
                           className={`d-flex ${
-                            message.to_id === selectedUser?.user_id
+                            message.to_id === selectedUser?.user_id || sellId
                               ? "justify-content-end"
                               : "justify-content-start"
                           }`}
                         >
                           <div
                             className={`message-box ${
-                              message.to_id === selectedUser?.user_id
+                              message.to_id === selectedUser?.user_id || sellId
                                 ? "sent-message"
                                 : "received-message"
                             }`}
@@ -245,9 +243,7 @@ const MessageScreen = () => {
                   ))}
                   <div ref={chatEndRef} />
                 </div>
-
                 <hr />
-
                 <InputGroup>
                   <Form.Control
                     type="text"

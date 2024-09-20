@@ -14,7 +14,13 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
-import { Button, CircularProgress } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
@@ -24,6 +30,9 @@ import { Col, Form, Row } from "react-bootstrap";
 import OTPInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -52,7 +61,7 @@ const customersidebarItems = [
   { text: "Sign-in and security" },
   { text: "Address" },
   // { text: "Feedback" },
-  { text: "Payment Information" },
+  { text: "Feedback" },
   { text: "Account Preferences" },
   { text: "Selling" },
 ];
@@ -107,6 +116,7 @@ const PersonalInfo = () => {
   const [mOtp, setMOtp] = useState("");
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("91");
+  const [reviewList, setReviewList] = useState([]);
   const [contactUpdateData, setContactUpdateData] = useState({
     country_id: "",
     city_name: "",
@@ -136,6 +146,7 @@ const PersonalInfo = () => {
     address_first_name: "",
     address_last_name: "",
   });
+
   useEffect(() => {
     if (file) {
       updateProfileImg();
@@ -199,10 +210,10 @@ const PersonalInfo = () => {
     getUserInfo();
     getContactInfo();
     getCountries();
-    getBusinessContactInfo();
-    getBusinessInfo();
+    // getBusinessInfo();
     getShipAddress();
     getShipAddressList();
+    getReviewList();
   }, []);
 
   const handlePhoneChange = (value, country) => {
@@ -221,17 +232,6 @@ const PersonalInfo = () => {
     const { name, value } = e.target;
     setContactUpdateData({
       ...contactUpdateData,
-      [name]: value,
-    });
-    if (name === "country_id") {
-      getStates(value);
-    }
-  };
-
-  const handleBusinessChange = (e) => {
-    const { name, value } = e.target;
-    setBusinessUpdateData({
-      ...businessUpdateData,
       [name]: value,
     });
     if (name === "country_id") {
@@ -262,6 +262,9 @@ const PersonalInfo = () => {
     }
     if (text === "Selling") {
       navigate("/selling");
+    }
+    if (text === "Feedback") {
+      setType(text);
     }
   };
 
@@ -424,17 +427,21 @@ const PersonalInfo = () => {
       setload(false);
     }
   };
-
-  const getBusinessContactInfo = async () => {
+  console.log("reviewlist", reviewList);
+  const getReviewList = async () => {
+    const payload = {
+      page: 0,
+      rating_for: "Seller",
+    };
     try {
       const response = await apiCallNew(
-        "get",
-        {},
-        ApiEndPoints.GetBusinessInfo
+        "post",
+        payload,
+        ApiEndPoints.ReviewList
       );
       setload(true);
       if (response.success) {
-        setBusinessData(response.result);
+        setReviewList(response.result);
         setload(false);
       } else {
         setload(false);
@@ -490,27 +497,26 @@ const PersonalInfo = () => {
       console.log(error);
     }
   };
-  const handleBusinessUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await apiCallNew(
-        "post",
-        businessUpdateData,
-        ApiEndPoints.UpdateBusinessContactInfo
-      );
-      if (response.success) {
-        handleUpdateCustomer(e);
-        getBusinessContactInfo();
-        getBusinessInfo();
-        getUserInfo();
-        toast.success(response.msg);
-      } else {
-        toast.error(response.msg);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleBusinessUpdate = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await apiCallNew(
+  //       "post",
+  //       businessUpdateData,
+  //       ApiEndPoints.UpdateBusinessContactInfo
+  //     );
+  //     if (response.success) {
+  //       handleUpdateCustomer(e);
+  //       getBusinessInfo();
+  //       getUserInfo();
+  //       toast.success(response.msg);
+  //     } else {
+  //       toast.error(response.msg);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleUpdateCustomer = async (e) => {
     e.preventDefault();
@@ -751,6 +757,11 @@ const PersonalInfo = () => {
       setload(false);
     }
   };
+  const feedbackData = {
+    positive: 120,
+    neutral: 45,
+    negative: 30,
+  };
   return (
     <div>
       <Header />
@@ -759,7 +770,7 @@ const PersonalInfo = () => {
           <CircularProgress style={styles.loader} />
         </div>
       )}
-      <div className="container mt-2 mb-3">
+      <div className="container mt-2 mb-3 ">
         <Container maxWidth="lg" className="p-0">
           <h4>My atozbay</h4>
           <Grid container spacing={3}>
@@ -802,15 +813,6 @@ const PersonalInfo = () => {
                   <Box className="pb-3">
                     <Grid className={classes.section}>
                       <Typography variant="h6">Personal info</Typography>
-                      {/* <Grid>
-                        {!contactData?.country_id && (
-                          <Link to={"/contact-info"}>
-                            <button className="btn btn-sm save-btn">
-                              Add Info
-                            </button>
-                          </Link>
-                        )}
-                      </Grid> */}
                     </Grid>
                     <Box
                       className={classes.section}
@@ -869,18 +871,6 @@ const PersonalInfo = () => {
                         </Typography>
                       </Grid>
                     </Box>
-                    {/* <Box className={classes.section} xs={3} md={3}>
-                      <Grid>
-                        <Typography variant="body1">Account type</Typography>
-                        <Typography
-                          variant="body2"
-                          className="usernamess"
-                          style={{ fontWeight: "bold" }}
-                        >
-                          {userData?.user_type}
-                        </Typography>
-                      </Grid>
-                    </Box> */}
 
                     <Box className={classes.section}>
                       <Grid>
@@ -1057,49 +1047,11 @@ const PersonalInfo = () => {
                         </Form>
                       </Box>
                     )}
-                    {/* <Box className={classes.section}>
-                      <Grid>
-                        <Typography variant="body1">
-                          Personal info (Owner name, address)
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className="usernamess"
-                          style={{ fontWeight: "bold" }}
-                        >
-                          {contactData?.name}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className="usernamess"
-                          style={{ fontWeight: "bold" }}
-                        >
-                          {contactData?.address_1},
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className="usernamess"
-                          style={{ fontWeight: "bold" }}
-                        >
-                          {contactData?.city_name}, ({contactData?.pincode})
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className="usernamess"
-                          style={{ fontWeight: "bold" }}
-                        >
-                          {contactData?.address_country_name}
-                        </Typography>
-                      </Grid>
-                      <Link color="primary" onClick={() => setType("Edit")}>
-                        <u>Edit</u>
-                      </Link>
-                    </Box> */}
                   </Box>
                 </Paper>
               </Grid>
             )}
-            {busiType == "Business info" && (
+            {/* {busiType == "Business info" && (
               <Grid item xs={12} md={9} className={classes.content}>
                 <Paper>
                   <Box>
@@ -1239,9 +1191,8 @@ const PersonalInfo = () => {
                   </Box>
                 </Paper>
               </Grid>
-            )}
-            {(type === "Sign-in and security" ||
-              busiType === "Sign-in and security") && (
+            )} */}
+            {type === "Sign-in and security" && (
               <Grid item xs={12} md={9} className={classes.content}>
                 <Paper>
                   <Box>
@@ -1504,7 +1455,7 @@ const PersonalInfo = () => {
                 </Paper>
               </Grid>
             )}
-            {busiType == "Edit" && (
+            {/* {busiType == "Edit" && (
               <Grid item xs={12} md={9}>
                 <Paper>
                   <Box className="p-3">
@@ -1512,7 +1463,7 @@ const PersonalInfo = () => {
                       <Typography variant="h6">Business info</Typography>
                     </Grid>
                     <Box>
-                      <form onSubmit={handleBusinessUpdate}>
+                      <form>
                         <Grid container spacing={3}>
                           <Grid item xs={12} md={6} sm={12}>
                             <div className="form-floating mb-3">
@@ -1654,8 +1605,8 @@ const PersonalInfo = () => {
                   </Box>
                 </Paper>
               </Grid>
-            )}
-            {(busiType == "Address" || type == "Address") && (
+            )} */}
+            {type == "Address" && (
               <Grid item xs={12} md={9}>
                 <Paper>
                   <Box className="p-3">
@@ -1718,7 +1669,7 @@ const PersonalInfo = () => {
                 </Paper>
               </Grid>
             )}
-            {(busiType == "addressEdit" || type == "addressEdit") && (
+            {type == "addressEdit" && (
               <Grid item xs={12} md={9}>
                 <Paper>
                   <Box className="p-3">
@@ -1910,6 +1861,224 @@ const PersonalInfo = () => {
                         </Grid>
                       </form>
                     </Box>
+                  </Box>
+                </Paper>
+              </Grid>
+            )}
+            {type == "Feedback" && (
+              <Grid item xs={12} md={9}>
+                <Paper>
+                  <Box className="p-3 mb-5">
+                    <Grid item className="d-flex justify-content-between">
+                      <p className="shipping-titless">Feedback</p>
+                    </Grid>
+                    <Box className="p-3 mt-2 mb-2">
+                      <Grid container spacing={4} justifyContent="center">
+                        <Grid item xs={12} md={4}>
+                          <Card sx={{ boxShadow: 3 }}>
+                            <CardContent className="text-center">
+                              <IconButton
+                                aria-label="positive"
+                                color="success"
+                                size="large"
+                              >
+                                <ThumbUpIcon
+                                  fontSize="inherit"
+                                  style={{
+                                    fontSize: "3rem",
+                                  }}
+                                />
+                              </IconButton>
+                              <Typography
+                                variant="h6"
+                                color="textPrimary"
+                                align="center"
+                              >
+                                Positive Feedback
+                              </Typography>
+                              <Typography
+                                variant="h4"
+                                align="center"
+                                color="success.main"
+                              >
+                                {feedbackData.positive}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Card sx={{ boxShadow: 3 }}>
+                            <CardContent className="text-center">
+                              <IconButton
+                                aria-label="neutral"
+                                color="warning"
+                                size="large"
+                              >
+                                <ThumbsUpDownIcon
+                                  fontSize="inherit"
+                                  style={{
+                                    fontSize: "3rem",
+                                  }}
+                                />
+                              </IconButton>
+                              <Typography
+                                variant="h6"
+                                color="textPrimary"
+                                align="center"
+                              >
+                                Neutral Feedback
+                              </Typography>
+                              <Typography
+                                variant="h4"
+                                align="center"
+                                color="warning.main"
+                              >
+                                {feedbackData.neutral}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Card sx={{ boxShadow: 3 }}>
+                            <CardContent className="text-center">
+                              <IconButton
+                                aria-label="negative"
+                                color="error"
+                                size="large"
+                              >
+                                <ThumbDownIcon
+                                  fontSize="inherit"
+                                  style={{
+                                    fontSize: "3rem",
+                                  }}
+                                />
+                              </IconButton>
+                              <Typography
+                                variant="h6"
+                                color="textPrimary"
+                                align="center"
+                              >
+                                Negative Feedback
+                              </Typography>
+                              <Typography
+                                variant="h4"
+                                align="center"
+                                color="error.main"
+                              >
+                                {feedbackData.negative}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Box>
+                </Paper>
+                <Paper>
+                  <Box className="p-3 mb-5">
+                    <Grid item className="d-flex justify-content-between">
+                      <p className="shipping-titless">All Feedback</p>
+                    </Grid>
+                    {/* <Box className="p-3 mt-2 mb-2">
+                      <Grid container spacing={4} justifyContent="center">
+                        <Grid item xs={12} md={4}>
+                          <Card sx={{ boxShadow: 3 }}>
+                            <CardContent className="text-center">
+                              <IconButton
+                                aria-label="positive"
+                                color="success"
+                                size="large"
+                              >
+                                <ThumbUpIcon
+                                  fontSize="inherit"
+                                  style={{
+                                    fontSize: "3rem",
+                                  }}
+                                />
+                              </IconButton>
+                              <Typography
+                                variant="h6"
+                                color="textPrimary"
+                                align="center"
+                              >
+                                Positive Feedback
+                              </Typography>
+                              <Typography
+                                variant="h4"
+                                align="center"
+                                color="success.main"
+                              >
+                                {feedbackData.positive}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Card sx={{ boxShadow: 3 }}>
+                            <CardContent className="text-center">
+                              <IconButton
+                                aria-label="neutral"
+                                color="warning"
+                                size="large"
+                              >
+                                <ThumbsUpDownIcon
+                                  fontSize="inherit"
+                                  style={{
+                                    fontSize: "3rem",
+                                  }}
+                                />
+                              </IconButton>
+                              <Typography
+                                variant="h6"
+                                color="textPrimary"
+                                align="center"
+                              >
+                                Neutral Feedback
+                              </Typography>
+                              <Typography
+                                variant="h4"
+                                align="center"
+                                color="warning.main"
+                              >
+                                {feedbackData.neutral}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Card sx={{ boxShadow: 3 }}>
+                            <CardContent className="text-center">
+                              <IconButton
+                                aria-label="negative"
+                                color="error"
+                                size="large"
+                              >
+                                <ThumbDownIcon
+                                  fontSize="inherit"
+                                  style={{
+                                    fontSize: "3rem",
+                                  }}
+                                />
+                              </IconButton>
+                              <Typography
+                                variant="h6"
+                                color="textPrimary"
+                                align="center"
+                              >
+                                Negative Feedback
+                              </Typography>
+                              <Typography
+                                variant="h4"
+                                align="center"
+                                color="error.main"
+                              >
+                                {feedbackData.negative}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      </Grid>
+                    </Box> */}
                   </Box>
                 </Paper>
               </Grid>

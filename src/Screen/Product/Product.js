@@ -33,6 +33,7 @@ import { doller } from "../../Component/ReuseFormat/Doller";
 import { useCart } from "../../Component/context/AuthContext";
 import SellIcon from "@mui/icons-material/Sell";
 import CloseIcon from "@mui/icons-material/Close";
+// import logo from "../../Assets/image/bay.png";
 
 const Product = () => {
   const { slug } = useParams();
@@ -520,7 +521,7 @@ const Product = () => {
               </div>
               <div className="price mb-3 border-top mt-2">
                 <p className="mt-3">
-                  Current bid:
+                  Starting bid:
                   <b className="ms-4 price-valuee">
                     {doller.Aud} {productDetails?.product_prices?.starting_bid}
                   </b>
@@ -845,7 +846,7 @@ const Product = () => {
               >
                 <Card.Img
                   variant="top"
-                  src={item?.product_images[0]?.product_image ?? ""}
+                  src={item?.product_images[0]?.product_image ?? logos}
                   alt={item?.name}
                   style={{ height: "200px", objectFit: "cover" }}
                 />
@@ -913,7 +914,7 @@ const Product = () => {
                   secondary={
                     <>
                       <Typography variant="body2">
-                        <strong>Amount:</strong> {coupon.coupon_amount}{" "}
+                        <strong>Amount:</strong> {coupon.coupon_amount} %
                       </Typography>
                       <Typography variant="body2">
                         <strong>Valid From:</strong>{" "}

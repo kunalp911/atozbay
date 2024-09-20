@@ -7,8 +7,12 @@ import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
+import { getToken } from "../../Helper/Storage";
+import { useNavigate } from "react-router-dom";
 
 const ContactUs = () => {
+  const token = getToken();
+  const navigate = useNavigate();
   const [load, setload] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -26,8 +30,7 @@ const ContactUs = () => {
     });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     try {
       setload(true);
       const response = await apiCallNew(
@@ -59,6 +62,13 @@ const ContactUs = () => {
     } catch (error) {
       setload(false);
       console.log(error);
+    }
+  };
+  const loginNavigate = () => {
+    if (token) {
+      handleSubmit();
+    } else {
+      navigate("/login");
     }
   };
 
@@ -147,7 +157,7 @@ const ContactUs = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Button className="mt-3 btncontact" onClick={handleSubmit}>
+          <Button className="mt-3 btncontact" onClick={loginNavigate}>
             Submit
           </Button>
         </Form>

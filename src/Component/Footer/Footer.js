@@ -16,11 +16,6 @@ const Footer = () => {
                 <ul className="list-unstyled mb-0">
                   <li>
                     <a href="#!" className="text-dark footerdroptitle">
-                      Registration
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#!" className="text-dark footerdroptitle">
                       atozbay Money Back Guarantee
                     </a>
                   </li>
@@ -111,6 +106,11 @@ const Footer = () => {
                   <li>
                     <Link to={"/contact-us"}>
                       <a className="text-dark footerdroptitle">Contact us</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/report"}>
+                      <a className="text-dark footerdroptitle">Report</a>
                     </Link>
                   </li>
                 </ul>

@@ -60,6 +60,8 @@ import ImgPaymentDecliend from "../Screen/Payment/ImagePayment/ImgPaymentDeclien
 import ActivePackage from "../Screen/Selling/ActivePackage/ActivePackage";
 import CookieConsent from "../Component/Cookie/CookieConsent";
 import Earning from "../Screen/Selling/Earning/Earning";
+import Report from "../Screen/Report/Report";
+import Feedback from "../Component/Feedback/Feedback";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -291,7 +293,9 @@ const PublicRouter = () => {
         <Route path="/add-coupon" element={<AddCoupon />} />
         <Route path="/packages" element={<Subscription />} />
         <Route path="/active-package" element={<ActivePackage />} />
-        <Route path="/earning" element={<Earning />} />
+        <Route path="/wallet-history" element={<Earning />} />
+        <Route path="/report" element={<Report />} />
+        <Route path="/feedback" element={<Feedback />} />
       </Routes>
     </BrowserRouter>
   );
