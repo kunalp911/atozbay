@@ -535,7 +535,7 @@ const AddCoupon = () => {
             label="Public"
           />
           <TextField
-            label="Coupon Amount"
+            label="Coupon Amount (%)"
             name="coupon_amount"
             type="number"
             value={couponData.coupon_amount}

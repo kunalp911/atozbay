@@ -71,6 +71,7 @@ const AddtoCart = () => {
         setload(false);
         setCartList([]);
         calculateTotals([]);
+        setShipCharge(0);
       }
     } catch (error) {
       console.log(error);
@@ -394,8 +395,7 @@ const AddtoCart = () => {
                                       )
                                     }
                                   >
-                                    {Array.isArray(data) &&
-                                    data.quantity > 0 ? (
+                                    {data?.quantity > 0 ? (
                                       [...Array(data.quantity).keys()].map(
                                         (x) => (
                                           <option key={x + 1} value={x + 1}>

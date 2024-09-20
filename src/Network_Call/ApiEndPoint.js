@@ -101,6 +101,11 @@ const ApiEndPoints = {
   OrderProductCancel: `${APPConfig.API_URL}/order-product-cancel/`,
   OrderProductReturn: `${APPConfig.API_URL}/order-product-return/`,
   WalletHistory: `${APPConfig.API_URL}/wallet-history`,
+  ReportProblem: `${APPConfig.API_URL}/report-problem`,
+  ProblemList: `${APPConfig.API_URL}/problems-list`,
+  SellergiveReview: `${APPConfig.API_URL}/seller-give-review`,
+  CustomergiveReview: `${APPConfig.API_URL}/customer-give-review`,
+  ReviewList: `${APPConfig.API_URL}/reviews-list`,
 };
 
 export default ApiEndPoints;

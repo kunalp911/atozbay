@@ -134,13 +134,13 @@ const Sidebar = ({ status, bidchild }) => {
                   Packages
                 </ListGroup.Item>
               </Link>
-              <Link to="/packages" className="text-decoration-none">
+              <Link to="/wallet-history" className="text-decoration-none">
                 <ListGroup.Item
                   className={`fs-6 ${
                     bidchild == "earning" ? "text-primary" : "text-muted"
                   }`}
                 >
-                  Earnings
+                  Wallet
                 </ListGroup.Item>
               </Link>
             </ListGroup>

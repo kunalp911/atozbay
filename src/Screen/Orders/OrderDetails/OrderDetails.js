@@ -15,12 +15,13 @@ import Sidebar from "../../Myatozbay/Sidebar/Sidebar";
 import Header from "../../../Component/Header/Header";
 import { apiCallNew } from "../../../Network_Call/apiservices";
 import ApiEndPoints from "../../../Network_Call/ApiEndPoint";
-import { CircularProgress, Typography } from "@mui/material";
+import { Alert, CircularProgress, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./OrderDetails.css";
 import { doller } from "../../../Component/ReuseFormat/Doller";
 import { formatCapitalize } from "../../../Component/ReuseFormat/ReuseFormat";
 import { toast } from "react-toastify";
+import { FaComments } from "react-icons/fa";
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -240,15 +241,6 @@ const OrderDetails = () => {
                         </Col>
                         <Col md={8}>
                           <Card.Body className="">
-                            {/* <p
-                              onClick={() =>
-                                navigate(`/message`, {
-                                  state: { id: product?.seller_user_id },
-                                })
-                              }
-                            >
-                              message
-                            </p> */}
                             {product?.order_product_status == "Placed" && (
                               <p
                                 className="procancel mb-0 fw-bold"
@@ -283,6 +275,8 @@ const OrderDetails = () => {
                                 handleShow(product?.product_id);
                                 setModalStatus(2);
                               }}
+                               
+
                             >
                               <u> Return</u>
                             </p> */}
@@ -330,6 +324,40 @@ const OrderDetails = () => {
                           style={{ cursor: "pointer" }}
                         >
                           <b>Write a review</b>
+                        </p>
+                      </div>
+                      <div className="d-flex justify-content-between ">
+                        <p
+                          onClick={() =>
+                            navigate(`/message`, {
+                              state: { id: product?.seller_user_id },
+                            })
+                          }
+                          style={{
+                            cursor: "pointer",
+                            fontWeight: 600,
+                            border: "1px solid #ddd",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          contact seller <FaComments />
+                        </p>
+                        <p
+                          className="text-end text-primary"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            navigate(`/feedback`, {
+                              state: {
+                                id: product?.id,
+                                orderId: product?.order_id,
+                                productId: product?.product_id,
+                                status: "customer",
+                              },
+                            });
+                          }}
+                        >
+                          <b>Feedback</b>
                         </p>
                       </div>
 

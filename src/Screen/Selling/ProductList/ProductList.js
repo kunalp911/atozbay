@@ -493,7 +493,7 @@ const ProductList = () => {
                           >
                             <Typography sx={labelStyle}>Amount:</Typography>
                             <Typography sx={valueStyle}>
-                              {coupon.coupon_amount}
+                              {coupon.coupon_amount} %
                             </Typography>
                           </Typography>
                           <Typography

@@ -31,9 +31,13 @@ const Draft = () => {
   };
 
   const getProductList = () => {
+    const payload = {
+      page: 0,
+      status: 2,
+    };
     try {
       setload(true);
-      apiCallNew("post", {}, ApiEndPoints.ProductList).then((response) => {
+      apiCallNew("post", payload, ApiEndPoints.ProductList).then((response) => {
         if (response.success) {
           setProductLists(response.result);
           setload(false);
@@ -44,7 +48,6 @@ const Draft = () => {
       setload(false);
     }
   };
-  const filterData = productLists.filter((item) => item.status == 2);
 
   const deleteProducts = async () => {
     try {
@@ -91,7 +94,7 @@ const Draft = () => {
                   onChange={(e) => {
                     const isChecked = e.target.checked;
                     if (isChecked) {
-                      const allProductIds = filterData.map((item) => item.id);
+                      const allProductIds = productLists.map((item) => item.id);
                       setSelectedProducts(allProductIds);
                     } else {
                       setSelectedProducts([]);
@@ -107,7 +110,7 @@ const Draft = () => {
                 </button>
               </Col>
             </Row>
-            {filterData?.map((item, index) => (
+            {productLists?.map((item, index) => (
               <div key={index}>
                 <input
                   type="checkbox"
