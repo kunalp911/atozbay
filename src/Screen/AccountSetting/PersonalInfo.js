@@ -15,6 +15,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import {
+  Avatar,
   Button,
   Card,
   CardContent,
@@ -33,6 +34,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import moment from "moment/moment";
+import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -117,6 +120,8 @@ const PersonalInfo = () => {
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("91");
   const [reviewList, setReviewList] = useState([]);
+  const [reviewCount, setReviewCount] = useState([]);
+  const [titleStatus, setTitleStatus] = useState("");
   const [contactUpdateData, setContactUpdateData] = useState({
     country_id: "",
     city_name: "",
@@ -428,10 +433,10 @@ const PersonalInfo = () => {
     }
   };
   console.log("reviewlist", reviewList);
-  const getReviewList = async () => {
+  const getReviewList = async (title) => {
     const payload = {
       page: 0,
-      rating_for: "Seller",
+      rating_for: title,
     };
     try {
       const response = await apiCallNew(
@@ -442,6 +447,7 @@ const PersonalInfo = () => {
       setload(true);
       if (response.success) {
         setReviewList(response.result);
+        setReviewCount(response);
         setload(false);
       } else {
         setload(false);
@@ -451,7 +457,6 @@ const PersonalInfo = () => {
       setload(false);
     }
   };
-
   const getCountries = () => {
     try {
       apiCallNew("get", {}, ApiEndPoints.CountryList).then((response) => {
@@ -757,11 +762,7 @@ const PersonalInfo = () => {
       setload(false);
     }
   };
-  const feedbackData = {
-    positive: 120,
-    neutral: 45,
-    negative: 30,
-  };
+
   return (
     <div>
       <Header />
@@ -1901,7 +1902,7 @@ const PersonalInfo = () => {
                                 align="center"
                                 color="success.main"
                               >
-                                {feedbackData.positive}
+                                {reviewCount?.positive_count}
                               </Typography>
                             </CardContent>
                           </Card>
@@ -1933,7 +1934,7 @@ const PersonalInfo = () => {
                                 align="center"
                                 color="warning.main"
                               >
-                                {feedbackData.neutral}
+                                {reviewCount?.neutral_count}
                               </Typography>
                             </CardContent>
                           </Card>
@@ -1965,7 +1966,7 @@ const PersonalInfo = () => {
                                 align="center"
                                 color="error.main"
                               >
-                                {feedbackData.negative}
+                                {reviewCount?.negative_count}
                               </Typography>
                             </CardContent>
                           </Card>
@@ -1976,109 +1977,114 @@ const PersonalInfo = () => {
                 </Paper>
                 <Paper>
                   <Box className="p-3 mb-5">
-                    <Grid item className="d-flex justify-content-between">
-                      <p className="shipping-titless">All Feedback</p>
+                    <Grid item className="d-flex justify-content-between mb-3">
+                      <p
+                        className="shipping-titless"
+                        style={{
+                          borderBottom: "2px solid black",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {titleStatus == "Seller"
+                          ? "Seller"
+                          : titleStatus == "Customer"
+                          ? "Customer"
+                          : "All"}{" "}
+                        Feedback ({reviewCount?.review_count})
+                      </p>
+                      <div className="dropdown me-3 ">
+                        <button
+                          className="btn border dropdown-toggle btn-sm"
+                          type="button"
+                          id="dropdownMenuButton"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                          size="sm"
+                        >
+                          Feedback Type
+                        </button>
+                        <ul
+                          className="dropdown-menu"
+                          aria-labelledby="dropdownMenuButton"
+                        >
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => {
+                                getReviewList("");
+                                setTitleStatus("");
+                              }}
+                            >
+                              All Feedback
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => {
+                                getReviewList("Seller");
+                                setTitleStatus("Seller");
+                              }}
+                            >
+                              Seller Feedback
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item"
+                              onClick={() => {
+                                getReviewList("Customer");
+                                setTitleStatus("Customer");
+                              }}
+                            >
+                              Customer Feedback
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
                     </Grid>
-                    {/* <Box className="p-3 mt-2 mb-2">
-                      <Grid container spacing={4} justifyContent="center">
-                        <Grid item xs={12} md={4}>
-                          <Card sx={{ boxShadow: 3 }}>
-                            <CardContent className="text-center">
-                              <IconButton
-                                aria-label="positive"
-                                color="success"
-                                size="large"
-                              >
-                                <ThumbUpIcon
-                                  fontSize="inherit"
-                                  style={{
-                                    fontSize: "3rem",
-                                  }}
-                                />
-                              </IconButton>
+                    {reviewList?.map((feedback) => (
+                      <Card key={feedback.id} sx={{ mb: 1, p: 1 }}>
+                        <CardContent>
+                          <Grid container spacing={1}>
+                            {/* Product Image */}
+                            <Grid item xs={3}>
+                              <Avatar
+                                src={feedback?.product_image_path}
+                                alt={feedback?.product_name}
+                                sx={{ width: 60, height: 60 }}
+                                variant="square"
+                              />
+                            </Grid>
+
+                            {/* Feedback Content */}
+                            <Grid item xs={9}>
                               <Typography
-                                variant="h6"
-                                color="textPrimary"
-                                align="center"
+                                variant="subtitle1"
+                                sx={{ fontSize: 14 }}
                               >
-                                Positive Feedback
+                                {formatCapitalize(feedback?.product_name)}
                               </Typography>
                               <Typography
-                                variant="h4"
-                                align="center"
-                                color="success.main"
+                                variant="body2"
+                                sx={{ mt: 0.5, fontSize: 13 }}
                               >
-                                {feedbackData.positive}
-                              </Typography>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Card sx={{ boxShadow: 3 }}>
-                            <CardContent className="text-center">
-                              <IconButton
-                                aria-label="neutral"
-                                color="warning"
-                                size="large"
-                              >
-                                <ThumbsUpDownIcon
-                                  fontSize="inherit"
-                                  style={{
-                                    fontSize: "3rem",
-                                  }}
-                                />
-                              </IconButton>
-                              <Typography
-                                variant="h6"
-                                color="textPrimary"
-                                align="center"
-                              >
-                                Neutral Feedback
+                                <b>Review:</b> {feedback?.review}
                               </Typography>
                               <Typography
-                                variant="h4"
-                                align="center"
-                                color="warning.main"
+                                variant="body2"
+                                color="textSecondary"
+                                sx={{ fontSize: 12 }}
                               >
-                                {feedbackData.neutral}
+                                {moment(feedback?.created_at).format(
+                                  "MMM Do, YYYY h:mm A"
+                                )}
                               </Typography>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Card sx={{ boxShadow: 3 }}>
-                            <CardContent className="text-center">
-                              <IconButton
-                                aria-label="negative"
-                                color="error"
-                                size="large"
-                              >
-                                <ThumbDownIcon
-                                  fontSize="inherit"
-                                  style={{
-                                    fontSize: "3rem",
-                                  }}
-                                />
-                              </IconButton>
-                              <Typography
-                                variant="h6"
-                                color="textPrimary"
-                                align="center"
-                              >
-                                Negative Feedback
-                              </Typography>
-                              <Typography
-                                variant="h4"
-                                align="center"
-                                color="error.main"
-                              >
-                                {feedbackData.negative}
-                              </Typography>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                      </Grid>
-                    </Box> */}
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </Box>
                 </Paper>
               </Grid>

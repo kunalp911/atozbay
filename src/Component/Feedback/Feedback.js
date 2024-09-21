@@ -21,6 +21,7 @@ import "./feedback.css";
 const Feedback = () => {
   const location = useLocation();
   const data = location.state || null;
+  const navigate = useNavigate();
   const [load, setload] = useState(false);
   const [ratings, setRatings] = useState({
     itemDescription: 0,
@@ -87,6 +88,11 @@ const Feedback = () => {
         setRatings({});
         setSelectedStatus("");
         setReviewDescription("");
+        navigate(
+          data?.status == "seller"
+            ? `/seller-order-details/${data?.orderId}`
+            : `/order-details/${data?.orderId}`
+        );
       } else {
         setload(false);
         const errors = response.result;

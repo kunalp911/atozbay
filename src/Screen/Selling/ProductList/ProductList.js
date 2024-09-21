@@ -15,6 +15,8 @@ import {
   ListItem,
   ListItemText,
   Modal,
+  Pagination,
+  Stack,
   Typography,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
@@ -46,6 +48,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 const ProductList = () => {
   const navigate = useNavigate();
   const [productLists, setProductLists] = React.useState([]);
+  const [productCount, setProductCount] = React.useState(0);
   const [couponList, setCouponList] = React.useState();
   const [stokeOpen, setStokeOpen] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -65,13 +68,17 @@ const ProductList = () => {
   });
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const fiterData = productLists.filter((item) => item.status == 1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   useEffect(() => {
-    getProductList();
     getCouponList();
     getActivePackage();
   }, []);
+
+  useEffect(() => {
+    getProductList(currentPage);
+  }, [currentPage]);
 
   useEffect(() => {
     const currentDate = new Date();
@@ -229,12 +236,17 @@ const ProductList = () => {
     setStockFormData({ ...stockFormData, [name]: value });
   };
 
-  const getProductList = () => {
+  const getProductList = (page = 1) => {
+    const payload = {
+      page: page - 1,
+      status: 1,
+    };
     try {
       setload(true);
-      apiCallNew("post", {}, ApiEndPoints.ProductList).then((response) => {
+      apiCallNew("post", payload, ApiEndPoints.ProductList).then((response) => {
         if (response.success) {
           setProductLists(response.result);
+          setProductCount(response.product_count);
           setload(false);
         }
       });
@@ -582,7 +594,7 @@ const ProductList = () => {
                 </Row>
 
                 <Form action="javascript:void(0)">
-                  {fiterData?.map((product, index) => (
+                  {productLists?.map((product, index) => (
                     <Card className="mt-2" key={product?.id}>
                       <Card.Header>
                         <Row className="align-items-center">
@@ -754,6 +766,20 @@ const ProductList = () => {
                       </Card.Body>
                     </Card>
                   ))}
+                  <Stack spacing={2} className="mt-4">
+                    <Row>
+                      <Col
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <Pagination
+                          count={Math.ceil(productCount / itemsPerPage)} // Calculate total pages
+                          page={currentPage}
+                          onChange={(event, value) => setCurrentPage(value)} // Update current page
+                          color="primary"
+                        />
+                      </Col>
+                    </Row>
+                  </Stack>
                 </Form>
               </Container>
             </div>

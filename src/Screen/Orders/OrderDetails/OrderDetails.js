@@ -69,6 +69,7 @@ const OrderDetails = () => {
     order_address,
     order_product,
     order_review,
+    order_trans_fee,
   } = order;
 
   const handleClose = () => setShow(false);
@@ -184,6 +185,10 @@ const OrderDetails = () => {
                     {doller.Aud} {shipping_charge}
                   </ListGroup.Item>
                   <ListGroup.Item>
+                    <strong>Transaction Charge:</strong>
+                    {doller.Aud} {order_trans_fee}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
                     <strong>Total:</strong>
                     {doller.Aud} {total}
                   </ListGroup.Item>
@@ -246,7 +251,12 @@ const OrderDetails = () => {
                                 className="procancel mb-0 fw-bold"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
-                                  handleShow(product?.product_id);
+                                  product?.products?.product_prices
+                                    ?.starting_bid
+                                    ? toast.error(
+                                        "Your are not able to cancel because of this is auction product"
+                                      )
+                                    : handleShow(product?.product_id);
                                   setModalStatus(1);
                                 }}
                               >

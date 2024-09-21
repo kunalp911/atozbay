@@ -330,7 +330,7 @@ const AddProduct = () => {
     setOpensss(true);
   };
 
-  const handleUpdateProduct = async (e) => {
+  const handleUpdateProduct = async (e, status) => {
     e.preventDefault();
     const attribute_ids = [];
     const attribute_value_ids = [];
@@ -359,6 +359,7 @@ const AddProduct = () => {
         (item) => item?.custom_attribute_value
       ),
       custom_attribute_id: customArray?.map((item) => item?.id),
+      status: status,
       ...addProductFormData,
     };
     setload(true);
@@ -370,9 +371,13 @@ const AddProduct = () => {
       );
       setload(true);
       if (response.success === true) {
-        navigate("/product-list");
         toast.success(response.msg);
         setload(false);
+        if (status == 2) {
+          navigate("/drafts");
+        } else {
+          navigate("/product-list");
+        }
       } else {
         toast.error(response.msg[0]);
         setload(false);
@@ -739,14 +744,12 @@ const AddProduct = () => {
         attribute_value_ids.push(attributeValueId);
       }
     });
-    const allImages = [...(images || []), ...(updateImage || [])];
-
     const payload = {
       attribute_id: attribute_ids,
       attribute_value_id: attribute_value_ids,
       item_condition: selectedValue ? selectedValue : conditionName,
       video: video ? video : null,
-      images: allImages,
+      images: images,
       auction_date_time: formattedDateTime,
       custom_attribute_name: customArray?.map(
         (item) => item?.custom_attribute_name
@@ -757,6 +760,7 @@ const AddProduct = () => {
       status: status,
       ...addProductFormData,
     };
+
     setload(true);
 
     try {
@@ -1519,7 +1523,7 @@ const AddProduct = () => {
               ) : isUpdateMode ? (
                 <button
                   className="btn btn-customs"
-                  onClick={handleUpdateProduct}
+                  onClick={(e) => handleUpdateProduct(e, 1)}
                 >
                   Update it
                 </button>
@@ -1533,7 +1537,9 @@ const AddProduct = () => {
               )}
               <button
                 className="btn btn-customss"
-                onClick={(e) => handleAddProduct(e, 2)}
+                onClick={(e) => {
+                  draf ? handleUpdateProduct(e, 2) : handleAddProduct(e, 2);
+                }}
               >
                 Save for later
               </button>

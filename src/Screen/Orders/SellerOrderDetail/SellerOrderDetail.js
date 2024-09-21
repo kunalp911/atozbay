@@ -73,6 +73,7 @@ const SellerOrderDetail = () => {
     created_at,
     order_address,
     order_product,
+    order_trans_fee,
   } = order;
 
   const handleOpen = () => setOpens(true);
@@ -181,6 +182,10 @@ const SellerOrderDetail = () => {
                   <ListGroup.Item>
                     <strong>Shipping Charge:</strong>
                     {doller.Aud} {shipping_charge}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Transaction Charge:</strong>
+                    {doller.Aud} {order_trans_fee}
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <strong>Total:</strong> {doller.Aud} {total}
