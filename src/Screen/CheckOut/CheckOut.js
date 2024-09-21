@@ -63,6 +63,9 @@ const CheckOut = () => {
   const [couponCode, setCouponCode] = useState("");
   const [couponData, setCouponData] = useState(0);
   const [shipCharge, setShipCharge] = useState(0);
+  const [shipChargeSingle, setShipChargeSingle] = useState(0);
+  const [transCharge, setTransCharge] = useState(0);
+  const [transChargeSingle, setTransChargeSingle] = useState(0);
 
   const isEmpty = (obj) => !Object.keys(obj).length;
 
@@ -71,6 +74,7 @@ const CheckOut = () => {
 
   console.log("bid_id", bid_id, ">>", winstatus);
   console.log("productDetails", productDetails);
+  console.log("totalPrices", totalPrices, "SSS", totalPrice);
   useEffect(() => {
     if (shipAddList?.length > 0 && primaryAddress === null) {
       setPrimaryAddress(shipAddList[0]?.id);
@@ -110,6 +114,15 @@ const CheckOut = () => {
     }
   }, [shipAddList]);
 
+  const subTotalSingle =
+    productDetails?.product_shipping?.shipping_charge + totalPrice - couponData;
+  const TransFeeSingle = (subTotalSingle * transChargeSingle) / 100;
+  const DirectTotalSingle = subTotalSingle + TransFeeSingle;
+
+  const subTotal = shipCharge + totalPrices - couponData;
+  const TransFee = (subTotal * transCharge) / 100;
+  const DirectTotal = subTotal + TransFee;
+
   const handlePrimaryChange = (id) => {
     setPrimaryAddress(id);
     getPrimaryAddress(id);
@@ -139,6 +152,7 @@ const CheckOut = () => {
       if (response.success) {
         setCartList(response.result);
         setShipCharge(response.shipping_charge);
+        setTransCharge(response.transaction_fee);
         calculateTotals(response.result);
         setload(false);
       }
@@ -313,6 +327,8 @@ const CheckOut = () => {
         (response) => {
           if (response.success) {
             setProductLists(response.result);
+            setShipChargeSingle(response.shipping_charge);
+            setTransChargeSingle(response.transaction_fee);
             setload(false);
           }
         }
@@ -404,14 +420,18 @@ const CheckOut = () => {
     try {
       const payload = {
         shipping_id: shipAdd?.id,
-        sub_total: totalPrices,
+        sub_total: status === 1 ? DirectTotalSingle : DirectTotal,
         total: totalPrices,
         coupon_code: couponCode,
         coupon_amount: couponData,
-        shipping_charge: shipCharge,
+        shipping_charge:
+          status === 1
+            ? shipCharge
+            : productDetails?.product_shipping?.shipping_charge,
         device_type: "web",
         bid_id: winstatus == "win" ? bid_id : null,
         product_id: status == 1 ? "" : id,
+        quantity: winstatus == "win" ? 1 : quantity,
       };
       const response = await apiCallNew(
         "post",
@@ -908,16 +928,24 @@ const CheckOut = () => {
                       {doller.Aud} {totalPrices?.toFixed(2)}
                     </Col>
                   </Row>
-                  <Row>
-                    <Col>Shipping</Col>
-                    <Col className="text-right">
-                      + {doller.Aud} {shipCharge?.toFixed(2)}
-                    </Col>
-                  </Row>
+                  {shipCharge > 0 && (
+                    <Row>
+                      <Col>Shipping</Col>
+                      <Col className="text-right">
+                        + {doller.Aud} {shipCharge?.toFixed(2)}
+                      </Col>
+                    </Row>
+                  )}
                   <Row>
                     <Col>Discount</Col>
                     <Col className="text-right">
                       - {doller.Aud} {couponData?.toFixed(2)}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>Transaction Fee</Col>
+                    <Col className="text-right">
+                      + {doller.Aud} {TransFee?.toFixed(2)}
                     </Col>
                   </Row>
                   <hr />
@@ -925,8 +953,7 @@ const CheckOut = () => {
                     <Col>Total</Col>
                     <Col className="text-right">
                       <b>
-                        {doller.Aud}{" "}
-                        {(totalPrices + shipCharge - couponData)?.toFixed(2)}
+                        {doller.Aud} {DirectTotal?.toFixed(2)}
                       </b>
                     </Col>
                   </Row>
@@ -946,19 +973,27 @@ const CheckOut = () => {
                       {doller.Aud} {totalPrice?.toFixed(2)}
                     </Col>
                   </Row>
-                  <Row>
-                    <Col>Shipping</Col>
-                    <Col className="text-right">
-                      + {doller.Aud}{" "}
-                      {productDetails?.product_shipping?.shipping_charge?.toFixed(
-                        2
-                      )}
-                    </Col>
-                  </Row>
+                  {productDetails?.product_shipping?.shipping_charge > 0 && (
+                    <Row>
+                      <Col>Shipping</Col>
+                      <Col className="text-right">
+                        + {doller.Aud}{" "}
+                        {productDetails?.product_shipping?.shipping_charge?.toFixed(
+                          2
+                        )}
+                      </Col>
+                    </Row>
+                  )}
                   <Row>
                     <Col>Discount</Col>
                     <Col className="text-right">
                       - {doller.Aud} {couponData?.toFixed(2)}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>Transaction Fee</Col>
+                    <Col className="text-right">
+                      + {doller.Aud} {TransFeeSingle?.toFixed(2)}
                     </Col>
                   </Row>
                   <hr />
@@ -966,12 +1001,7 @@ const CheckOut = () => {
                     <Col>Total</Col>
                     <Col className="text-right">
                       <b>
-                        {doller.Aud}{" "}
-                        {(
-                          totalPrice +
-                          productDetails?.product_shipping?.shipping_charge -
-                          couponData
-                        )?.toFixed(2)}
+                        {doller.Aud} {DirectTotalSingle?.toFixed(2)}
                       </b>
                     </Col>
                   </Row>

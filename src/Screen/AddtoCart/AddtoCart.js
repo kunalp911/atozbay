@@ -280,12 +280,6 @@ const AddtoCart = () => {
   };
   const subtotal = calculateSubtotal(cart);
 
-  // const removeFromCart = (itemId) => {
-  //   const updatedCart = cart.filter((item) => item.id !== itemId);
-  //   localStorage.setItem("cart", JSON.stringify(updatedCart));
-  //   setCart(updatedCart);
-  //   updateCart(updatedCart);
-  // };
   const removeFromCart = (id) => {
     setCart((prevCart) => {
       const updatedCart = prevCart?.filter((item) => item.id !== id);
@@ -596,10 +590,10 @@ const AddtoCart = () => {
                         {doller.Aud} {subtotal}
                       </span>
                     </div>
-                    <div className="summary-item">
+                    {/* <div className="summary-item">
                       <span className="text">Shipping</span>
                       <span className="price">{doller.Aud} 0</span>
-                    </div>
+                    </div> */}
                     <div className="summary-item mt-4">
                       <span className="text">Total</span>
                       <span
@@ -627,19 +621,19 @@ const AddtoCart = () => {
                       </span>
                     </div>
 
-                    <div className="summary-item">
+                    {/* <div className="summary-item">
                       <span className="text">Shipping</span>
                       <span className="price">
                         {doller.Aud} {shipCharge}
                       </span>
-                    </div>
+                    </div> */}
                     <div className="summary-item mt-4">
                       <span className="text">Total</span>
                       <span
                         className="price"
                         style={{ fontWeight: "bold", fontSize: "23px" }}
                       >
-                        {doller.Aud} {totalPrice + shipCharge}
+                        {doller.Aud} {totalPrice}
                       </span>
                     </div>
                     <button

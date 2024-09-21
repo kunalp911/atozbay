@@ -160,6 +160,7 @@ import { formatCapitalize } from "../../../Component/ReuseFormat/ReuseFormat";
 const Earning = () => {
   const [load, setload] = React.useState(false);
   const [walletList, setWalletList] = React.useState([]);
+  const [walletListCount, setWalletListCount] = React.useState([]);
 
   useEffect(() => {
     getWalletList();
@@ -171,12 +172,27 @@ const Earning = () => {
       0
     );
   };
+  const subtotalEarnings = (walletList) => {
+    return walletList
+      .reduce((acc, item) => {
+        return (
+          acc +
+          (item?.product_price +
+            item?.shipping_charge -
+            item?.admin_product_commission -
+            item?.order_product_trans_fee)
+        );
+      }, 0)
+      .toFixed(2);
+  };
+
   const getWalletList = () => {
     try {
       setload(true);
       apiCallNew("post", {}, ApiEndPoints.WalletHistory).then((response) => {
         if (response.success) {
           setWalletList(response.result);
+          setWalletListCount(response.result_count);
           setload(false);
         } else {
           setload(false);
@@ -196,7 +212,7 @@ const Earning = () => {
         </div>
       )}
       <Header />
-      <div className="sideallspace mt-3">
+      <div className="sideallspace mt-3 mb-5">
         <h4 className="helo">My atozbay</h4>
         <Row className="">
           <Col md={2} xs={12} lg={2} className="mt-3">
@@ -208,9 +224,9 @@ const Earning = () => {
                 <h2 className="helo">Wallet History</h2>
               </Col>
             </Row>
-            <Row className="mt-3">
+            <Row className="mt-3" style={{ overflowX: "auto" }}>
               <TableContainer component={Paper}>
-                <Table>
+                <Table style={{ minWidth: 1500 }}>
                   <TableHead>
                     <TableRow>
                       <TableCell style={{ fontWeight: "bold" }}>
@@ -229,10 +245,16 @@ const Earning = () => {
                         Shipping Charge
                       </TableCell>
                       <TableCell style={{ fontWeight: "bold" }}>
+                        Transaction Fee
+                      </TableCell>
+                      <TableCell style={{ fontWeight: "bold" }}>
                         Status
                       </TableCell>
                       <TableCell style={{ fontWeight: "bold" }}>
                         On Hold
+                      </TableCell>
+                      <TableCell style={{ fontWeight: "bold" }}>
+                        Earning
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -243,11 +265,14 @@ const Earning = () => {
                         <TableCell>
                           {formatCapitalize(item?.product_name || "N/A")}
                         </TableCell>
-                        <TableCell>{item?.product_price || "N/A"}</TableCell>
+                        <TableCell>{item?.product_price || "0"}</TableCell>
                         <TableCell>
                           {item?.admin_product_commission || "0"}
                         </TableCell>
-                        <TableCell>{item?.shipping_charge || "N/A"}</TableCell>
+                        <TableCell>{item?.shipping_charge || "0"}</TableCell>
+                        <TableCell>
+                          {item?.order_product_trans_fee || "0"}
+                        </TableCell>
                         <TableCell>
                           {item?.order_product_status || "N/A"}
                         </TableCell>
@@ -255,6 +280,16 @@ const Earning = () => {
                           style={{ fontWeight: "bold", color: "#525050" }}
                         >
                           {item?.on_hold == 0 ? "Yes" : "Setteld"}
+                        </TableCell>
+                        <TableCell
+                          style={{ fontWeight: "bold", color: "#525050" }}
+                        >
+                          {(
+                            item?.product_price +
+                            item?.shipping_charge -
+                            item?.admin_product_commission -
+                            item?.order_product_trans_fee
+                          ).toFixed(2)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -274,7 +309,13 @@ const Earning = () => {
                       <TableCell style={{ fontWeight: "bold" }}>
                         {subtotal(walletList, "shipping_charge")}
                       </TableCell>
+                      <TableCell style={{ fontWeight: "bold" }}>
+                        {subtotal(walletList, "order_product_trans_fee")}
+                      </TableCell>
                       <TableCell colSpan={2}></TableCell>
+                      <TableCell style={{ fontWeight: "bold" }}>
+                        {subtotalEarnings(walletList)}
+                      </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
