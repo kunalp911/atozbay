@@ -64,66 +64,6 @@ const slideImages = [
   },
 ];
 
-const cardData = [
-  {
-    image: "https://i.ebayimg.com/images/g/QxgAAOSwB-plsB5T/s-l960.webp",
-    title: "Green Iguana",
-    price: "AUD 49.99",
-    status: "New",
-    rating: 4.5,
-  },
-  {
-    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-    title: "Red Parrot",
-    price: "AUD 59.99",
-    status: "Sale",
-    rating: 4.0,
-  },
-  {
-    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-    title: "Red Parrot",
-    price: "AUD 59.99",
-    status: "Sale",
-    rating: 4.0,
-  },
-  {
-    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-    title: "Red Parrot",
-    price: "AUD 59.99",
-    status: "Sale",
-    rating: 4.0,
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
-    title: "Red Parrot",
-    price: "AUD 59.99",
-    status: "Sale",
-    rating: 4.0,
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
-    title: "Red Parrot",
-    price: "AUD 59.99",
-    status: "Sale",
-    rating: 4.0,
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1466074395296-41cba23ce4f8?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
-    title: "Red Parrot",
-    price: "AUD 59.99",
-    status: "Sale",
-    rating: 4.0,
-  },
-  {
-    title: "Lizard",
-    image: "https://i.ebayimg.com/images/g/GrQAAOSwdoVlsB5a/s-l960.webp",
-    date: "8 July",
-    price: "AUD 10001",
-  },
-];
 const Dashboard = () => {
   const navigate = useNavigate();
   const [subCategoriesList, setSubCategoriesList] = React.useState([]);
@@ -131,6 +71,7 @@ const Dashboard = () => {
   const [dealProduct, setDealProduct] = useState([]);
 
   const ReverseOrder = [...subCategoriesList].reverse();
+  const visibleProducts = dealProduct?.slice(0, 8);
   useEffect(() => {
     getSubCategories();
     getDailydealProduct();
@@ -203,29 +144,15 @@ const Dashboard = () => {
         </div>
         <div className=" mt-4">
           <div className="  custom-card d-flex flex-column flex-md-row align-items-center">
-            <div className="offer-details">
-              <h5 className="font-weight-bold">
-                Feel special this summer with 15% off*
-              </h5>
-              <div className="row d-flex">
-                <p className="mb-1">
-                  Save on luxury jewelry, watches and handbags for you.
-                </p>
-                <p className="mb-0">
-                  <a href="#" className="text-decoration-none">
-                    *Min. spend $300. Max. discount $100
-                  </a>
-                </p>
-              </div>
-            </div>
-            <div className="code-badge mt-3 mt-md-0">Code: LUXUS15</div>
+            <div className="offer-details"></div>
+            {/* <div className="code-badge mt-3 mt-md-0">Code: LUXUS15</div> */}
           </div>
           <div className=" mt-5">
             <h3>Shop Category</h3>
           </div>
           <div className="container mt-3">
             <div className="row">
-              {subCategoriesList.map((offer, index) => (
+              {subCategoriesList?.slice(0, 6)?.map((offer, index) => (
                 <div
                   key={index}
                   className="col-6 col-md-4 col-lg-2 mb-3 text-center p-0"
@@ -254,7 +181,7 @@ const Dashboard = () => {
           </div>
           <div className="mt-3">
             <div className="row mx-0 mt-0">
-              {dealProduct?.map((card, index) => (
+              {visibleProducts?.map((card, index) => (
                 <div className="col-md-3 mb-4" key={index}>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardActionArea
@@ -288,6 +215,14 @@ const Dashboard = () => {
                   </Card>
                 </div>
               ))}
+              <p className="text-end fw-bold">
+                <span
+                  onClick={() => navigate("/dailydeals")}
+                  style={{ cursor: "pointer" }}
+                >
+                  View All
+                </span>
+              </p>
             </div>
           </div>
           <div className=" mt-5">
@@ -295,7 +230,10 @@ const Dashboard = () => {
               <div className="custom-card-text">
                 <h2>Growing your collection? We’ve got your back</h2>
                 <p>You’re protected by the eBay Money Back Guarantee.</p>
-                <button className="custom-card-button">
+                <button
+                  className="custom-card-button"
+                  onClick={() => navigate("/all-product")}
+                >
                   Shop collectibles
                 </button>
               </div>
@@ -320,7 +258,7 @@ const Dashboard = () => {
           </div>
           <div className="container mt-3">
             <div className="row">
-              {ReverseOrder.map((offer, index) => (
+              {ReverseOrder?.slice(0, 6)?.map((offer, index) => (
                 <div
                   key={index}
                   className="col-6 col-md-4 col-lg-2 mb-3 text-center p-0"
@@ -388,7 +326,6 @@ const Dashboard = () => {
                 <p>
                   Save on luxury jewelry, watches and handbags for your summer.
                 </p>
-                <button className="custom-card-button">Code: LUXUS15</button>
               </div>
               <div className="custom-card-images">
                 <img

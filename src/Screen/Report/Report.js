@@ -17,9 +17,9 @@ const Report = () => {
   const [load, setload] = useState(false);
   const [typeList, setTypeList] = useState([]);
 
-  console.log("tyyyy", issueType);
   useEffect(() => {
     getProblemList();
+    window.scrollTo(0, 0);
   }, []);
 
   const handleDescriptionChange = (e) => {

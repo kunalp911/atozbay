@@ -20,9 +20,9 @@ const ImgPaymentSuccess = () => {
         have any questions.
       </p>
       <div className="mt-4 d-flex">
-        <Link to={"/"}>
-          <a href="/" className="btn btn-success mr-3">
-            Continue Shopping
+        <Link to={"/active-package"}>
+          <a href="/active-package" className="btn btn-success mr-3">
+            View Package
           </a>
         </Link>
         {/* <Link to={"/purchase"}>

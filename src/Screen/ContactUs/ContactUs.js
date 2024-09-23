@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
@@ -21,6 +21,10 @@ const ContactUs = () => {
     message: "",
     subject: "",
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,13 +66,6 @@ const ContactUs = () => {
     } catch (error) {
       setload(false);
       console.log(error);
-    }
-  };
-  const loginNavigate = () => {
-    if (token) {
-      handleSubmit();
-    } else {
-      navigate("/login");
     }
   };
 
@@ -157,7 +154,7 @@ const ContactUs = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Button className="mt-3 btncontact" onClick={loginNavigate}>
+          <Button className="mt-3 btncontact" onClick={handleSubmit}>
             Submit
           </Button>
         </Form>

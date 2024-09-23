@@ -115,7 +115,9 @@ const CheckOut = () => {
   }, [shipAddList]);
 
   const subTotalSingle =
-    productDetails?.product_shipping?.shipping_charge + totalPrice - couponData;
+    productDetails?.product_shipping?.shipping_charge * quantity +
+    totalPrice -
+    couponData;
   const TransFeeSingle = (subTotalSingle * transChargeSingle) / 100;
   const DirectTotalSingle = subTotalSingle + TransFeeSingle;
 
@@ -427,7 +429,7 @@ const CheckOut = () => {
         shipping_charge:
           status === 1
             ? shipCharge
-            : productDetails?.product_shipping?.shipping_charge,
+            : productDetails?.product_shipping?.shipping_charge * quantity,
         device_type: "web",
         bid_id: winstatus == "win" ? bid_id : null,
         product_id: status == 1 ? "" : id,
@@ -540,6 +542,7 @@ const CheckOut = () => {
                                     Number(e.target.value)
                                   )
                                 }
+                                disabled
                               >
                                 {[...Array(data.quantity).keys()].map((x) => (
                                   <option key={x + 1} value={x + 1}>
@@ -592,8 +595,22 @@ const CheckOut = () => {
                           className="w-25"
                           value={quantity}
                           onChange={(e) => setQuantity(e.target.value)}
+                          disabled
                         >
-                          <option value="1">1</option>
+                          {productDetails?.product_prices?.quantity > 0 ? (
+                            [
+                              ...Array(
+                                productDetails?.product_prices?.quantity
+                              ).keys(),
+                            ].map((x) => (
+                              <option key={x + 1} value={x + 1}>
+                                {x + 1}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="1">1</option>
+                          )}
+                          {/* <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
                           <option value="4">4</option>
@@ -602,7 +619,7 @@ const CheckOut = () => {
                           <option value="7">7</option>
                           <option value="8">8</option>
                           <option value="9">9</option>
-                          <option value="10">10</option>
+                          <option value="10">10</option> */}
                         </Form.Control>
                       </Form.Group>
                       <p className="m-0" style={{ fontSize: "14px" }}>
@@ -978,9 +995,10 @@ const CheckOut = () => {
                       <Col>Shipping</Col>
                       <Col className="text-right">
                         + {doller.Aud}{" "}
-                        {productDetails?.product_shipping?.shipping_charge?.toFixed(
-                          2
-                        )}
+                        {(
+                          productDetails?.product_shipping?.shipping_charge *
+                          quantity
+                        )?.toFixed(2)}
                       </Col>
                     </Row>
                   )}

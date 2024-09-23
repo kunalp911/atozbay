@@ -1,0 +1,13 @@
+.blog-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* Limits to 4 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds ... for overflowed text */
+}
+.blogheadercss {
+  height: 300px;
+  padding: 20px 15px;
+  margin-bottom: 15px;
+  background: linear-gradient(#343a40, rgba(0, 0, 0, 0.5));
+}
