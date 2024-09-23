@@ -1,7 +1,9 @@
 import React from "react";
 import "./footer.css";
 import { Link } from "react-router-dom";
+import { getToken } from "../../Helper/Storage";
 const Footer = () => {
+  const token = getToken();
   return (
     <div>
       <footer
@@ -14,7 +16,7 @@ const Footer = () => {
               <div className="col-lg-2 col-md-6 mb-4 mb-md-0">
                 <h6 className="text-uppercasess">Buy</h6>
                 <ul className="list-unstyled mb-0">
-                  <li>
+                  {/* <li>
                     <a href="#!" className="text-dark footerdroptitle">
                       atozbay Money Back Guarantee
                     </a>
@@ -23,11 +25,22 @@ const Footer = () => {
                     <a href="#!" className="text-dark footerdroptitle">
                       Bidding & buying help
                     </a>
-                  </li>
+                  </li> */}
+                  {!token && (
+                    <li>
+                      <Link to={"/signup"}>
+                        <a href="#" className="text-dark footerdroptitle">
+                          Registration
+                        </a>
+                      </Link>
+                    </li>
+                  )}
                   <li>
-                    <a href="#!" className="text-dark footerdroptitle">
-                      Stores
-                    </a>
+                    <Link to={"/all-product"}>
+                      <a href="#!" className="text-dark footerdroptitle">
+                        Stores
+                      </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -35,19 +48,18 @@ const Footer = () => {
                 <h6 className="text-uppercasess">Sell</h6>
                 <ul className="list-unstyled mb-0">
                   <li>
-                    <a href="#!" className="text-dark footerdroptitle">
-                      Start selling
-                    </a>
+                    <Link to={"/selling"}>
+                      <a href="#!" className="text-dark footerdroptitle">
+                        Start selling
+                      </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#!" className="text-dark footerdroptitle">
-                      Learn to sell
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#!" className="text-dark footerdroptitle">
-                      Affiliates
-                    </a>
+                    <Link to={"/selling"}>
+                      <a href="#!" className="text-dark footerdroptitle">
+                        Learn to sell
+                      </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -55,17 +67,27 @@ const Footer = () => {
                 <h6 className="text-uppercasess">Stay connected</h6>
                 <ul className="list-unstyled mb-0">
                   <li>
-                    <a href="#!" className="text-dark footerdroptitle">
-                      atozbay Blogs
-                    </a>
+                    <Link to={"/blogs"}>
+                      <a href="#!" className="text-dark footerdroptitle">
+                        atozbay Blogs
+                      </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#!" className="text-dark footerdroptitle">
+                    <a
+                      href="https://www.facebook.com"
+                      className="text-dark footerdroptitle"
+                      target="_blank"
+                    >
                       Facebook
                     </a>
                   </li>
                   <li>
-                    <a href="#!" className="text-dark footerdroptitle">
+                    <a
+                      href="https://twitter.com"
+                      className="text-dark footerdroptitle"
+                      target="_blank"
+                    >
                       Twitter
                     </a>
                   </li>
@@ -98,11 +120,11 @@ const Footer = () => {
               <div className="col-lg-2 col-md-6 mb-4 mb-md-0">
                 <h6 className="text-uppercasess">Help & Contact</h6>
                 <ul className="list-unstyled mb-0">
-                  <li>
+                  {/* <li>
                     <a href="#!" className="text-dark footerdroptitle">
                       Seller Information Center
                     </a>
-                  </li>
+                  </li> */}
                   <li>
                     <Link to={"/contact-us"}>
                       <a className="text-dark footerdroptitle">Contact us</a>

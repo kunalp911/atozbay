@@ -110,6 +110,18 @@ const Draft = () => {
                 </button>
               </Col>
             </Row>
+            {productLists?.length === 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <p>No product found</p>
+              </div>
+            )}
             {productLists?.map((item, index) => (
               <div key={index}>
                 <input

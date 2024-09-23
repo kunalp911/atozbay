@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../Component/Header/Header";
 import "./selling.css";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,10 @@ import Footer from "../../Component/Footer/Footer";
 import { Col, Row } from "react-bootstrap";
 const Selling = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div>
       <Header />

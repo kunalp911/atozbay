@@ -1516,7 +1516,7 @@ const AddProduct = () => {
               {isUpdateMode && draf ? (
                 <button
                   className="btn btn-customs"
-                  onClick={(e) => handleAddProduct(e, 1)}
+                  onClick={(e) => handleUpdateProduct(e, 1)}
                 >
                   List it
                 </button>

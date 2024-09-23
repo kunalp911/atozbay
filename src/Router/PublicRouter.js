@@ -62,6 +62,8 @@ import CookieConsent from "../Component/Cookie/CookieConsent";
 import Earning from "../Screen/Selling/Earning/Earning";
 import Report from "../Screen/Report/Report";
 import Feedback from "../Component/Feedback/Feedback";
+import Blogs from "../Screen/Blogs/Blogs";
+import BlogDetails from "../Screen/Blogs/BlogDetails";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -296,6 +298,8 @@ const PublicRouter = () => {
         <Route path="/wallet-history" element={<Earning />} />
         <Route path="/report" element={<Report />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blogs/:slug" element={<BlogDetails />} />
       </Routes>
     </BrowserRouter>
   );
