@@ -20,6 +20,7 @@ import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
 import moment from "moment/moment";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const MessageScreen = () => {
   const location = useLocation();
@@ -32,7 +33,8 @@ const MessageScreen = () => {
   const [selleName, setSelleName] = useState("");
   const [newMessage, setNewMessage] = useState("");
   const chatEndRef = useRef(null);
-
+  const emailPattern = /[@]|\.com/;
+  const phonePattern = /\d{5,}/;
   useEffect(() => {
     getUserList();
   }, []);
@@ -55,6 +57,21 @@ const MessageScreen = () => {
       getMessagesHistory(sellId);
     }
   }, [sellId]);
+
+  const handleInputChange = (e) => {
+    const input = e.target.value;
+    if (emailPattern.test(input)) {
+      toast.error("Email addresses are not allowed.");
+      return;
+    } else if (phonePattern.test(input)) {
+      toast.error("Phone numbers are not allowed.");
+      return;
+    } else {
+      console.log("");
+    }
+
+    setNewMessage(input);
+  };
 
   const getUserList = () => {
     try {
@@ -249,7 +266,7 @@ const MessageScreen = () => {
                     type="text"
                     placeholder="Write a message..."
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={handleInputChange}
                     className="message-input"
                     // disabled={!selectedUser} // Disable if no user is selected
                   />

@@ -32,9 +32,6 @@ const Feedback = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [reviewDescription, setReviewDescription] = useState("");
 
-  console.log("fedeeded", ratings, selectedStatus, reviewDescription);
-  console.log("datadata", data);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

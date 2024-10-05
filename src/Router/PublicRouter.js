@@ -64,6 +64,7 @@ import Report from "../Screen/Report/Report";
 import Feedback from "../Component/Feedback/Feedback";
 import Blogs from "../Screen/Blogs/Blogs";
 import BlogDetails from "../Screen/Blogs/BlogDetails";
+import HelpFees from "../Screen/HelpFees/HelpFees";
 
 const PublicRouter = () => {
   const PaymentSuccessListener = () => {
@@ -78,8 +79,6 @@ const PublicRouter = () => {
         const query = new URLSearchParams(location.search);
         const id = query.get("id");
         const device_type = query.get("device_type");
-        console.log(" Success  id>>>>>>>", id);
-        console.log("device_type", device_type);
 
         if (id) {
           const token = getToken(); // Get the token from storage
@@ -95,17 +94,15 @@ const PublicRouter = () => {
               },
             })
             .then((response) => {
-              console.log("API Success Response:", response.data);
+              console.log(response.data);
             })
             .catch((error) => {
-              console.error("API Error:", error);
+              console.error(error);
             });
         }
       } else if (location.pathname === "/payment-cancel") {
         const query = new URLSearchParams(location.search);
         const id = query.get("id");
-        console.log("cancel id", id);
-        console.log("cancel query", query);
 
         if (id) {
           const token = getToken(); // Get the token from storage
@@ -121,17 +118,15 @@ const PublicRouter = () => {
               },
             })
             .then((response) => {
-              console.log("API Cancel Response:??????", response.data);
+              console.log(response.data);
             })
             .catch((error) => {
-              console.error("API Error:", error);
+              console.error(error);
             });
         }
       } else if (location.pathname === "/payment-declined") {
         const query = new URLSearchParams(location.search);
         const id = query.get("id");
-        console.log("declinedid", id);
-        console.log("declinedquery", query);
 
         if (id) {
           const token = getToken(); // Get the token from storage
@@ -147,10 +142,10 @@ const PublicRouter = () => {
               },
             })
             .then((response) => {
-              console.log("API Declined Response:", response.data);
+              console.log(response.data);
             })
             .catch((error) => {
-              console.error("API Error:", error);
+              console.error(error);
             });
         }
       } else if (location.pathname === "/package-payment-success") {
@@ -169,10 +164,10 @@ const PublicRouter = () => {
               },
             })
             .then((response) => {
-              console.log("API Failed Response:", response.data);
+              console.log(response.data);
             })
             .catch((error) => {
-              console.error("API Error:", error);
+              console.error(error);
             });
         }
       } else if (location.pathname === "/package-payment-cancel") {
@@ -191,10 +186,10 @@ const PublicRouter = () => {
               },
             })
             .then((response) => {
-              console.log("API Failed Response:", response.data);
+              console.log(response.data);
             })
             .catch((error) => {
-              console.error("API Error:", error);
+              console.error(error);
             });
         }
       } else if (location.pathname === "/package-payment-declined") {
@@ -213,10 +208,10 @@ const PublicRouter = () => {
               },
             })
             .then((response) => {
-              console.log("API Failed Response:", response.data);
+              console.log(response.data);
             })
             .catch((error) => {
-              console.error("API Error:", error);
+              console.error(error);
             });
         }
       }
@@ -225,7 +220,7 @@ const PublicRouter = () => {
     return null; // This component doesn't render anything
   };
   return (
-    <BrowserRouter basename="/web">
+    <BrowserRouter>
       <PaymentSuccessListener />
       <CookieConsent />
       <Routes>
@@ -300,6 +295,7 @@ const PublicRouter = () => {
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blogs/:slug" element={<BlogDetails />} />
+        <Route path="/help-fees" element={<HelpFees />} />
       </Routes>
     </BrowserRouter>
   );

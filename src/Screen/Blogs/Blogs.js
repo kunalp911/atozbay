@@ -13,7 +13,6 @@ const Blogs = () => {
   const navigate = useNavigate();
   const [load, setLoad] = useState(false);
   const [blogs, setBlogs] = useState([]);
-  console.log("first", blogs);
 
   useEffect(() => {
     getBlogs();
@@ -60,7 +59,7 @@ const Blogs = () => {
                 <Card.Img
                   variant="top"
                   src={blog?.image ? blog?.image : logo}
-                  alt={blog?.title}
+                  alt={"image"}
                 />
                 <Card.Body>
                   <Card.Title className="fw-bold">{blog.title}</Card.Title>

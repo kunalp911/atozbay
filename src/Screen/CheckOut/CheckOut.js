@@ -69,12 +69,6 @@ const CheckOut = () => {
 
   const isEmpty = (obj) => !Object.keys(obj).length;
 
-  // const DirectPrice = responseData?.product_prices?.price;
-  // const Price = status === "wining" ? auctionPrice : DirectPrice;
-
-  console.log("bid_id", bid_id, ">>", winstatus);
-  console.log("productDetails", productDetails);
-  console.log("totalPrices", totalPrices, "SSS", totalPrice);
   useEffect(() => {
     if (shipAddList?.length > 0 && primaryAddress === null) {
       setPrimaryAddress(shipAddList[0]?.id);
@@ -493,7 +487,6 @@ const CheckOut = () => {
     }
   };
 
-  console.log("status", status, ">>>tt", totalPrices);
   return (
     <div>
       <Header />

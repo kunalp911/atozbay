@@ -179,7 +179,7 @@ const ProductList = () => {
       setload(true);
       apiCallNew("post", payload, ApiEndPoints.TodayDeal).then((response) => {
         if (response.success) {
-          console.log("respo", response);
+          console.log(response);
           toast.success(response.msg);
           getProductList();
           setSelectedProductId(null);
@@ -276,7 +276,7 @@ const ProductList = () => {
       apiCallNew("post", stockFormData, ApiEndPoints.StockAdd).then(
         (response) => {
           if (response.success) {
-            console.log("res", response);
+            console.log(response);
             setload(false);
             handlestokClose(false);
             getProductList();
@@ -305,7 +305,6 @@ const ProductList = () => {
   };
 
   const handleUpdate = (product) => {
-    console.log("update", product);
     navigate("/add-product", { state: { product: product } });
   };
   const confirmDeletion = (id) => {
@@ -709,7 +708,8 @@ const ProductList = () => {
                                   </td>
                                   <td>AUD {product?.product_prices?.price}</td>
                                 </tr>
-                                {product?.product_prices?.auction_duration && (
+                                {product?.product_prices?.auction_duration >
+                                  0 && (
                                   <tr>
                                     <td>
                                       <strong>Auction Duration</strong>
@@ -723,7 +723,6 @@ const ProductList = () => {
                                     </td>
                                   </tr>
                                 )}
-
                                 <tr>
                                   <td>
                                     <strong>Available Quantity</strong>

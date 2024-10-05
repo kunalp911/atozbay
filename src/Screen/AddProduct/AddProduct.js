@@ -33,6 +33,7 @@ import { makeStyles } from "@material-ui/core";
 import { toast } from "react-toastify";
 import moment from "moment/moment";
 import CloseIcon from "@mui/icons-material/Close";
+import { formatCapitalize } from "../../Component/ReuseFormat/ReuseFormat";
 
 const useStyles = makeStyles((theme) => ({
   dialogPaper: {
@@ -91,10 +92,6 @@ const PreviewModal = ({ open, onClose, formData, images, imagess }) => {
               </ListItem>
               <ListItem>
                 <strong>Category ID:</strong> {formData.category_id || "N/A"}
-              </ListItem>
-              <ListItem>
-                <strong>Short Description:</strong>{" "}
-                {formData.short_desc || "N/A"}
               </ListItem>
               <ListItem>
                 <strong>Shipping in Days:</strong>{" "}
@@ -210,12 +207,9 @@ const AddProduct = () => {
     shipping_charge: "",
     return_days: "",
   });
-  console.log("addProductFormData", addProductFormData);
   const formattedDateTime = moment(`${date} ${time}`, "YYYY-MM-DD H:mm").format(
     "YYYY-MM-DD HH:mm"
   );
-  console.log("/.././././update", updateProduct);
-  console.log("updateImage", updateImage);
   useEffect(() => {
     if (updateProduct) {
       setAddProductFormData({
@@ -807,7 +801,7 @@ const AddProduct = () => {
           <h4 className="helo">Complete your listing</h4>
         </div>
         <section className="photos-video mt-2">
-          <h6 style={{ fontWeight: "bold" }}>PHOTOS OR VIDEO</h6>
+          <h6 style={{ fontWeight: "bold" }}>PHOTOS</h6>
           <div
             {...getRootProps({ className: "dropzone" })}
             style={dropzoneStyle}
@@ -818,10 +812,10 @@ const AddProduct = () => {
                 <AddPhotoAlternateIcon />
                 <p>Add photos</p>
               </div>
-              <div style={boxStyle} onClick={() => setIsPhoto(false)}>
+              {/* <div style={boxStyle} onClick={() => setIsPhoto(false)}>
                 <VideoLibraryIcon />
                 <p>Upload video</p>
-              </div>
+              </div> */}
             </div>
           </div>
           <div>
@@ -1284,11 +1278,13 @@ const AddProduct = () => {
                 className="form-control"
                 id="description"
                 rows="5"
+                maxLength={1000}
                 placeholder="Enter description here..."
                 name="description"
-                value={addProductFormData.description}
+                value={formatCapitalize(addProductFormData.description)}
                 onChange={handleaddProductChange}
               ></textarea>
+              <small>{addProductFormData.description.length}/1000</small>
             </div>
           </div>
           <div className="listing-section">

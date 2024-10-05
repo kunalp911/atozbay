@@ -42,7 +42,6 @@ const OrderDetails = () => {
     "Cancelled",
   ];
 
-  console.log("productId", productId, modalStatus);
   useEffect(() => {
     getProduct();
   }, [id]);
@@ -76,7 +75,6 @@ const OrderDetails = () => {
   const handleShow = (ids) => {
     setShow(true);
     setProductId(ids);
-    console.log(">>>>>", ids);
   };
 
   const getProduct = async () => {
@@ -92,7 +90,7 @@ const OrderDetails = () => {
         setLoad(false);
       }
     } catch (error) {
-      console.log("ERROR", error);
+      console.log(error);
       setLoad(false);
     }
   };

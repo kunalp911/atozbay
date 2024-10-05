@@ -432,7 +432,6 @@ const PersonalInfo = () => {
       setload(false);
     }
   };
-  console.log("reviewlist", reviewList);
   const getReviewList = async (title) => {
     const payload = {
       page: 0,

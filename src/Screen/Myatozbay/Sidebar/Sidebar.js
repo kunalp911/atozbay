@@ -86,9 +86,6 @@ const Sidebar = ({ status, bidchild }) => {
                   Overview
                 </ListGroup.Item>
               </Link>
-              <ListGroup.Item className="fs-6 text-muted">
-                Sell an item
-              </ListGroup.Item>
               <Link to="/seller-orders-list" className="text-decoration-none">
                 <ListGroup.Item
                   className={`fs-6 ${
@@ -200,6 +197,15 @@ const Sidebar = ({ status, bidchild }) => {
             }`}
           >
             Messages
+          </ListGroup.Item>
+        </Link>
+        <Link to="/help-fees" className="text-decoration-none">
+          <ListGroup.Item
+            className={`fw-bold fs-6 ${
+              isActive("help") ? "listitemname" : "listitemnamess"
+            }`}
+          >
+            Help & Fees
           </ListGroup.Item>
         </Link>
       </ListGroup>

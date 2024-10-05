@@ -143,9 +143,9 @@ const Footer = () => {
         <div className="text-center footertitle p-3">
           © 2024 Copyright:
           <a className="text-dark footertitles">
-            Copyright © 1995-2024 atozbay Inc. All Rights Reserved.
-            Accessibility, User Agreement, Privacy, Payments Terms of Use,
-            Cookies, CA Privacy Notice, Your Privacy Choices and AdChoice
+            Copyright © 2024 atozbay Inc. All Rights Reserved. Accessibility,
+            User Agreement, Privacy, Payments Terms of Use, Cookies, CA Privacy
+            Notice, Your Privacy Choices and AdChoice
           </a>
         </div>
       </footer>

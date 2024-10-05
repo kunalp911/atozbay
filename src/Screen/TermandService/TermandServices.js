@@ -3,11 +3,13 @@ import Header from "../../Component/Header/Header";
 import Footer from "../../Component/Footer/Footer";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { apiCallNew } from "../../Network_Call/apiservices";
+import { CircularProgress } from "@mui/material";
 
 const removeHtmlTags = (html) => html?.replace(/<\/?[^>]+>/gi, "");
 
 const TermandServices = () => {
   const [data, setData] = useState({});
+  const [load, setload] = useState(false);
 
   const plainTextContent = removeHtmlTags(data?.content);
   useEffect(() => {
@@ -15,18 +17,28 @@ const TermandServices = () => {
   }, []);
   const handlegetTerm = () => {
     try {
+      setload(true);
       apiCallNew("get", {}, ApiEndPoints.Terms).then((response) => {
         if (response.success) {
           setData(response.result);
+          setload(false);
+        } else {
+          setload(false);
         }
       });
     } catch (error) {
       console.log(error);
+      setload(false);
     }
   };
   return (
     <div>
       <Header />
+      {load && (
+        <div style={styles.backdrop}>
+          <CircularProgress style={styles.loader} />
+        </div>
+      )}
       <div
         className="container mt-4 mb-5"
         style={{ maxWidth: "800px", margin: "auto" }}
@@ -49,6 +61,24 @@ const TermandServices = () => {
       <Footer />
     </div>
   );
+};
+
+const styles = {
+  backdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loader: {
+    color: "white",
+  },
 };
 
 export default TermandServices;

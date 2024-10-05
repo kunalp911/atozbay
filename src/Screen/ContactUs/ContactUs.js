@@ -7,12 +7,8 @@ import { apiCallNew } from "../../Network_Call/apiservices";
 import ApiEndPoints from "../../Network_Call/ApiEndPoint";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
-import { getToken } from "../../Helper/Storage";
-import { useNavigate } from "react-router-dom";
 
 const ContactUs = () => {
-  const token = getToken();
-  const navigate = useNavigate();
   const [load, setload] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -113,7 +109,7 @@ const ContactUs = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Row>
+          <Row className="mt-3">
             <Col md={6}>
               <Form.Group controlId="formSubject">
                 <Form.Label>Subject</Form.Label>
@@ -139,18 +135,20 @@ const ContactUs = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Row>
+          <Row className="mt-3">
             <Col>
               <Form.Group controlId="formMessage">
                 <Form.Label>Message</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={4}
+                  maxLength={1000}
                   placeholder="Enter your message"
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                 />
+                <small>{formData.message.length}/1000</small>
               </Form.Group>
             </Col>
           </Row>
