@@ -82,7 +82,9 @@ const Subscription = () => {
                     <br />
                     <strong>No. of Images:</strong> {pkg.no_of_images}
                   </Card.Text>
-                  <Card.Text>{pkg.description.replace(/\r\n/g, " ")}</Card.Text>
+                  <Card.Text>
+                    {pkg.description.replace(/<\/?[^>]+(>|$)/g, "")}
+                  </Card.Text>
                 </Card.Body>
                 <Card.Footer className="text-center">
                   <Button

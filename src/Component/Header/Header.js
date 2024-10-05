@@ -403,6 +403,11 @@ const Header = () => {
                         Messages
                       </ListGroup.Item>
                     </Link>
+                    <Link to="/help-fees" className="text-decoration-none">
+                      <ListGroup.Item className="fw-bold">
+                        Help & Fees
+                      </ListGroup.Item>
+                    </Link>
                   </ListGroup>
                 </div>
               </li>

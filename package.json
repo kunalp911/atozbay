@@ -1,7 +1,7 @@
 {
   "name": "atozbay",
   "version": "0.1.0",
-  "homepage": "https://atozbay.com/web",
+  "homepage": "https://atozbay.com",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.4",

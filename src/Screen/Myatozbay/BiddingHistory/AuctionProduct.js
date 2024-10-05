@@ -21,8 +21,6 @@ const AuctionProduct = () => {
   const [page, setPage] = useState(1);
 
   const itemsPerPage = 20;
-  console.log("shopProductLists", shopProductLists);
-
   useEffect(() => {
     getShopProductList(page);
   }, [page]);

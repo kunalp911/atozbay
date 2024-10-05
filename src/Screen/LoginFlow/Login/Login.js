@@ -65,7 +65,7 @@ const Login = () => {
   };
   const validationSchema = Yup.object({
     email: Yup.string()
-      .required("Email is Required")
+      .required("Email is required")
       .email("Invalid email format"),
     password: Yup.string().required("Password is required"),
   });
@@ -79,8 +79,7 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-    }
-    console.log("response", response);
+    } 
   };
 
   const GoogleDataGet = useGoogleLogin({
@@ -93,8 +92,7 @@ const Login = () => {
               Authorization: `Bearer ${response.access_token}`,
             },
           }
-        );
-        console.log("resss", res);
+        ); 
         if (res.status == 200) {
           setGoogleData(res.data);
           setSocialID(res.data?.sub);

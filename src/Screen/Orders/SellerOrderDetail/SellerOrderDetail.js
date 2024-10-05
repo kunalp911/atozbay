@@ -92,7 +92,7 @@ const SellerOrderDetail = () => {
         setLoad(false);
       }
     } catch (error) {
-      console.log("ERROR", error);
+      console.log(error);
       setLoad(false);
     }
   };

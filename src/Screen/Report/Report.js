@@ -156,12 +156,10 @@ const Report = () => {
               >
                 Send
               </Button>
-
               <p className="mt-3 text-muted text-center">
                 Please don't include any personal information such as your name,
                 address, or phone number.
               </p>
-
               <p className="small text-muted text-center">
                 By submitting your report, you agree to our terms and conditions
                 and privacy policy. if you have any questions or concerns,

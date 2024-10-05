@@ -211,7 +211,6 @@ const AddCoupon = () => {
       apiCallNew("post", stockFormData, ApiEndPoints.StockAdd).then(
         (response) => {
           if (response.success) {
-            console.log("res", response);
             setload(false);
             handlestokClose(false);
             getProductList();

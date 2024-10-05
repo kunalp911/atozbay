@@ -76,7 +76,7 @@ const SelectCondition = () => {
     <div>
       <div className="container col-12 d-flex justify-content-between border-bottom">
         <ArrowBackIosIcon
-          onClick={() => navigate("/selling/list-item")}
+          onClick={() => navigate("/selling")}
           style={{ cursor: "pointer", margin: "20px 0px" }}
         />
         <img
@@ -93,10 +93,10 @@ const SelectCondition = () => {
           <Typography sx={{ fontWeight: "600", fontSize: "20px" }} gutterBottom>
             Select condition
           </Typography>
-          <Typography variant="body2" color="textSecondary">
+          {/* <Typography variant="body2" color="textSecondary">
             Disclose all defects to prevent returns and earn better feedback.{" "}
             <a href="#examples-of-defects">Examples of defects</a>.
-          </Typography>
+          </Typography> */}
         </Box>
         <Grid container spacing={3}>
           {conditions.map((condition, index) => (

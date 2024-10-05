@@ -16,8 +16,6 @@ const Purchase = () => {
   const [totalPages, setTotalPages] = useState();
 
   const handlePageChange = (event, value) => {
-    console.log("first", value);
-
     setPage(value);
   };
 
