@@ -171,12 +171,12 @@ const MessageScreen = () => {
             </ListGroup>
           </Col> */}
           <Col xs={12} md={4} lg={3} className=" border-end">
-            <div className="d-flex justify-content-between align-items-center border-bottom">
+            {/* <div className="d-flex justify-content-between align-items-center border-bottom">
               <Form.Check type="checkbox" className="mb-3 ml-4" />
               <IconButton aria-label="delete" className="ml-auto">
                 <DeleteIcon />
               </IconButton>
-            </div>
+            </div> */}
             <ListGroup className="mt-1 ml-2">
               {userList?.map((user) => (
                 <ListGroup.Item

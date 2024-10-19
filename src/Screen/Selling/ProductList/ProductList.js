@@ -74,6 +74,7 @@ const ProductList = () => {
   useEffect(() => {
     getCouponList();
     getActivePackage();
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
@@ -599,7 +600,7 @@ const ProductList = () => {
                         <Row className="align-items-center">
                           <Col xs={2} sm={1}>
                             <Form.Check
-                              className="ms-2"
+                              className="ms-2 mb-5 mb-sm-0"
                               type="checkbox"
                               value={product?.id}
                               onChange={(e) => handleProductSelect(e, product)}

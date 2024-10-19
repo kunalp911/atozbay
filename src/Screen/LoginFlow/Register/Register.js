@@ -453,7 +453,7 @@ const Register = () => {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                         />
-                        {showPassword ? (
+                        {showPasswords ? (
                           <VisibilityIcon
                             style={{
                               position: "absolute",

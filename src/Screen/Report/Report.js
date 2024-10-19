@@ -146,7 +146,7 @@ const Report = () => {
                   onChange={handleDescriptionChange}
                   placeholder="Describe the issue..."
                 />
-                <small>{issueDescription.length}/1000</small>
+                <small>{issueDescription?.length}/1000</small>
               </Form.Group>
               <Button
                 type="submit"
