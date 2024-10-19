@@ -79,7 +79,7 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-    } 
+    }
   };
 
   const GoogleDataGet = useGoogleLogin({
@@ -92,7 +92,7 @@ const Login = () => {
               Authorization: `Bearer ${response.access_token}`,
             },
           }
-        ); 
+        );
         if (res.status == 200) {
           setGoogleData(res.data);
           setSocialID(res.data?.sub);

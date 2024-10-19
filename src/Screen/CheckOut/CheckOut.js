@@ -66,6 +66,8 @@ const CheckOut = () => {
   const [shipChargeSingle, setShipChargeSingle] = useState(0);
   const [transCharge, setTransCharge] = useState(0);
   const [transChargeSingle, setTransChargeSingle] = useState(0);
+  const [adminCommision, setAdminCommision] = useState(0);
+  const [adminCommisionSingle, setAdminCommisionSingle] = useState(0);
 
   const isEmpty = (obj) => !Object.keys(obj).length;
 
@@ -112,13 +114,15 @@ const CheckOut = () => {
     productDetails?.product_shipping?.shipping_charge * quantity +
     totalPrice -
     couponData;
-  const TransFeeSingle = (subTotalSingle * transChargeSingle) / 100;
-  const DirectTotalSingle = subTotalSingle + TransFeeSingle;
+  // const TransFeeSingle = (subTotalSingle * adminCommisionSingle) / 100;
+  const DirectTotalSingle =
+    (Number(subTotalSingle) || 0) + (Number(transChargeSingle) || 0);
 
   const subTotal = shipCharge + totalPrices - couponData;
-  const TransFee = (subTotal * transCharge) / 100;
-  const DirectTotal = subTotal + TransFee;
+  // const TransFee = (subTotal * adminCommision) / 100;
+  const DirectTotal = (Number(subTotal) || 0) + (Number(transCharge) || 0);
 
+  console.log("fafaafafaf", subTotal, DirectTotal, transCharge);
   const handlePrimaryChange = (id) => {
     setPrimaryAddress(id);
     getPrimaryAddress(id);
@@ -150,6 +154,7 @@ const CheckOut = () => {
         setShipCharge(response.shipping_charge);
         setTransCharge(response.transaction_fee);
         calculateTotals(response.result);
+        setAdminCommision(response.admin_commission);
         setload(false);
       }
     } catch (error) {
@@ -325,6 +330,7 @@ const CheckOut = () => {
             setProductLists(response.result);
             setShipChargeSingle(response.shipping_charge);
             setTransChargeSingle(response.transaction_fee);
+            setAdminCommisionSingle(response.admin_commission);
             setload(false);
           }
         }
@@ -555,9 +561,6 @@ const CheckOut = () => {
                             </p>
                           </Col>
                         </Row>
-                        <p className="m-0" style={{ fontSize: "14px" }}>
-                          <strong>Delivery:</strong> .........!
-                        </p>
                       </Col>
                     </Row>
                   ))
@@ -615,9 +618,6 @@ const CheckOut = () => {
                           <option value="10">10</option> */}
                         </Form.Control>
                       </Form.Group>
-                      <p className="m-0" style={{ fontSize: "14px" }}>
-                        <strong>Delivery:</strong> .........!
-                      </p>
                     </Col>
                   </Row>
                 )}
@@ -955,16 +955,14 @@ const CheckOut = () => {
                   <Row>
                     <Col>Transaction Fee</Col>
                     <Col className="text-right">
-                      + {doller.Aud} {TransFee?.toFixed(2)}
+                      + {doller.Aud} {(Number(transCharge) || 0)?.toFixed(2)}
                     </Col>
                   </Row>
                   <hr />
                   <Row>
                     <Col>Total</Col>
                     <Col className="text-right">
-                      <b>
-                        {doller.Aud} {DirectTotal?.toFixed(2)}
-                      </b>
+                      <b>{(Number(DirectTotal) || 0).toFixed(2)}</b>
                     </Col>
                   </Row>
                   <button
@@ -1004,15 +1002,18 @@ const CheckOut = () => {
                   <Row>
                     <Col>Transaction Fee</Col>
                     <Col className="text-right">
-                      + {doller.Aud} {TransFeeSingle?.toFixed(2)}
+                      + {doller.Aud}{" "}
+                      {(Number(transChargeSingle) || 0)?.toFixed(2)}
                     </Col>
                   </Row>
                   <hr />
                   <Row>
                     <Col>Total</Col>
                     <Col className="text-right">
+                      {console.log("DirectTotalSingle", DirectTotalSingle)}
                       <b>
-                        {doller.Aud} {DirectTotalSingle?.toFixed(2)}
+                        {doller.Aud}{" "}
+                        {(Number(DirectTotalSingle) || 0).toFixed(2)}
                       </b>
                     </Col>
                   </Row>

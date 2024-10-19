@@ -108,6 +108,7 @@ const ApiEndPoints = {
   ReviewList: `${APPConfig.API_URL}/reviews-list`,
   BlogList: `${APPConfig.API_URL}/blogs-list`,
   BlogDetail: `${APPConfig.API_URL}/blog-slug/`,
+  CategoryAdd: `${APPConfig.API_URL}/category-add`,
 };
 
 export default ApiEndPoints;

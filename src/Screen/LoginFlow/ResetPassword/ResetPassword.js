@@ -16,12 +16,10 @@ const ResetPassword = () => {
   const [errors, setErrors] = useState({});
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
- 
+
   const validationSchema = Yup.object({
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
-      .matches(/[0-9]/, "Password must contain at least one number")
-      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
       .matches(
         /[@$!%*?&]/,
         "Password must contain at least one special character"
@@ -30,16 +28,16 @@ const ResetPassword = () => {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Confirm Password is required"),
-  }); 
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setErrors({});
-      const valid ={
+      const valid = {
         password: password,
-        confirmPassword: confirmPassword
-      }
+        confirmPassword: confirmPassword,
+      };
       const payload = {
         email: email,
         password: password,

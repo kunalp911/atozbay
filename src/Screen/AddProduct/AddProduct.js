@@ -175,6 +175,7 @@ const AddProduct = () => {
   const [open, setOpen] = useState(false);
   const [openss, setOpenss] = useState(false);
   const [opensss, setOpensss] = useState(false);
+  const [openCategory, setOpenCategory] = useState(false);
   const [step, setStep] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
@@ -187,7 +188,12 @@ const AddProduct = () => {
     custom_attribute_value: "",
     id: null,
   });
+
+  const [refundType, setRefundType] = useState("");
   const [customArray, setCustomArray] = useState([]);
+  const [customCategory, setCustomCategory] = useState("");
+  const [customCategoryMain, setCustomCategoryMain] = useState("");
+  const [customCategoryData, setCustomCategoryData] = useState("");
   const [openPackage, setOpenPackage] = useState(false);
   const [addProductFormData, setAddProductFormData] = useState({
     name: "",
@@ -210,6 +216,9 @@ const AddProduct = () => {
   const formattedDateTime = moment(`${date} ${time}`, "YYYY-MM-DD H:mm").format(
     "YYYY-MM-DD HH:mm"
   );
+  console.log("updateProduct", updateProduct);
+  console.log("addProductFormData", addProductFormData);
+  console.log("categoriesList", categoriesList);
   useEffect(() => {
     if (updateProduct) {
       setAddProductFormData({
@@ -247,7 +256,31 @@ const AddProduct = () => {
       ...prevData,
       condition_description: selectedValue || conditionName || "",
     }));
+    window.scrollTo(0, 0);
   }, [selectedValue, conditionName]);
+
+  useEffect(() => {
+    setAddProductFormData((prevData) => ({
+      ...prevData,
+      return_days: refundType === "1" ? updateProduct?.return_days : "",
+    }));
+  }, [refundType]);
+
+  useEffect(() => {
+    setAddProductFormData((addProductFormData) => {
+      return {
+        ...addProductFormData,
+        category_id: customCategoryData
+          ? customCategoryData
+          : updateProduct?.category_id,
+      };
+    });
+  }, [customCategoryData]);
+
+  useEffect(() => {
+    setRefundType(updateProduct?.return_days ? "1" : "2");
+  }, [updateProduct?.return_days]);
+
   const handleOpenPreview = () => {
     setOpenPreview(true);
   };
@@ -264,6 +297,30 @@ const AddProduct = () => {
       ...customAttributes,
       [name]: value,
     });
+  };
+
+  const customCategorySubmit = async (e) => {
+    const payload = {
+      category_name: customCategory,
+      parent_id: customCategoryMain,
+    };
+    try {
+      const response = await apiCallNew(
+        "post",
+        payload,
+        ApiEndPoints.CategoryAdd
+      );
+      if (response.success) {
+        setCustomCategoryData(response.result);
+        setOpenCategory(false);
+        toast.success(response.msg);
+        getCategories();
+      } else {
+        toast.error(response.msg[0]);
+      }
+    } catch (error) {
+      toast.error(error.msg[0]);
+    }
   };
 
   const customSubmit = (e) => {
@@ -418,6 +475,14 @@ const AddProduct = () => {
 
   const handleClosesss = () => {
     setOpensss(false);
+  };
+
+  const handleCateOpen = () => {
+    setOpenCategory(true);
+  };
+
+  const handleCateClose = () => {
+    setOpenCategory(false);
   };
 
   const handleOpen = () => setOpen(true);
@@ -936,6 +1001,18 @@ const AddProduct = () => {
                 Edit
               </p>
             </div>
+            <div className="form-group">
+              <p className="item-condition-name">
+                <u>{customCategory}</u>
+              </p>
+              <div className="mt-5">
+                <p onClick={handleCateOpen}>
+                  <span className="addcustom-item">
+                    {"+"} Add custom Category
+                  </span>
+                </p>
+              </div>
+            </div>
           </div>
           <div className="listing-section">
             <div className="section-header">ITEM SPECIFICS</div>
@@ -1268,6 +1345,80 @@ const AddProduct = () => {
                   </form>
                 </DialogContent>
               </Dialog>
+              {/* {custom category add} */}
+              <Dialog
+                open={openCategory}
+                onClose={handleCateClose}
+                fullWidth
+                maxWidth="sm"
+              >
+                <Grid container className="d-flex justify-content-between p-2">
+                  <DialogTitle className="text-center">
+                    Add custom Category
+                  </DialogTitle>
+                  <IconButton
+                    aria-label="close"
+                    onClick={handleCateClose}
+                    sx={{
+                      position: "absolute",
+                      right: 8,
+                      top: 5,
+                    }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </Grid>
+                {console.log("customCategoryMain", customCategoryMain)}
+                <DialogContent dividers>
+                  <form
+                    action="javascript:void(0)"
+                    onSubmit={customCategorySubmit}
+                  >
+                    <div className="form-group">
+                      <label>Select Category</label>
+                      <select
+                        type="text"
+                        className="form-control"
+                        name="custom_attribute_name"
+                        value={customCategoryMain}
+                        onChange={(e) => setCustomCategoryMain(e.target.value)}
+                      >
+                        <option>Select Category</option>
+                        {categoriesList.map((item) => (
+                          <option key={item?.id} value={item?.id}>
+                            {item?.category_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Sub Category Name</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="custom_attribute_name"
+                        value={customCategory}
+                        onChange={(e) => setCustomCategory(e.target.value)}
+                      />
+                    </div>
+                    <div className="d-flex justify-content-end">
+                      <button
+                        className="btn btn-closess"
+                        onClick={handleCateClose}
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn btn-savss ms-3"
+                        disabled={!customCategory || !customCategoryMain}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           <div className="listing-section">
@@ -1284,7 +1435,7 @@ const AddProduct = () => {
                 value={formatCapitalize(addProductFormData.description)}
                 onChange={handleaddProductChange}
               ></textarea>
-              <small>{addProductFormData.description.length}/1000</small>
+              <small>{addProductFormData?.description?.length}/1000</small>
             </div>
           </div>
           <div className="listing-section">
@@ -1474,35 +1625,54 @@ const AddProduct = () => {
             </div>
           </div>
           <div className="col-sm-4 p-0 mt-4">
-            <div className="section-header mb-2">Return</div>
-            <label for="ship">Return in days</label>
+            <div className="section-header mb-2">Refund</div>
+            <label for="ship">Refund</label>
             <div className="">
               <select
                 className="form-control"
                 id="return"
                 name="return_days"
-                value={addProductFormData.return_days}
-                onChange={handleaddProductChange}
+                value={refundType}
+                onChange={(e) => setRefundType(e.target.value)}
               >
                 <option value="" hidden></option>
-                <option value="1">1 day</option>
-                <option value="2">2 days</option>
-                <option value="3">3 days</option>
-                <option value="4">4 days</option>
-                <option value="5">5 days</option>
-                <option value="6">6 days</option>
-                <option value="7">7 days</option>
-                <option value="8">8 days</option>
-                <option value="9">9 days</option>
-                <option value="10">10 days</option>
-                <option value="11">11 days</option>
-                <option value="12">12 days</option>
-                <option value="13">13 days</option>
-                <option value="14">14 days</option>
-                <option value="15">15 days</option>
+                <option value="2">no</option>
+                <option value="1">yes</option>
               </select>
             </div>
           </div>
+          {refundType == 1 && (
+            <div className="col-sm-4 p-0 mt-4">
+              <div className="section-header mb-2">Return</div>
+              <label for="ship">Return in days</label>
+              <div className="">
+                <select
+                  className="form-control"
+                  id="return"
+                  name="return_days"
+                  value={addProductFormData.return_days}
+                  onChange={handleaddProductChange}
+                >
+                  <option value="" hidden></option>
+                  <option value="1">1 day</option>
+                  <option value="2">2 days</option>
+                  <option value="3">3 days</option>
+                  <option value="4">4 days</option>
+                  <option value="5">5 days</option>
+                  <option value="6">6 days</option>
+                  <option value="7">7 days</option>
+                  <option value="8">8 days</option>
+                  <option value="9">9 days</option>
+                  <option value="10">10 days</option>
+                  <option value="11">11 days</option>
+                  <option value="12">12 days</option>
+                  <option value="13">13 days</option>
+                  <option value="14">14 days</option>
+                  <option value="15">15 days</option>
+                </select>
+              </div>
+            </div>
+          )}
           <div className="listing-section mt-4 border-top">
             <div className="container-custom">
               <h3>List it for free.</h3>

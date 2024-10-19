@@ -148,7 +148,7 @@ const ContactUs = () => {
                   value={formData.message}
                   onChange={handleChange}
                 />
-                <small>{formData.message.length}/1000</small>
+                <small>{formData?.message?.length}/1000</small>
               </Form.Group>
             </Col>
           </Row>
